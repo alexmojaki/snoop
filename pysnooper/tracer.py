@@ -118,10 +118,7 @@ def get_write_function(output, overwrite):
     elif callable(output):
         write = output
     else:
-        assert isinstance(output, utils.WritableStream)
-
-        def write(s):
-            output.write(s)
+        write = output.write
     return write
 
 
