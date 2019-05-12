@@ -4,7 +4,7 @@
 import re
 import abc
 import inspect
-from pysnooper.third_party.six.moves import zip_longest
+from six.moves import zip_longest
 
 from python_toolbox import caching, sys_tools
 

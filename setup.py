@@ -11,6 +11,8 @@ def read_file(filename):
 version = re.search("__version__ = '([0-9.]*)'",
                     read_file('pysnooper/__init__.py')).group(1)
 
+install_requires = ['six']
+
 setuptools.setup(
     name='PySnooper',
     version=version,
@@ -21,7 +23,7 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url='https://github.com/cool-RR/PySnooper',
     packages=setuptools.find_packages(exclude=['tests']),
-    install_requires=read_file('requirements.in'),
+    install_requires=install_requires,
     extras_require={
         'tests': {
             'pytest',

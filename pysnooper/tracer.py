@@ -12,8 +12,9 @@ import itertools
 import threading
 import traceback
 
+import six
+
 from .variables import CommonVariable, Exploding, BaseVariable
-from .third_party import six
 from . import utils, pycompat
 
 

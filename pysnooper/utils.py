@@ -1,7 +1,7 @@
 # Copyright 2019 Ram Rachum and collaborators.
 # This program is distributed under the MIT license.
 
-from .third_party import six
+import six
 
 MAX_VARIABLE_LENGTH = 100
 MAX_EXCEPTION_LENGTH = 200
