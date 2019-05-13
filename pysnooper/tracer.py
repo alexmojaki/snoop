@@ -15,6 +15,7 @@ import traceback
 import six
 from cheap_repr import cheap_repr
 
+from pysnooper.formatting import DefaultFormatter, Event
 from .variables import CommonVariable, Exploding, BaseVariable
 from . import utils, pycompat
 
@@ -138,7 +139,7 @@ class FileWriter(object):
 thread_global = threading.local()
 
 
-class Tracer:
+class Tracer(object):
     '''
     Snoop on the function, writing everything it's doing to stderr.
 
@@ -177,6 +178,9 @@ class Tracer:
         @pysnooper.snoop(thread_info=True)
 
     '''
+
+    formatter_class = DefaultFormatter
+    
     def __init__(
             self,
             output=None,
@@ -205,6 +209,7 @@ class Tracer:
         self.target_codes = set()
         self.target_frames = set()
         self.thread_local = threading.local()
+        self.formatter = self.formatter_class(prefix=prefix)
 
     def __call__(self, function):
         self.target_codes.add(function.__code__)
@@ -236,10 +241,6 @@ class Tracer:
             return generator_wrapper
         else:
             return simple_wrapper
-
-    def write(self, s):
-        s = u'{self.prefix}{s}\n'.format(**locals())
-        self._write(s)
 
     def __enter__(self):
         calling_frame = inspect.currentframe().f_back
@@ -297,7 +298,6 @@ class Tracer:
         thread_global.__dict__.setdefault('depth', -1)
         if event == 'call':
             thread_global.depth += 1
-        indent = ' ' * 4 * thread_global.depth
 
         #                                                                     #
         ### Finished checking whether we should trace this line. ##############
@@ -308,51 +308,21 @@ class Tracer:
         self.frame_to_local_reprs[frame] = local_reprs = \
                                        get_local_reprs(frame, watch=self.watch)
 
-        newish_string = ('Starting var:.. ' if event == 'call' else
-                                                            'New var:....... ')
+        trace_event = Event(frame, event, arg, thread_global.depth)
 
         for name, value_repr in local_reprs.items():
-            if name not in old_local_reprs:
-                self.write('{indent}{newish_string}{name} = {value_repr}'.format(
-                                                                       **locals()))
-            elif old_local_reprs[name] != value_repr:
-                self.write('{indent}Modified var:.. {name} = {value_repr}'.format(
-                                                                   **locals()))
+            if name not in old_local_reprs or old_local_reprs[name] != value_repr:
+                trace_event.variables.append((name, value_repr))
 
+        if event == 'return':
+            del self.frame_to_local_reprs[frame]
+            thread_global.depth -= 1
+        
+        formatted = self.formatter.format(trace_event)
+        self._write(formatted)
+        
         #                                                                     #
         ### Finished newish and modified variables. ###########################
-
-        now_string = datetime_module.datetime.now().time().isoformat()
-        line_no = frame.f_lineno
-        source_line = get_source_from_frame(frame)[line_no - 1]
-        thread_info = ""
-        if self.thread_info:
-            current_thread = threading.current_thread()
-            thread_info = "{ident}-{name} ".format(
-                ident=current_thread.ident, name=current_thread.getName())
-        thread_info = self.set_thread_info_padding(thread_info)
-
-        ### Dealing with misplaced function definition: #######################
-        #                                                                     #
-        if event == 'call' and source_line.lstrip().startswith('@'):
-            # If a function decorator is found, skip lines until an actual
-            # function definition is found.
-            for candidate_line_no in itertools.count(line_no):
-                try:
-                    candidate_source_line = \
-                            get_source_from_frame(frame)[candidate_line_no - 1]
-                except IndexError:
-                    # End of source file reached without finding a function
-                    # definition. Fall back to original source line.
-                    break
-
-                if candidate_source_line.lstrip().startswith('def'):
-                    # Found the def line!
-                    line_no = candidate_line_no
-                    source_line = candidate_source_line
-                    break
-        #                                                                     #
-        ### Finished dealing with misplaced function definition. ##############
 
         # If a call ends due to an exception, we still get a 'return' event
         # with arg = None. This seems to be the only way to tell the difference
@@ -373,10 +343,6 @@ class Tracer:
         else:
             self.write(u'{indent}{now_string} {thread_info}{event:9} '
                        u'{line_no:4} {source_line}'.format(**locals()))
-
-        if event == 'return':
-            del self.frame_to_local_reprs[frame]
-            thread_global.depth -= 1
 
             if not ended_by_exception:
                 return_value_repr = cheap_repr(arg)
