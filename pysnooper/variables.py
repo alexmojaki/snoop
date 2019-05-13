@@ -3,6 +3,8 @@ import abc
 from collections import Mapping, Sequence
 from copy import deepcopy
 
+from cheap_repr import cheap_repr
+
 from . import utils
 from . import pycompat
 
@@ -38,7 +40,7 @@ class BaseVariable(pycompat.ABC):
 
 class CommonVariable(BaseVariable):
     def _items(self, main_value):
-        result = [(self.source, utils.get_shortish_repr(main_value))]
+        result = [(self.source, cheap_repr(main_value))]
         for key in self._safe_keys(main_value):
             try:
                 if key in self.exclude:
@@ -48,7 +50,7 @@ class CommonVariable(BaseVariable):
                 continue
             result.append((
                 '{}{}'.format(self.unambiguous_source, self._format_key(key)),
-                utils.get_shortish_repr(value)
+                cheap_repr(value)
             ))
         return result
 
@@ -88,7 +90,7 @@ class Keys(CommonVariable):
         return main_value.keys()
 
     def _format_key(self, key):
-        return '[{}]'.format(utils.get_shortish_repr(key))
+        return '[{}]'.format(cheap_repr(key))
 
     def _get_value(self, main_value, key):
         return main_value[key]

@@ -21,16 +21,6 @@ def shitcode(s):
     )
 
 
-def get_shortish_repr(item):
-    try:
-        r = repr(item)
-    except Exception:
-        r = 'REPR FAILED'
-    r = r.replace('\r', '').replace('\n', '')
-    r = truncate(r, MAX_VARIABLE_LENGTH)
-    return r
-
-
 def truncate(string, max_length):
     if len(string) > max_length:
         left = (max_length - 3) // 2

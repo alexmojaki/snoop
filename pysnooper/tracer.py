@@ -13,6 +13,7 @@ import threading
 import traceback
 
 import six
+from cheap_repr import cheap_repr
 
 from .variables import CommonVariable, Exploding, BaseVariable
 from . import utils, pycompat
@@ -25,7 +26,7 @@ def get_local_reprs(frame, watch=()):
     code = frame.f_code
     vars_order = code.co_varnames + code.co_cellvars + code.co_freevars + tuple(frame.f_locals.keys())
 
-    result_items = [(key, utils.get_shortish_repr(value)) for key, value in frame.f_locals.items()]
+    result_items = [(key, cheap_repr(value)) for key, value in frame.f_locals.items()]
     result_items.sort(key=lambda key_value: vars_order.index(key_value[0]))
     result = collections.OrderedDict(result_items)
 
@@ -266,7 +267,6 @@ class Tracer:
                                        current_thread_len)
         return thread_info.ljust(self.thread_info_padding)
 
-
     def trace(self, frame, event, arg):
 
         ### Checking whether we should trace this line: #######################
@@ -379,7 +379,7 @@ class Tracer:
             thread_global.depth -= 1
 
             if not ended_by_exception:
-                return_value_repr = utils.get_shortish_repr(arg)
+                return_value_repr = cheap_repr(arg)
                 self.write('{indent}Return value:.. {return_value_repr}'.
                            format(**locals()))
 
