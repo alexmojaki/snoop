@@ -31,6 +31,8 @@ def truncate(string, max_length):
 
 def ensure_tuple(x):
     if isinstance(x, six.string_types):
+        x = x.replace(',', ' ').split()
+    if not isinstance(x, (list, set, tuple)):
         x = (x,)
     return tuple(x)
 

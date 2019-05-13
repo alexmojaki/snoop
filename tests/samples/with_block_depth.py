@@ -25,17 +25,17 @@ def main():
 
 expected_output = """
 12:34:56.789012 line        22         result1 = f2(5)
-Starting var:.. x2 = 5
+............... x2 = 5
 12:34:56.789012 call        14 def f2(x2):
 12:34:56.789012 line        15     result2 = f3(x2)
-    Starting var:.. x3 = 5
+    ............... x3 = 5
     12:34:56.789012 call         9 def f3(x3):
     12:34:56.789012 line        10     result3 = f4(x3)
-    New var:....... result3 = 10
+    ............... result3 = 10
     12:34:56.789012 line        11     return result3
     12:34:56.789012 return      11     return result3
     Return value:.. 10
-New var:....... result2 = 10
+............... result2 = 10
 12:34:56.789012 line        16     return result2
 12:34:56.789012 return      16     return result2
 Return value:.. 10

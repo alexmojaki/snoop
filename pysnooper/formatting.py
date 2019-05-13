@@ -1,8 +1,13 @@
 import datetime as datetime_module
+import opcode
+import os
 import re
+import threading
+import traceback
 
-import six
 from cheap_repr import cheap_repr
+import six
+from pysnooper.utils import ensure_tuple
 
 from . import utils
 
@@ -34,75 +39,112 @@ class Event(object):
     def source_line(self):
         return self.source[self.line_no - 1]
 
-    @property
-    def entries(self):
-        result = self.variables[:]
-        result.append(self)
-        if self.event == 'return':
-            result.append(ReturnValueEntry(
-                value=self.arg,
-            ))
-        return result
-
-
-class Entry(object):
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
-
-
-class VariableEntry(Entry):
-    pass
-
-
-class ReturnValueEntry(Entry):
-    pass
-
 
 class DefaultFormatter(object):
     datetime_format = '%H:%M:%S.%f'
 
-    def __init__(self, prefix):
+    def __init__(self, prefix='', columns='time'):
         self.prefix = six.text_type(prefix)
-        self.now_length = len(self.now_string())
+        self.columns = [
+            column if callable(column) else
+            getattr(self, '{}_column'.format(column))
+            for column in ensure_tuple(columns)
+        ]
+        self.column_widths = dict.fromkeys(self.columns, 0)
+        self.total_width = 0
 
-    def now_string(self):
+    def thread_column(self, _event):
+        return threading.current_thread().name
+
+    def thread_ident_column(self, _event):
+        return threading.current_thread().ident
+
+    def time_column(self, _event):
         return datetime_module.datetime.now().strftime(self.datetime_format)
+
+    def file_column(self, event):
+        result = os.path.basename(event.frame.f_code.co_filename)
+        if result.endswith('.pyc'):
+            result = result[:-1]
+        return result
+
+    def function_column(self, event):
+        return event.frame.f_code.co_name
 
     def format(self, event):
         indent = event.depth * u'    '
+        self.columns_string(event)
+        self.total_width = max(
+            len(self.columns_string(event)),
+            self.total_width,
+        )
+        lines = [
+            self.format_variable(var)
+            for var in event.variables
+        ]
+        
+        # If a call ends due to an exception, we still get a 'return' event
+        # with arg = None. This seems to be the only way to tell the difference
+        # https://stackoverflow.com/a/12800909/2482744
+        code_byte = event.frame.f_code.co_code[event.frame.f_lasti]
+        if not isinstance(code_byte, int):
+            code_byte = ord(code_byte)
+        ended_by_exception = (
+                event.event == 'return'
+                and event.arg is None
+                and (opcode.opname[code_byte]
+                     not in ('RETURN_VALUE', 'YIELD_VALUE'))
+        )
+
+        if ended_by_exception:
+            lines += [u'Call ended by exception']
+        else:
+            lines += [self.format_event(event)]
+
+        if event.event == 'return' and not ended_by_exception:
+            lines += [self.format_return_value(event.arg)]
+        elif event.event == 'exception':
+            exception = '\n'.join(traceback.format_exception_only(*event.arg[:2])).strip()
+            lines += [utils.truncate(exception, utils.MAX_EXCEPTION_LENGTH)]
+            
         return ''.join([
             (
                     self.prefix
                     + indent
-                    + self.format_entry(entry, event)
+                    + line
                     + u'\n'
             )
-            for entry in event.entries
+            for line in lines
         ])
 
-    def format_entry(self, entry, event):
-        method = getattr(self, 'format_' + entry.__class__.__name__)
-        return method(entry, event)
+    def columns_string(self, event):
+        column_strings = []
+        for column in self.columns:
+            string = six.text_type(column(event))
+            width = self.column_widths[column] = max(
+                self.column_widths[column],
+                len(string),
+            )
+            column_strings.append(string.ljust(width))
+        return u' '.join(column_strings)
 
-    def format_Event(self, entry, _event):
-        return u'{now_string} {event:9} {line_no:4} {source_line}'.format(
-            now_string=self.now_string(),
+    def format_event(self, entry):
+        return u'{columns_string} {event:9} {line_no:4} {source_line}'.format(
             source_line=entry.source_line,
+            columns_string=self.columns_string(entry),
             **entry.__dict__
         )
 
-    def format_VariableEntry(self, entry, _event):
-        return u'{description} {name} = {value_repr}'.format(
-            description=u'{entry.type} var:'
-                .format(entry=entry)
-                .ljust(self.now_length, '.'),
-            **entry.__dict__
+    def format_variable(self, entry):
+        return u'{dots} {} = {}'.format(
+            *entry,
+            dots=self.total_width * u'.',
         )
 
-    def format_ReturnValueEntry(self, entry, _event):
+    def format_return_value(self, value):
         return u'{description} {value_repr}'.format(
-            description=u'Return value:'.ljust(self.now_length, '.'),
-            value_repr=cheap_repr(entry.value),
+            description=u'Return value:'.ljust(self.total_width, '.'),
+            value_repr=cheap_repr(value),
         )
 
 
