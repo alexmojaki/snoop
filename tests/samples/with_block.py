@@ -46,37 +46,37 @@ def main():
 
 
 expected_output = """
-............... x = 2
-12:34:56.789012 line        17         foo(x - 1)
-............... x = 1
-12:34:56.789012 line        17         foo(x - 1)
-............... _x = 0
-12:34:56.789012 call        26 def bar1(_x):
-12:34:56.789012 line        27     qux()
-12:34:56.789012 return      27     qux()
-Return value:.. None
-12:34:56.789012 line        18         bar2(x)
-............... _x = 1
-12:34:56.789012 call        31 def bar2(_x):
-12:34:56.789012 line        32     qux()
-12:34:56.789012 return      32     qux()
-Return value:.. None
-12:34:56.789012 line        19         qux()
-............... _x = 9
-12:34:56.789012 call        36 def bar3(_x):
-12:34:56.789012 line        37     qux()
-12:34:56.789012 return      37     qux()
-Return value:.. None
-12:34:56.789012 line        18         bar2(x)
-............... _x = 2
-12:34:56.789012 call        31 def bar2(_x):
-12:34:56.789012 line        32     qux()
-12:34:56.789012 return      32     qux()
-Return value:.. None
-12:34:56.789012 line        19         qux()
-............... _x = 9
-12:34:56.789012 call        36 def bar3(_x):
-12:34:56.789012 line        37     qux()
-12:34:56.789012 return      37     qux()
-Return value:.. None
+........... x = 2
+12:34:56.78 line        17         foo(x - 1)
+........... x = 1
+12:34:56.78 line        17         foo(x - 1)
+........... _x = 0
+12:34:56.78 call        26 def bar1(_x):
+12:34:56.78 line        27     qux()
+12:34:56.78 return      27     qux()
+Return value: None
+12:34:56.78 line        18         bar2(x)
+........... _x = 1
+12:34:56.78 call        31 def bar2(_x):
+12:34:56.78 line        32     qux()
+12:34:56.78 return      32     qux()
+Return value: None
+12:34:56.78 line        19         qux()
+........... _x = 9
+12:34:56.78 call        36 def bar3(_x):
+12:34:56.78 line        37     qux()
+12:34:56.78 return      37     qux()
+Return value: None
+12:34:56.78 line        18         bar2(x)
+........... _x = 2
+12:34:56.78 call        31 def bar2(_x):
+12:34:56.78 line        32     qux()
+12:34:56.78 return      32     qux()
+Return value: None
+12:34:56.78 line        19         qux()
+........... _x = 9
+12:34:56.78 call        36 def bar3(_x):
+12:34:56.78 line        37     qux()
+12:34:56.78 return      37     qux()
+Return value: None
 """

@@ -1,9 +1,9 @@
-import datetime as datetime_module
 import opcode
 import os
 import re
 import threading
 import traceback
+from datetime import datetime
 
 from cheap_repr import cheap_repr
 import six
@@ -41,7 +41,7 @@ class Event(object):
 
 
 class DefaultFormatter(object):
-    datetime_format = '%H:%M:%S.%f'
+    datetime_format = None
 
     def __init__(self, prefix='', columns='time'):
         self.prefix = six.text_type(prefix)
@@ -60,7 +60,11 @@ class DefaultFormatter(object):
         return threading.current_thread().ident
 
     def time_column(self, _event):
-        return datetime_module.datetime.now().strftime(self.datetime_format)
+        datetime_format = self.datetime_format or '%H:%M:%S.%f'
+        result = datetime.now().strftime(datetime_format)
+        if self.datetime_format is None:
+            result = result[:-4]
+        return result
 
     def file_column(self, event):
         result = os.path.basename(event.frame.f_code.co_filename)

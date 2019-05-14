@@ -15,8 +15,8 @@ def main():
 
 
 expected_output = """
-12:34:56.789012 call        13 def main():
-12:34:56.789012 line        14     str(3)
-12:34:56.789012 return      14     str(3)
-Return value:.. None
+12:34:56.78 call        13 def main():
+12:34:56.78 line        14     str(3)
+12:34:56.78 return      14     str(3)
+Return value: None
 """

@@ -24,20 +24,20 @@ def main():
 
 
 expected_output = """
-12:34:56.789012 call        20 def main():
-12:34:56.789012 line        21     _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
-............... _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
-............... _d['a'] = 1
-............... _d['b'] = 2
-12:34:56.789012 line        22     _s = WithSlots()
-............... _s = <tests.samples.variables_cla...hSlots object at 0xABC>
-............... _s.x = 3
-............... _s.y = 4
-12:34:56.789012 line        23     _lst = list(range(1000))
-............... _lst = [0, 1, 2, ..., 997, 998, 999]
-............... _lst[997] = 997
-............... _lst[998] = 998
-............... _lst[999] = 999
-12:34:56.789012 return      23     _lst = list(range(1000))
-Return value:.. None
+12:34:56.78 call        20 def main():
+12:34:56.78 line        21     _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
+........... _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
+........... _d['a'] = 1
+........... _d['b'] = 2
+12:34:56.78 line        22     _s = WithSlots()
+........... _s = <tests.samples.variables_cla...hSlots object at 0xABC>
+........... _s.x = 3
+........... _s.y = 4
+12:34:56.78 line        23     _lst = list(range(1000))
+........... _lst = [0, 1, 2, ..., 997, 998, 999]
+........... _lst[997] = 997
+........... _lst[998] = 998
+........... _lst[999] = 999
+12:34:56.78 return      23     _lst = list(range(1000))
+Return value: None
 """

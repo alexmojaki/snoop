@@ -29,7 +29,7 @@ def assert_sample_output(module):
                                   stderr=True) as output_capturer:
         module.main()
 
-    time = '12:34:56.789012'
+    time = '12:34:56.78'
     time_pattern = re.sub(r'\d', r'\\d', time)
 
     output = output_capturer.string_io.getvalue()
