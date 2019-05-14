@@ -97,13 +97,13 @@ class DefaultFormatter(object):
             if (event.arg is None
                     and opcode.opname[code_byte]
                     not in ('RETURN_VALUE', 'YIELD_VALUE')):
-                lines += [u'Call ended by exception']
+                lines += [u'!!! Call ended by exception']
             else:
                 lines += [self.format_return_value(event.arg)]
         elif event.event == 'exception':
             exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
             lines += truncate_list(
-                [truncate_string(line, 200)
+                ['!!! ' + truncate_string(line, 200)
                  for line in exception_string.splitlines()],
                 max_length=5,
             )
