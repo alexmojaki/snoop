@@ -30,5 +30,5 @@ expected_output = """
 ........... _five = 5
 ........... _six = 6
 ........... _seven = 7
-Return value: None
+<<< Return value from f: None
 """

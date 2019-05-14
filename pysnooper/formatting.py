@@ -99,7 +99,7 @@ class DefaultFormatter(object):
                     not in ('RETURN_VALUE', 'YIELD_VALUE')):
                 lines += [u'!!! Call ended by exception']
             else:
-                lines += [self.format_return_value(event.arg)]
+                lines += [self.format_return_value(event)]
         elif event.event == 'exception':
             exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
             lines += truncate_list(
@@ -144,10 +144,10 @@ class DefaultFormatter(object):
             dots=self.total_width * u'.',
         )
 
-    def format_return_value(self, value):
-        return u'{description} {value_repr}'.format(
-            description=u'Return value:'.ljust(self.total_width, '.'),
-            value_repr=cheap_repr(value),
+    def format_return_value(self, event):
+        return u'<<< Return value from {func}: {value}'.format(
+            func=event.frame.f_code.co_name,
+            value=cheap_repr(event.arg),
         )
 
 

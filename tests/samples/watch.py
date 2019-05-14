@@ -37,5 +37,5 @@ expected_output = """
 ........... foo.x = 16
 ........... len(foo.__dict__["x"] * "abc") = 48
 12:34:56.78 line        19     for i in range(2):
-Return value: None
+<<< Return value from main: None
 """

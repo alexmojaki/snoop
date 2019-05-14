@@ -37,5 +37,5 @@ expected_output = """
 ........... lst = [7, 8, 9, 10]
 ........... (lst + [])[3] = 10
 ........... lst + [] = [7, 8, 9, 10]
-Return value: None
+<<< Return value from main: None
 """

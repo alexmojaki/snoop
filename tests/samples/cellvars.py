@@ -43,7 +43,7 @@ expected_output = """
         12:34:56.78 line        10             _y = x
         ........... _y = 1
         12:34:56.78 line        11             return 42
-        Return value: 42
-    Return value: 42
-Return value: 42
+        <<< Return value from f4: 42
+    <<< Return value from f3: 42
+<<< Return value from f2: 42
 """

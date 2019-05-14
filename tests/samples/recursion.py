@@ -32,23 +32,23 @@ expected_output = """
             12:34:56.78 call         5 def factorial(x):
             12:34:56.78 line         6     if x <= 1:
             12:34:56.78 line         7         return 1
-            Return value: 1
+            <<< Return value from factorial: 1
             ........... a = 2
             ........... b = 1
             12:34:56.78 call        11 def mul(a, b):
             12:34:56.78 line        12     return a * b
-            Return value: 2
-        Return value: 2
+            <<< Return value from mul: 2
+        <<< Return value from factorial: 2
         ........... a = 3
         ........... b = 2
         12:34:56.78 call        11 def mul(a, b):
         12:34:56.78 line        12     return a * b
-        Return value: 6
-    Return value: 6
+        <<< Return value from mul: 6
+    <<< Return value from factorial: 6
     ........... a = 4
     ........... b = 6
     12:34:56.78 call        11 def mul(a, b):
     12:34:56.78 line        12     return a * b
-    Return value: 24
-Return value: 24
+    <<< Return value from mul: 24
+<<< Return value from factorial: 24
 """

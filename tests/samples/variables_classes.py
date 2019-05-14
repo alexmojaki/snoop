@@ -38,5 +38,5 @@ expected_output = """
 ........... _lst[997] = 997
 ........... _lst[998] = 998
 ........... _lst[999] = 999
-Return value: None
+<<< Return value from main: None
 """

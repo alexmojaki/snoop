@@ -40,5 +40,5 @@ expected_output = """
 !!! TypeError: bad
 12:34:56.78 line        20     except:
 12:34:56.78 line        21         pass
-Return value: None
+<<< Return value from main: None
 """

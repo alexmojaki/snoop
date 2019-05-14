@@ -53,25 +53,25 @@ expected_output = """
 ........... _x = 0
 12:34:56.78 call        26 def bar1(_x):
 12:34:56.78 line        27     qux()
-Return value: None
+<<< Return value from bar1: None
 12:34:56.78 line        18         bar2(x)
 ........... _x = 1
 12:34:56.78 call        31 def bar2(_x):
 12:34:56.78 line        32     qux()
-Return value: None
+<<< Return value from bar2: None
 12:34:56.78 line        19         qux()
 ........... _x = 9
 12:34:56.78 call        36 def bar3(_x):
 12:34:56.78 line        37     qux()
-Return value: None
+<<< Return value from bar3: None
 12:34:56.78 line        18         bar2(x)
 ........... _x = 2
 12:34:56.78 call        31 def bar2(_x):
 12:34:56.78 line        32     qux()
-Return value: None
+<<< Return value from bar2: None
 12:34:56.78 line        19         qux()
 ........... _x = 9
 12:34:56.78 call        36 def bar3(_x):
 12:34:56.78 line        37     qux()
-Return value: None
+<<< Return value from bar3: None
 """
