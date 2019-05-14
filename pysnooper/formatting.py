@@ -7,7 +7,7 @@ from datetime import datetime
 
 from cheap_repr import cheap_repr
 import six
-from pysnooper.utils import ensure_tuple
+from pysnooper.utils import ensure_tuple, truncate_string, truncate_list
 
 from . import utils
 
@@ -101,8 +101,12 @@ class DefaultFormatter(object):
             else:
                 lines += [self.format_return_value(event.arg)]
         elif event.event == 'exception':
-            exception = '\n'.join(traceback.format_exception_only(*event.arg[:2])).strip()
-            lines += [utils.truncate(exception, utils.MAX_EXCEPTION_LENGTH)]
+            exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
+            lines += truncate_list(
+                [truncate_string(line, 200)
+                 for line in exception_string.splitlines()],
+                max_length=5,
+            )
         else:
             lines += [self.format_event(event)]
             

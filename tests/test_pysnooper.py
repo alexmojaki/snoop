@@ -14,7 +14,7 @@ from cheap_repr import cheap_repr, register_repr
 from cheap_repr.utils import safe_qualname
 
 import pysnooper
-from pysnooper.utils import truncate
+from pysnooper.utils import truncate_string, truncate_list
 from pysnooper.variables import needs_parentheses
 
 
@@ -155,13 +155,25 @@ def test_needs_parentheses():
     assert needs_parentheses('x if z else y')
 
 
-def test_truncate():
+def test_truncate_string():
     max_length = 20
     for i in range(max_length * 2):
         string = i * 'a'
-        truncated = truncate(string, max_length)
+        truncated = truncate_string(string, max_length)
         if len(string) <= max_length:
             assert string == truncated
         else:
             assert truncated == 'aaaaaaaa...aaaaaaaaa'
+            assert len(truncated) == max_length
+
+
+def test_truncate_list():
+    max_length = 5
+    for i in range(max_length * 2):
+        lst = i * ['a']
+        truncated = truncate_list(lst, max_length)
+        if len(lst) <= max_length:
+            assert lst == truncated
+        else:
+            assert truncated == ['a', 'a', '...', 'a', 'a']
             assert len(truncated) == max_length

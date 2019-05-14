@@ -21,12 +21,20 @@ def shitcode(s):
     )
 
 
-def truncate(string, max_length):
-    if len(string) > max_length:
-        left = (max_length - 3) // 2
-        right = max_length - 3 - left
-        string = u'{}...{}'.format(string[:left], string[-right:])
-    return string
+def truncate(seq, max_length, middle):
+    if len(seq) > max_length:
+        left = (max_length - len(middle)) // 2
+        right = max_length - len(middle) - left
+        seq = seq[:left] + middle + seq[-right:]
+    return seq
+
+
+def truncate_string(string, max_length):
+    return truncate(string, max_length, '...')
+
+
+def truncate_list(lst, max_length):
+    return truncate(lst, max_length, ['...'])
 
 
 def ensure_tuple(x):
