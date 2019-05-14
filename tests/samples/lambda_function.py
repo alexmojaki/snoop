@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
 expected_output = """
 ........... x = 3
-12:34:56.78 call         5     my_function = pysnooper.snoop()(lambda x: x ** 2)
-12:34:56.78 line         5     my_function = pysnooper.snoop()(lambda x: x ** 2)
+12:34:56.78    5 |     my_function = pysnooper.snoop()(lambda x: x ** 2)
+12:34:56.78    5 |     my_function = pysnooper.snoop()(lambda x: x ** 2)
 <<< Return value from <lambda>: 9
 """

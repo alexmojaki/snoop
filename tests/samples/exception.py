@@ -22,23 +22,23 @@ def main():
 
 
 expected_output = """
-12:34:56.78 call        17 def main():
-12:34:56.78 line        18     try:
-12:34:56.78 line        19         bar()
-    12:34:56.78 call         8 def bar():
-    12:34:56.78 line         9     try:
-    12:34:56.78 line        10         foo()
-        12:34:56.78 call         4 def foo():
-        12:34:56.78 line         5     raise TypeError('bad')
+12:34:56.78   17 | def main():
+12:34:56.78   18 |     try:
+12:34:56.78   19 |         bar()
+    12:34:56.78    8 | def bar():
+    12:34:56.78    9 |     try:
+    12:34:56.78   10 |         foo()
+        12:34:56.78    4 | def foo():
+        12:34:56.78    5 |     raise TypeError('bad')
         !!! TypeError: bad
         !!! Call ended by exception
     !!! TypeError: bad
-    12:34:56.78 line        11     except Exception:
-    12:34:56.78 line        12         str(1)
-    12:34:56.78 line        13         raise
+    12:34:56.78   11 |     except Exception:
+    12:34:56.78   12 |         str(1)
+    12:34:56.78   13 |         raise
     !!! Call ended by exception
 !!! TypeError: bad
-12:34:56.78 line        20     except:
-12:34:56.78 line        21         pass
+12:34:56.78   20 |     except:
+12:34:56.78   21 |         pass
 <<< Return value from main: None
 """

@@ -132,7 +132,7 @@ class DefaultFormatter(object):
         return u' '.join(column_strings)
 
     def format_event(self, entry):
-        return u'{columns_string} {event:9} {line_no:4} {source_line}'.format(
+        return u'{columns_string} {line_no:4} | {source_line}'.format(
             source_line=entry.source_line,
             columns_string=self.columns_string(entry),
             **entry.__dict__

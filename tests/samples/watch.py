@@ -21,21 +21,21 @@ def main():
 
 
 expected_output = """
-12:34:56.78 call        17 def main():
-12:34:56.78 line        18     foo = Foo()
+12:34:56.78   17 | def main():
+12:34:56.78   18 |     foo = Foo()
 ........... foo = <tests.samples.watch.Foo object at 0xABC>
 ........... foo.x = 2
 ........... len(foo.__dict__["x"] * "abc") = 6
-12:34:56.78 line        19     for i in range(2):
+12:34:56.78   19 |     for i in range(2):
 ........... i = 0
-12:34:56.78 line        20         foo.square()
+12:34:56.78   20 |         foo.square()
 ........... foo.x = 4
 ........... len(foo.__dict__["x"] * "abc") = 12
-12:34:56.78 line        19     for i in range(2):
+12:34:56.78   19 |     for i in range(2):
 ........... i = 1
-12:34:56.78 line        20         foo.square()
+12:34:56.78   20 |         foo.square()
 ........... foo.x = 16
 ........... len(foo.__dict__["x"] * "abc") = 48
-12:34:56.78 line        19     for i in range(2):
+12:34:56.78   19 |     for i in range(2):
 <<< Return value from main: None
 """

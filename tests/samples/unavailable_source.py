@@ -14,7 +14,7 @@ def main():
 
 
 expected_output = """
-12:34:56.78 call         4 SOURCE IS UNAVAILABLE
-12:34:56.78 line         6 SOURCE IS UNAVAILABLE
+12:34:56.78    4 | SOURCE IS UNAVAILABLE
+12:34:56.78    6 | SOURCE IS UNAVAILABLE
 <<< Return value from foo: 3
 """
