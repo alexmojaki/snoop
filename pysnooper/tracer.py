@@ -1,24 +1,19 @@
 # Copyright 2019 Ram Rachum and collaborators.
 # This program is distributed under the MIT license.
 
+import collections
 import functools
 import inspect
-import opcode
-import sys
 import re
-import collections
-import datetime as datetime_module
-import itertools
+import sys
 import threading
-import traceback
 
 import six
 from cheap_repr import cheap_repr
 
-from pysnooper.formatting import DefaultFormatter, Event
-from .variables import CommonVariable, Exploding, BaseVariable
+from .formatting import DefaultFormatter, Event
 from . import utils, pycompat
-
+from .variables import CommonVariable, Exploding, BaseVariable
 
 ipython_filename_pattern = re.compile('^<ipython-input-([0-9]+)-.*>$')
 
