@@ -43,10 +43,7 @@ expected_output = """
         12:34:56.78 line        10             _y = x
         ........... _y = 1
         12:34:56.78 line        11             return 42
-        12:34:56.78 return      11             return 42
         Return value: 42
-    12:34:56.78 return      13         return f4(a)
     Return value: 42
-12:34:56.78 return      15     return f3(a)
 Return value: 42
 """

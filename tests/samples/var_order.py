@@ -30,6 +30,5 @@ expected_output = """
 ........... _five = 5
 ........... _six = 6
 ........... _seven = 7
-12:34:56.78 return      10     _five, _six, _seven = 5, 6, 7
 Return value: None
 """

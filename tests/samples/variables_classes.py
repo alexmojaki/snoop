@@ -38,6 +38,5 @@ expected_output = """
 ........... _lst[997] = 997
 ........... _lst[998] = 998
 ........... _lst[999] = 999
-12:34:56.78 return      23     _lst = list(range(1000))
 Return value: None
 """

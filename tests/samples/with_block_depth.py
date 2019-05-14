@@ -33,10 +33,8 @@ expected_output = """
     12:34:56.78 line        10     result3 = f4(x3)
     ........... result3 = 10
     12:34:56.78 line        11     return result3
-    12:34:56.78 return      11     return result3
     Return value: 10
 ........... result2 = 10
 12:34:56.78 line        16     return result2
-12:34:56.78 return      16     return result2
 Return value: 10
 """

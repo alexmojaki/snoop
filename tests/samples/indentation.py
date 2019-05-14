@@ -32,12 +32,8 @@ expected_output = """
         12:34:56.78 line        19     f5()
             12:34:56.78 call        22 def f5():
             12:34:56.78 line        23     pass
-            12:34:56.78 return      23     pass
             Return value: None
-        12:34:56.78 return      19     f5()
         Return value: None
-    12:34:56.78 return      10     f3()
     Return value: None
-12:34:56.78 return       6     f2()
 Return value: None
 """

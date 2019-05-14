@@ -26,6 +26,5 @@ ZZZ........... foo = 7
 ZZZ12:34:56.78 line        11         self.x **= 2
 ZZZ........... self.x = 4
 ZZZ12:34:56.78 line        12         return self
-ZZZ12:34:56.78 return      12         return self
 ZZZReturn value: <tests.samples.method_and_prefix.Baz object at 0xABC>
 """

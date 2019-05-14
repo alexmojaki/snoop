@@ -87,29 +87,24 @@ class DefaultFormatter(object):
             for var in event.variables
         ]
         
-        # If a call ends due to an exception, we still get a 'return' event
-        # with arg = None. This seems to be the only way to tell the difference
-        # https://stackoverflow.com/a/12800909/2482744
-        code_byte = event.frame.f_code.co_code[event.frame.f_lasti]
-        if not isinstance(code_byte, int):
-            code_byte = ord(code_byte)
-        ended_by_exception = (
-                event.event == 'return'
-                and event.arg is None
-                and (opcode.opname[code_byte]
-                     not in ('RETURN_VALUE', 'YIELD_VALUE'))
-        )
-
-        if ended_by_exception:
-            lines += [u'Call ended by exception']
-        else:
-            lines += [self.format_event(event)]
-
-        if event.event == 'return' and not ended_by_exception:
-            lines += [self.format_return_value(event.arg)]
+        if event.event == 'return':
+            # If a call ends due to an exception, we still get a 'return' event
+            # with arg = None. This seems to be the only way to tell the difference
+            # https://stackoverflow.com/a/12800909/2482744
+            code_byte = event.frame.f_code.co_code[event.frame.f_lasti]
+            if not isinstance(code_byte, int):
+                code_byte = ord(code_byte)
+            if (event.arg is None
+                    and opcode.opname[code_byte]
+                    not in ('RETURN_VALUE', 'YIELD_VALUE')):
+                lines += [u'Call ended by exception']
+            else:
+                lines += [self.format_return_value(event.arg)]
         elif event.event == 'exception':
             exception = '\n'.join(traceback.format_exception_only(*event.arg[:2])).strip()
             lines += [utils.truncate(exception, utils.MAX_EXCEPTION_LENGTH)]
+        else:
+            lines += [self.format_event(event)]
             
         return ''.join([
             (
