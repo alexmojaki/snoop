@@ -125,7 +125,6 @@ class Tracer(object):
         ]
         self.frame_to_local_reprs = {}
         self.depth = depth
-        self.prefix = prefix
         assert self.depth >= 1
         self.target_codes = set()
         self.target_frames = set()

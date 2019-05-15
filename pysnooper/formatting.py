@@ -50,7 +50,7 @@ class DefaultFormatter(object):
         self.columns = [
             column if callable(column) else
             getattr(self, '{}_column'.format(column))
-            for column in ensure_tuple(columns)
+            for column in ensure_tuple(columns, split=True)
         ]
         self.column_widths = dict.fromkeys(self.columns, 0)
 
