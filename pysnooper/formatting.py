@@ -43,7 +43,10 @@ class DefaultFormatter(object):
     datetime_format = None
 
     def __init__(self, prefix='', columns='time'):
-        self.prefix = six.text_type(prefix)
+        prefix = six.text_type(prefix)
+        if prefix and prefix == prefix.rstrip():
+            prefix += ' '
+        self.prefix = prefix
         self.columns = [
             column if callable(column) else
             getattr(self, '{}_column'.format(column))
