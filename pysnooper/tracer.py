@@ -18,19 +18,6 @@ from .variables import CommonVariable, Exploding, BaseVariable
 ipython_filename_pattern = re.compile('^<ipython-input-([0-9]+)-.*>$')
 
 
-def get_local_reprs(frame, watch=()):
-    code = frame.f_code
-    vars_order = code.co_varnames + code.co_cellvars + code.co_freevars + tuple(frame.f_locals.keys())
-
-    result_items = [(key, cheap_repr(value)) for key, value in frame.f_locals.items()]
-    result_items.sort(key=lambda key_value: vars_order.index(key_value[0]))
-    result = collections.OrderedDict(result_items)
-
-    for variable in watch:
-        result.update(sorted(variable.items(frame)))
-    return result
-
-
 def get_write_function(output, overwrite):
     is_path = isinstance(output, (pycompat.PathLike, str))
     if overwrite and not is_path:
@@ -62,6 +49,35 @@ class FileWriter(object):
         with open(self.path, 'w' if self.overwrite else 'a') as output_file:
             output_file.write(s)
         self.overwrite = False
+
+
+class FrameInfo(object):
+    def __init__(self, frame):
+        self.frame = frame
+        self.local_reprs = {}
+
+    def update_variables(self, watch):
+        old_local_reprs = self.local_reprs
+        self.local_reprs = self.get_local_reprs(watch)
+
+        variables = []
+        for name, value_repr in self.local_reprs.items():
+            if name not in old_local_reprs or old_local_reprs[name] != value_repr:
+                variables.append((name, value_repr))
+        return variables
+
+    def get_local_reprs(self, watch):
+        frame = self.frame
+        code = frame.f_code
+        vars_order = code.co_varnames + code.co_cellvars + code.co_freevars + tuple(frame.f_locals.keys())
+
+        result_items = [(key, cheap_repr(value)) for key, value in frame.f_locals.items()]
+        result_items.sort(key=lambda key_value: vars_order.index(key_value[0]))
+        result = collections.OrderedDict(result_items)
+
+        for variable in watch:
+            result.update(sorted(variable.items(frame)))
+        return result
 
 
 thread_global = threading.local()
@@ -123,7 +139,7 @@ class Tracer(object):
              v if isinstance(v, BaseVariable) else Exploding(v)
              for v in utils.ensure_tuple(watch_explode)
         ]
-        self.frame_to_local_reprs = {}
+        self.frame_infos = {}
         self.depth = depth
         assert self.depth >= 1
         self.target_codes = set()
@@ -177,7 +193,7 @@ class Tracer(object):
         sys.settrace(stack.pop())
         calling_frame = inspect.currentframe().f_back
         self.target_frames.discard(calling_frame)
-        self.frame_to_local_reprs.pop(calling_frame, None)
+        self.frame_infos.pop(calling_frame, None)
 
     def _is_internal_frame(self, frame):
         return frame.f_code.co_filename == Tracer.__enter__.__code__.co_filename
@@ -218,18 +234,12 @@ class Tracer(object):
 
         ### Reporting newish and modified variables: ##########################
         #                                                                     #
-        old_local_reprs = self.frame_to_local_reprs.get(frame, {})
-        self.frame_to_local_reprs[frame] = local_reprs = \
-                                       get_local_reprs(frame, watch=self.watch)
-
+        frame_info = self.frame_infos.setdefault(frame, FrameInfo(frame))
         trace_event = Event(frame, event, arg, thread_global.depth)
-
-        for name, value_repr in local_reprs.items():
-            if name not in old_local_reprs or old_local_reprs[name] != value_repr:
-                trace_event.variables.append((name, value_repr))
+        trace_event.variables = frame_info.update_variables(self.watch)
 
         if event == 'return':
-            del self.frame_to_local_reprs[frame]
+            del self.frame_infos[frame]
             thread_global.depth -= 1
         
         formatted = self.formatter.format(trace_event)
