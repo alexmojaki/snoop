@@ -1,6 +1,8 @@
 # Copyright 2019 Ram Rachum and collaborators.
 # This program is distributed under the MIT license.
 
+import os
+
 import six
 
 MAX_VARIABLE_LENGTH = 100
@@ -45,4 +47,8 @@ def ensure_tuple(x):
     return tuple(x)
 
 
-
+def short_filename(code):
+    result = os.path.basename(code.co_filename)
+    if result.endswith('.pyc'):
+        result = result[:-1]
+    return result

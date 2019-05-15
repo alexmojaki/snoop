@@ -23,21 +23,24 @@ def main():
 
 
 expected_output = """
+12:34:56.78 >>> Call to main in depth.py
 12:34:56.78   20 | def main():
 12:34:56.78   21 |     result1 = f2(8)
-    ........... x2 = 8
+    12:34:56.78 >>> Call to f2 in depth.py
+    12:34:56.78 ...... x2 = 8
     12:34:56.78   14 | def f2(x2):
     12:34:56.78   15 |     result2 = f3(x2)
-        ........... x3 = 8
+        12:34:56.78 >>> Call to f3 in depth.py
+        12:34:56.78 ...... x3 = 8
         12:34:56.78    9 | def f3(x3):
         12:34:56.78   10 |     result3 = f4(x3)
-        ........... result3 = 16
+        12:34:56.78 ...... result3 = 16
         12:34:56.78   11 |     return result3
-        <<< Return value from f3: 16
-    ........... result2 = 16
+        12:34:56.78 <<< Return value from f3: 16
+    12:34:56.78 ...... result2 = 16
     12:34:56.78   16 |     return result2
-    <<< Return value from f2: 16
-........... result1 = 16
+    12:34:56.78 <<< Return value from f2: 16
+12:34:56.78 ...... result1 = 16
 12:34:56.78   22 |     return result1
-<<< Return value from main: 16
+12:34:56.78 <<< Return value from main: 16
 """

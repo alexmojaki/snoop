@@ -18,13 +18,14 @@ def main():
 
 
 expected_output = """
-ZZZ........... self = <tests.samples.method_and_prefix.Baz object at 0xABC>
-ZZZ........... self.x = 2
+ZZZ12:34:56.78 >>> Call to square in method_and_prefix.py
+ZZZ12:34:56.78 ...... self = <tests.samples.method_and_prefix.Baz object at 0xABC>
+ZZZ12:34:56.78 ...... self.x = 2
 ZZZ12:34:56.78    9 |     def square(self):
 ZZZ12:34:56.78   10 |         foo = 7
-ZZZ........... foo = 7
+ZZZ12:34:56.78 ...... foo = 7
 ZZZ12:34:56.78   11 |         self.x **= 2
-ZZZ........... self.x = 4
+ZZZ12:34:56.78 ...... self.x = 4
 ZZZ12:34:56.78   12 |         return self
-ZZZ<<< Return value from square: <tests.samples.method_and_prefix.Baz object at 0xABC>
+ZZZ12:34:56.78 <<< Return value from square: <tests.samples.method_and_prefix.Baz object at 0xABC>
 """

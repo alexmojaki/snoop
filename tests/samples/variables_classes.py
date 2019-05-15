@@ -24,19 +24,20 @@ def main():
 
 
 expected_output = """
+12:34:56.78 >>> Call to main in variables_classes.py
 12:34:56.78   20 | def main():
 12:34:56.78   21 |     _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
-........... _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
-........... _d['a'] = 1
-........... _d['b'] = 2
+12:34:56.78 ...... _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
+12:34:56.78 ...... _d['a'] = 1
+12:34:56.78 ...... _d['b'] = 2
 12:34:56.78   22 |     _s = WithSlots()
-........... _s = <tests.samples.variables_cla...hSlots object at 0xABC>
-........... _s.x = 3
-........... _s.y = 4
+12:34:56.78 ...... _s = <tests.samples.variables_cla...hSlots object at 0xABC>
+12:34:56.78 ...... _s.x = 3
+12:34:56.78 ...... _s.y = 4
 12:34:56.78   23 |     _lst = list(range(1000))
-........... _lst = [0, 1, 2, ..., 997, 998, 999]
-........... _lst[997] = 997
-........... _lst[998] = 998
-........... _lst[999] = 999
-<<< Return value from main: None
+12:34:56.78 ...... _lst = [0, 1, 2, ..., 997, 998, 999]
+12:34:56.78 ...... _lst[997] = 997
+12:34:56.78 ...... _lst[998] = 998
+12:34:56.78 ...... _lst[999] = 999
+12:34:56.78 <<< Return value from main: None
 """

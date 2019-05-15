@@ -15,7 +15,8 @@ def main():
 
 
 expected_output = """
+12:34:56.78 >>> Call to main in confusing_decorator_lines.py
 12:34:56.78   13 | def main():
 12:34:56.78   14 |     str(3)
-<<< Return value from main: None
+12:34:56.78 <<< Return value from main: None
 """

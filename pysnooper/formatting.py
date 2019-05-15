@@ -1,14 +1,13 @@
 import opcode
-import os
 import re
 import threading
 import traceback
 from datetime import datetime
 
-from cheap_repr import cheap_repr
 import six
-from pysnooper.utils import ensure_tuple, truncate_string, truncate_list
+from cheap_repr import cheap_repr
 
+from pysnooper.utils import ensure_tuple, truncate_string, truncate_list, short_filename
 from . import utils
 
 
@@ -51,7 +50,6 @@ class DefaultFormatter(object):
             for column in ensure_tuple(columns)
         ]
         self.column_widths = dict.fromkeys(self.columns, 0)
-        self.total_width = 0
 
     def thread_column(self, _event):
         return threading.current_thread().name
@@ -67,22 +65,28 @@ class DefaultFormatter(object):
         return result
 
     def file_column(self, event):
-        result = os.path.basename(event.frame.f_code.co_filename)
-        if result.endswith('.pyc'):
-            result = result[:-1]
-        return result
+        return short_filename(event.frame.f_code)
 
     def function_column(self, event):
         return event.frame.f_code.co_name
 
     def format(self, event):
-        indent = event.depth * u'    '
-        self.columns_string(event)
-        self.total_width = max(
-            len(self.columns_string(event)),
-            self.total_width,
+        prefix = (
+                self.prefix
+                + event.depth * u'    '
+                + self.columns_string(event)
+                + ' '
         )
-        lines = [
+
+        lines = []
+        
+        if event.event == 'call':
+            lines += [u'>>> Call to {} in {}'.format(
+                event.frame.f_code.co_name,
+                short_filename(event.frame.f_code),
+            )]
+        
+        lines += [
             self.format_variable(var)
             for var in event.variables
         ]
@@ -109,11 +113,9 @@ class DefaultFormatter(object):
             )
         else:
             lines += [self.format_event(event)]
-            
         return ''.join([
             (
-                    self.prefix
-                    + indent
+                    prefix
                     + line
                     + u'\n'
             )
@@ -132,17 +134,13 @@ class DefaultFormatter(object):
         return u' '.join(column_strings)
 
     def format_event(self, entry):
-        return u'{columns_string} {line_no:4} | {source_line}'.format(
+        return u'{line_no:4} | {source_line}'.format(
             source_line=entry.source_line,
-            columns_string=self.columns_string(entry),
             **entry.__dict__
         )
 
     def format_variable(self, entry):
-        return u'{dots} {} = {}'.format(
-            *entry,
-            dots=self.total_width * u'.',
-        )
+        return u'...... {} = {}'.format(*entry)
 
     def format_return_value(self, event):
         return u'<<< Return value from {func}: {value}'.format(
