@@ -43,7 +43,7 @@ def assert_sample_output(module):
                 module.expected_output.strip()
         )
     except AssertionError:
-        fix = 1
+        fix = 0
         if fix:
             path = module.__file__.rstrip('c')
             contents = file_to_string(path)

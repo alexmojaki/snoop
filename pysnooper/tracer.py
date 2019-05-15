@@ -234,12 +234,12 @@ class Tracer(object):
         elif self.last_frame and self.last_frame is not frame:
             line_no = self.frame_infos[frame].last_line_no
             trace_event = Event(frame, event, arg, thread_global.depth, line_no=line_no)
-            line = self.formatter.format_last_line(trace_event)
+            line = self.formatter.format_line_only(trace_event)
             self._write(line)
         
         self.last_frame = frame
 
-        trace_event = Event(frame, event, arg, thread_global.depth)
+        trace_event = Event(frame, event, arg, thread_global.depth, last_line_no=frame_info.last_line_no)
         trace_event.variables = frame_info.update_variables(self.watch)
 
         if event == 'return':

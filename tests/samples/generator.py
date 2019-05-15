@@ -43,21 +43,21 @@ expected_output = """
 12:34:56.78   14 |     _x2 = (yield x1)
 12:34:56.78 <<< Return value from f: 0
 12:34:56.78 >>> Call to f in generator.py
-12:34:56.78 ...... x1 = 0
+12:34:56.78 .......... x1 = 0
 12:34:56.78   14 |     _x2 = (yield x1)
-12:34:56.78 ...... _x2 = 'blabla'
+12:34:56.78 .......... _x2 = 'blabla'
 12:34:56.78   15 |     assert not original_tracer_active()
 12:34:56.78   16 |     _x3 = 'foo'
-12:34:56.78 ...... _x3 = 'foo'
+12:34:56.78 .......... _x3 = 'foo'
 12:34:56.78   17 |     assert not original_tracer_active()
 12:34:56.78   18 |     _x4 = (yield 2)
 12:34:56.78 <<< Return value from f: 2
 12:34:56.78 >>> Call to f in generator.py
-12:34:56.78 ...... x1 = 0
-12:34:56.78 ...... _x2 = 'blabla'
-12:34:56.78 ...... _x3 = 'foo'
+12:34:56.78 .......... x1 = 0
+12:34:56.78 .......... _x2 = 'blabla'
+12:34:56.78 .......... _x3 = 'foo'
 12:34:56.78   18 |     _x4 = (yield 2)
-12:34:56.78 ...... _x4 = 'looloo'
+12:34:56.78 .......... _x4 = 'looloo'
 12:34:56.78   19 |     assert not original_tracer_active()
 12:34:56.78   20 |     return
 12:34:56.78 <<< Return value from f: None
