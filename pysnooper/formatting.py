@@ -12,7 +12,7 @@ from . import utils
 
 
 class Event(object):
-    def __init__(self, frame, event, arg, depth):
+    def __init__(self, frame, event, arg, depth, line_no=None):
         self.frame = frame
         self.event = event
         self.arg = arg
@@ -20,7 +20,9 @@ class Event(object):
 
         self.variables = []
         self.source = get_source_from_frame(self.frame)
-        self.line_no = self.frame.f_lineno
+        if line_no is None:
+            line_no = frame.f_lineno
+        self.line_no = line_no
 
         if self.event == 'call' and self.source_line.lstrip().startswith('@'):
             # If a function decorator is found, skip lines until an actual
@@ -73,13 +75,16 @@ class DefaultFormatter(object):
     def function_column(self, event):
         return event.frame.f_code.co_name
 
-    def format(self, event):
-        prefix = (
+    def full_prefix(self, event):
+        return (
                 self.prefix
                 + event.depth * u'    '
                 + self.columns_string(event)
                 + ' '
         )
+
+    def format(self, event):
+        prefix = self.full_prefix(event)
 
         lines = []
         
@@ -149,6 +154,13 @@ class DefaultFormatter(object):
         return u'<<< Return value from {func}: {value}'.format(
             func=event.frame.f_code.co_name,
             value=cheap_repr(event.arg),
+        )
+
+    def format_last_line(self, event):
+        return (
+                self.full_prefix(event)
+                + self.format_event(event)
+                + u'\n'
         )
 
 

@@ -43,6 +43,7 @@ expected_output = """
             12:34:56.78   11 | def mul(a, b):
             12:34:56.78   12 |     return a * b
             12:34:56.78 <<< Return value from mul: 2
+        12:34:56.78    8 |     return mul(x, factorial(x - 1))
         12:34:56.78 <<< Return value from factorial: 2
         12:34:56.78 >>> Call to mul in recursion.py
         12:34:56.78 ...... a = 3
@@ -50,6 +51,7 @@ expected_output = """
         12:34:56.78   11 | def mul(a, b):
         12:34:56.78   12 |     return a * b
         12:34:56.78 <<< Return value from mul: 6
+    12:34:56.78    8 |     return mul(x, factorial(x - 1))
     12:34:56.78 <<< Return value from factorial: 6
     12:34:56.78 >>> Call to mul in recursion.py
     12:34:56.78 ...... a = 4
@@ -57,5 +59,6 @@ expected_output = """
     12:34:56.78   11 | def mul(a, b):
     12:34:56.78   12 |     return a * b
     12:34:56.78 <<< Return value from mul: 24
+12:34:56.78    8 |     return mul(x, factorial(x - 1))
 12:34:56.78 <<< Return value from factorial: 24
 """

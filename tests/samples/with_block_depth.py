@@ -36,6 +36,7 @@ expected_output = """
     12:34:56.78 ...... result3 = 10
     12:34:56.78   11 |     return result3
     12:34:56.78 <<< Return value from f3: 10
+12:34:56.78   15 |     result2 = f3(x2)
 12:34:56.78 ...... result2 = 10
 12:34:56.78   16 |     return result2
 12:34:56.78 <<< Return value from f2: 10

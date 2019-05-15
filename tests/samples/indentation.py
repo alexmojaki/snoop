@@ -37,7 +37,9 @@ expected_output = """
             12:34:56.78   22 | def f5():
             12:34:56.78   23 |     pass
             12:34:56.78 <<< Return value from f5: None
+        12:34:56.78   19 |     f5()
         12:34:56.78 <<< Return value from f4: None
     12:34:56.78 <<< Return value from f2: None
+12:34:56.78    6 |     f2()
 12:34:56.78 <<< Return value from main: None
 """

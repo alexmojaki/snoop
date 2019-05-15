@@ -35,11 +35,13 @@ expected_output = """
         12:34:56.78    5 |     raise TypeError('bad')
         12:34:56.78 !!! TypeError: bad
         12:34:56.78 !!! Call ended by exception
+    12:34:56.78   10 |         foo()
     12:34:56.78 !!! TypeError: bad
     12:34:56.78   11 |     except Exception:
     12:34:56.78   12 |         str(1)
     12:34:56.78   13 |         raise
     12:34:56.78 !!! Call ended by exception
+12:34:56.78   19 |         bar()
 12:34:56.78 !!! TypeError: bad
 12:34:56.78   20 |     except:
 12:34:56.78   21 |         pass

@@ -55,8 +55,10 @@ class FrameInfo(object):
     def __init__(self, frame):
         self.frame = frame
         self.local_reprs = {}
+        self.last_line_no = frame.f_lineno
 
     def update_variables(self, watch):
+        self.last_line_no = self.frame.f_lineno
         old_local_reprs = self.local_reprs
         self.local_reprs = self.get_local_reprs(watch)
 
@@ -140,6 +142,7 @@ class Tracer(object):
              for v in utils.ensure_tuple(watch_explode)
         ]
         self.frame_infos = {}
+        self.last_frame = None
         self.depth = depth
         assert self.depth >= 1
         self.target_codes = set()
@@ -183,6 +186,7 @@ class Tracer(object):
         if not self._is_internal_frame(calling_frame):
             calling_frame.f_trace = self.trace
             self.target_frames.add(calling_frame)
+            self.last_frame = calling_frame
 
         stack = self.thread_local.__dict__.setdefault('original_trace_functions', [])
         stack.append(sys.gettrace())
@@ -200,8 +204,6 @@ class Tracer(object):
 
     def trace(self, frame, event, arg):
 
-        ### Checking whether we should trace this line: #######################
-        #                                                                     #
         # We should trace this line either if it's in the decorated function,
         # or the user asked to go a few levels deeper and we're within that
         # number of levels deeper.
@@ -226,15 +228,17 @@ class Tracer(object):
                     return None
 
         thread_global.__dict__.setdefault('depth', -1)
+        frame_info = self.frame_infos.setdefault(frame, FrameInfo(frame))
         if event == 'call':
             thread_global.depth += 1
+        elif self.last_frame and self.last_frame is not frame:
+            line_no = self.frame_infos[frame].last_line_no
+            trace_event = Event(frame, event, arg, thread_global.depth, line_no=line_no)
+            line = self.formatter.format_last_line(trace_event)
+            self._write(line)
+        
+        self.last_frame = frame
 
-        #                                                                     #
-        ### Finished checking whether we should trace this line. ##############
-
-        ### Reporting newish and modified variables: ##########################
-        #                                                                     #
-        frame_info = self.frame_infos.setdefault(frame, FrameInfo(frame))
         trace_event = Event(frame, event, arg, thread_global.depth)
         trace_event.variables = frame_info.update_variables(self.watch)
 
@@ -244,8 +248,5 @@ class Tracer(object):
         
         formatted = self.formatter.format(trace_event)
         self._write(formatted)
-        
-        #                                                                     #
-        ### Finished newish and modified variables. ###########################
 
         return self.trace

@@ -47,6 +47,8 @@ expected_output = """
         12:34:56.78 ...... _y = 1
         12:34:56.78   11 |             return 42
         12:34:56.78 <<< Return value from f4: 42
+    12:34:56.78   13 |         return f4(a)
     12:34:56.78 <<< Return value from f3: 42
+12:34:56.78   15 |     return f3(a)
 12:34:56.78 <<< Return value from f2: 42
 """
