@@ -6,6 +6,7 @@ from datetime import datetime
 import six
 from cheap_repr import cheap_repr
 
+from pysnooper.pycompat import try_statement
 from pysnooper.source import get_source_from_frame
 from pysnooper.utils import ensure_tuple, truncate_string, truncate_list, short_filename
 
@@ -87,21 +88,36 @@ class DefaultFormatter(object):
         prefix = self.full_prefix(event)
 
         lines = []
+        dots = ''
+        statement_start_lines = []
         
         if event.event == 'call':
             lines += [u'>>> Call to {} in {}'.format(
                 event.frame.f_code.co_name,
                 short_filename(event.frame.f_code),
             )]
-        
-        last_statement = event.source.statements[event.last_line_no]
+
+        statements = event.source.statements
+        last_statement = statements[event.last_line_no]
         if last_statement:
             last_lineno = last_statement.lineno
             last_source_line = event.source.lines[last_lineno - 1]
             spaces = get_leading_spaces(last_source_line)
             dots = spaces.replace(' ', '.').replace('\t', '....')
-        else:
-            dots = ''
+            if event.event != 'call':
+                this_statement = statements[event.line_no]
+
+                if (
+                        this_statement != last_statement and
+                        this_statement.lineno != event.line_no and
+                        not isinstance(this_statement, try_statement)
+                ):
+                    original_line_no = event.line_no
+                    for n in range(this_statement.lineno, original_line_no):
+                        event.line_no = n
+                        statement_start_lines.append(self.format_event(event))
+                    event.line_no = original_line_no
+                    
         lines += [
             self.format_variable(var, dots)
             for var in event.variables
@@ -128,7 +144,7 @@ class DefaultFormatter(object):
                 max_length=5,
             )
         else:
-            lines += [self.format_event(event)]
+            lines += statement_start_lines + [self.format_event(event)]
         return ''.join([
             (
                     prefix

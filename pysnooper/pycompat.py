@@ -3,6 +3,7 @@
 '''Python 2/3 compatibility'''
 
 import abc
+import ast
 import os
 import inspect
 
@@ -42,3 +43,9 @@ try:
     iscoroutinefunction = inspect.iscoroutinefunction
 except AttributeError:
     iscoroutinefunction = lambda whatever: False # Lolz
+
+
+try:
+    try_statement = ast.Try
+except AttributeError:
+    try_statement = ast.TryExcept
