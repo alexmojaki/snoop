@@ -23,6 +23,10 @@ def f5():
     pass
 
 
+if __name__ == '__main__':
+    main()
+
+
 expected_output = """
 12:34:56.78 >>> Call to main in indentation.py
 12:34:56.78    5 | def main():

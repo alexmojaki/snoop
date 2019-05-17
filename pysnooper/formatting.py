@@ -5,6 +5,7 @@ from datetime import datetime
 
 import six
 from cheap_repr import cheap_repr
+from colorama import Fore, Style
 
 from pysnooper.pycompat import try_statement
 from pysnooper.source import get_source_from_frame
@@ -42,10 +43,23 @@ class Event(object):
         return self.source.lines[self.line_no - 1]
 
 
+def highlight_python(code):
+    return code
+    # TODO
+    # import pygments
+    # from pygments.formatters.terminal256 import Terminal256Formatter
+    # from pygments.lexers.python import PythonLexer
+    # return pygments.highlight(
+    #     code,
+    #     PythonLexer(),
+    #     Terminal256Formatter(),
+    # ).rstrip()
+
+
 class DefaultFormatter(object):
     datetime_format = None
 
-    def __init__(self, prefix='', columns='time'):
+    def __init__(self, prefix='', columns='time', color=False):
         prefix = six.text_type(prefix)
         if prefix and prefix == prefix.rstrip():
             prefix += ' '
@@ -56,7 +70,11 @@ class DefaultFormatter(object):
             for column in ensure_tuple(columns, split=True)
         ]
         self.column_widths = dict.fromkeys(self.columns, 0)
-
+        if color:
+            self.c = Colors
+        else:
+            self.c = NoColors()
+            
     def thread_column(self, _event):
         return threading.current_thread().name
 
@@ -77,11 +95,11 @@ class DefaultFormatter(object):
         return event.frame.f_code.co_name
 
     def full_prefix(self, event):
-        return (
-                self.prefix
-                + event.depth * u'    '
-                + self.columns_string(event)
-                + ' '
+        return u'{c.grey}{self.prefix}{indent}{columns} {c.reset}'.format(
+            c=self.c,
+            self=self,
+            indent=event.depth * u'    ',
+            columns=self.columns_string(event),
         )
 
     def format(self, event):
@@ -92,9 +110,10 @@ class DefaultFormatter(object):
         statement_start_lines = []
         
         if event.event == 'call':
-            lines += [u'>>> Call to {} in {}'.format(
+            lines += [u'{c.cyan}>>> Call to {c.reset}{}{c.cyan} in {c.reset}{}'.format(
                 event.frame.f_code.co_name,
                 short_filename(event.frame.f_code),
+                c=self.c,
             )]
 
         statements = event.source.statements
@@ -133,13 +152,13 @@ class DefaultFormatter(object):
             if (event.arg is None
                     and opcode.opname[code_byte]
                     not in ('RETURN_VALUE', 'YIELD_VALUE')):
-                lines += [u'!!! Call ended by exception']
+                lines += [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
             else:
                 lines += [self.format_return_value(event)]
         elif event.event == 'exception':
             exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
             lines += truncate_list(
-                ['!!! ' + truncate_string(line, 200)
+                [u'{c.red}!!! {line}{c.reset}'.format(c=self.c, line=truncate_string(line, 200))
                  for line in exception_string.splitlines()],
                 max_length=5,
             )
@@ -166,18 +185,24 @@ class DefaultFormatter(object):
         return u' '.join(column_strings)
 
     def format_event(self, entry):
-        return u'{line_no:4} | {source_line}'.format(
-            source_line=entry.source_line,
+        return u'{c.grey}{line_no:4}{c.reset} | {source_line}'.format(
+            source_line=highlight_python(entry.source_line),
+            c=self.c,
             **entry.__dict__
         )
 
     def format_variable(self, entry, dots):
-        return u'......{dots} {} = {}'.format(*entry, dots=dots)
+        return u'......{dots} {name} = {value}'.format(
+            name=entry[0],
+            value=highlight_python(entry[1]),
+            dots=dots,
+        )
 
     def format_return_value(self, event):
-        return u'<<< Return value from {func}: {value}'.format(
+        return u'{c.green}<<< Return value from {func}:{c.reset} {value}'.format(
+            c=self.c,
             func=event.frame.f_code.co_name,
-            value=cheap_repr(event.arg),
+            value=highlight_python(cheap_repr(event.arg)),
         )
 
     def format_line_only(self, event):
@@ -189,3 +214,16 @@ class DefaultFormatter(object):
 
 def get_leading_spaces(s):
     return s[:len(s) - len(s.lstrip())]
+
+
+class NoColors(object):
+    def __getattribute__(self, item):
+        return ''
+
+
+class Colors(object):
+    grey = Fore.LIGHTBLACK_EX
+    red = Fore.RED + Style.BRIGHT
+    green = Fore.GREEN + Style.BRIGHT
+    cyan = Fore.CYAN + Style.BRIGHT
+    reset = Style.RESET_ALL

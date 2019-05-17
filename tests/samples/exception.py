@@ -21,6 +21,10 @@ def main():
         pass
 
 
+if __name__ == '__main__':
+    main()
+
+
 expected_output = """
 12:34:56.78 >>> Call to main in exception.py
 12:34:56.78   17 | def main():
