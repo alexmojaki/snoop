@@ -230,12 +230,14 @@ class Tracer(object):
         # number of levels deeper.
 
         if not (frame.f_code in self.target_codes or frame in self.target_frames):
-            if self.depth == 1:
+            if (
+                    self.depth == 1
+                    or self._is_internal_frame(frame)
+                    or frame.f_code.co_name in ('<listcomp>', '<dictcomp>', '<setcomp>')
+            ):
                 # We did the most common and quickest check above, because the
                 # trace function runs so incredibly often, therefore it's
                 # crucial to hyper-optimize it for the common case.
-                return None
-            elif self._is_internal_frame(frame):
                 return None
             else:
                 _frame_candidate = frame
