@@ -10,6 +10,7 @@ import threading
 
 import six
 from cheap_repr import cheap_repr
+from littleutils import setattrs
 
 from .formatting import DefaultFormatter, Event
 from . import utils, pycompat
@@ -124,15 +125,35 @@ class Tracer(object):
     
     def __init__(
             self,
-            output=None,
+            out=None,
             watch=(),
             watch_explode=(),
-            depth=1,
-            prefix='',
-            columns='time',
-            overwrite=False,
+            depth=None,
+            prefix=None,
+            columns=None,
+            overwrite=None,
+            color=None,
     ):
-        self._write = get_write_function(output, overwrite)
+        if out is None:
+            out = Defaults.out
+        if depth is None:
+            depth = Defaults.depth
+        if prefix is None:
+            prefix = Defaults.prefix
+        if columns is None:
+            columns = Defaults.columns
+        if overwrite is None:
+            overwrite = Defaults.overwrite
+        if color is None:
+            color = Defaults.color
+
+        if color is None:
+            color = (
+                    out is None and sys.stderr.isatty()
+                    or getattr(out, 'isatty', lambda: False)()
+            )
+
+        self._write = get_write_function(out, overwrite)
 
         self.watch = [
             v if isinstance(v, BaseVariable) else CommonVariable(v)
@@ -148,7 +169,7 @@ class Tracer(object):
         self.target_codes = set()
         self.target_frames = set()
         self.thread_local = threading.local()
-        self.formatter = self.formatter_class(prefix, columns)
+        self.formatter = self.formatter_class(prefix, columns, color)
 
     def __call__(self, function):
         self.target_codes.add(function.__code__)
@@ -250,3 +271,22 @@ class Tracer(object):
         self._write(formatted)
 
         return self.trace
+
+
+class Defaults:
+    out = None
+    depth = 1
+    prefix = ''
+    columns = 'time'
+    overwrite = False
+    color = None
+
+
+def install(name="snoop", **kwargs):
+    try:
+        builtins = __import__("__builtin__")
+    except ImportError:
+        builtins = __import__("builtins")
+
+    setattr(builtins, name, Tracer)
+    setattrs(Defaults, **kwargs)
