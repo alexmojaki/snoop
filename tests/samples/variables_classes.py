@@ -27,7 +27,6 @@ expected_output = """
 12:34:56.78 >>> Call to main in variables_classes.py
 12:34:56.78   20 | def main():
 12:34:56.78   21 |     _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
-12:34:56.78 .......... _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
 12:34:56.78 .......... _d['a'] = 1
 12:34:56.78 .......... _d['b'] = 2
 12:34:56.78   22 |     _s = WithSlots()

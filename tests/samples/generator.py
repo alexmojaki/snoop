@@ -48,7 +48,6 @@ expected_output = """
 12:34:56.78 .......... _x2 = 'blabla'
 12:34:56.78   15 |     assert not original_tracer_active()
 12:34:56.78   16 |     _x3 = 'foo'
-12:34:56.78 .......... _x3 = 'foo'
 12:34:56.78   17 |     assert not original_tracer_active()
 12:34:56.78   18 |     _x4 = (yield 2)
 12:34:56.78 <<< Return value from f: 2

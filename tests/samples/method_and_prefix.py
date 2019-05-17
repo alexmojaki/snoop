@@ -23,7 +23,6 @@ ZZZ 12:34:56.78 .......... self = <tests.samples.method_and_prefix.Baz object at
 ZZZ 12:34:56.78 .......... self.x = 2
 ZZZ 12:34:56.78    9 |     def square(self):
 ZZZ 12:34:56.78   10 |         foo = 7
-ZZZ 12:34:56.78 .............. foo = 7
 ZZZ 12:34:56.78   11 |         self.x **= 2
 ZZZ 12:34:56.78 .............. self.x = 4
 ZZZ 12:34:56.78   12 |         return self

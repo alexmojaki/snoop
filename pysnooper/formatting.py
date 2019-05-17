@@ -118,6 +118,7 @@ class DefaultFormatter(object):
 
         statements = event.source.statements
         last_statement = statements[event.last_line_no]
+        last_source_line = ''
         if last_statement:
             last_lineno = last_statement.lineno
             last_source_line = event.source.lines[last_lineno - 1]
@@ -140,6 +141,7 @@ class DefaultFormatter(object):
         lines += [
             self.format_variable(var, dots)
             for var in event.variables
+            if '{} = {}'.format(*var) != last_source_line.strip()
         ]
         
         if event.event == 'return':
