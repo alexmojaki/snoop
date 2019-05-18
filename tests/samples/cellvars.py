@@ -27,7 +27,6 @@ expected_output = """
 12:34:56.78 ...... a = 42
 12:34:56.78    4 | def f2(a):
 12:34:56.78    5 |     def f3(a):
-12:34:56.78 .......... f3 = <function f2.<locals>.f3 at 0xABC>
 12:34:56.78   15 |     return f3(a)
     12:34:56.78 >>> Call to f3 in cellvars.py
     12:34:56.78 .......... a = 42
@@ -36,7 +35,6 @@ expected_output = """
     12:34:56.78    7 |         x += 1
     12:34:56.78 .............. x = 1
     12:34:56.78    9 |         def f4(_a):
-    12:34:56.78 .............. f4 = <function f2.<locals>.f3.<locals>.f4 at 0xABC>
     12:34:56.78   13 |         return f4(a)
         12:34:56.78 >>> Call to f4 in cellvars.py
         12:34:56.78 .............. _a = 42

@@ -1,3 +1,4 @@
+import ast
 import inspect
 import opcode
 import re
@@ -170,7 +171,13 @@ class DefaultFormatter(object):
         lines += [
             self.format_variable(var, dots, event.comprehension_type)
             for var in event.variables
-            if '{} = {}'.format(*var) != last_source_line.strip()
+            if ('{} = {}'.format(*var) != last_source_line.strip()
+                and not (
+                            isinstance(last_statement, ast.FunctionDef)
+                            and not last_statement.decorator_list
+                            and var[0] == last_statement.name
+                    )
+                )
         ]
         
         if event.event == 'return':
