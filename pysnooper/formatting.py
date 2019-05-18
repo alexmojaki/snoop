@@ -206,9 +206,14 @@ class DefaultFormatter(object):
         )
 
     def format_variable(self, entry, dots):
-        return u'......{dots} {name} = {value}'.format(
-            name=entry[0],
-            value=highlight_python(entry[1]),
+        name, value = entry
+        if name.startswith('.') and name[1:].isdigit():
+            description = 'Iterating over'
+        else:
+            description = '{name} ='.format(name=name)
+        return u'......{dots} {description} {value}'.format(
+            description=description,
+            value=highlight_python(value),
             dots=dots,
         )
 

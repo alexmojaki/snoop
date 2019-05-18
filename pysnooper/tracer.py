@@ -263,7 +263,8 @@ class Tracer(object):
         self.last_frame = frame
 
         trace_event = Event(frame, event, arg, thread_global.depth, last_line_no=frame_info.last_line_no)
-        trace_event.variables = frame_info.update_variables(self.watch)
+        if not (frame.f_code.co_name == '<genexpr>' and event not in ('return', 'exception')):
+            trace_event.variables = frame_info.update_variables(self.watch)
 
         if event == 'return':
             del self.frame_infos[frame]
