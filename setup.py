@@ -11,7 +11,12 @@ def read_file(filename):
 version = re.search("__version__ = '([0-9.]*)'",
                     read_file('pysnooper/__init__.py')).group(1)
 
-install_requires = ['six', 'littleutils', 'cheap_repr']
+install_requires = [
+    'six', 
+    'littleutils',
+    'cheap_repr',
+    'colorama',
+]
 
 setuptools.setup(
     name='PySnooper',
