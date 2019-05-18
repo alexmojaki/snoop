@@ -52,3 +52,7 @@ def short_filename(code):
     if result.endswith('.pyc'):
         result = result[:-1]
     return result
+
+
+def is_comprehension_frame(frame):
+    return frame.f_code.co_name in ('<listcomp>', '<dictcomp>', '<setcomp>')

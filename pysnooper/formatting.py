@@ -1,5 +1,6 @@
 import inspect
 import opcode
+import re
 import threading
 import traceback
 from datetime import datetime
@@ -10,7 +11,7 @@ from colorama import Fore, Style
 
 from pysnooper.pycompat import try_statement
 from pysnooper.source import get_source_from_frame
-from pysnooper.utils import ensure_tuple, truncate_string, truncate_list, short_filename
+from pysnooper.utils import ensure_tuple, truncate_string, truncate_list, short_filename, is_comprehension_frame
 
 
 class Event(object):
@@ -26,13 +27,21 @@ class Event(object):
             line_no = frame.f_lineno
         self.line_no = line_no
         self.last_line_no = last_line_no
+        code = frame.f_code
 
-        code_byte = frame.f_code.co_code[frame.f_lasti]
+        code_byte = code.co_code[frame.f_lasti]
         if not isinstance(code_byte, int):
             code_byte = ord(code_byte)
         self.opname = opcode.opname[code_byte]
 
-        self.is_generator = frame.f_code.co_flags & inspect.CO_GENERATOR
+        self.is_generator = code.co_flags & inspect.CO_GENERATOR
+        if is_comprehension_frame(frame):
+            self.comprehension_type = (
+                    re.match(r'<(\w+)comp>', code.co_name).group(1).title()
+                    + u' comprehension'
+            )
+        else:
+            self.comprehension_type = ''
 
         if self.event == 'call' and self.source_line.lstrip().startswith('@'):
             # If a function decorator is found, skip lines until an actual
@@ -118,19 +127,23 @@ class DefaultFormatter(object):
         statement_start_lines = []
         
         if event.event == 'call':
-            if event.is_generator:
-                if event.opname == 'YIELD_VALUE':
-                    description = 'Re-enter generator'
-                else:
-                    description = 'Start generator'
+            if event.comprehension_type:
+                lines += ['>>> {type}:'.format(
+                    type=event.comprehension_type)]
             else:
-                description = 'Call to'
-            lines += [u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}{filename}'.format(
-                name=event.frame.f_code.co_name,
-                filename=short_filename(event.frame.f_code),
-                c=self.c,
-                description=description,
-            )]
+                if event.is_generator:
+                    if event.opname == 'YIELD_VALUE':
+                        description = 'Re-enter generator'
+                    else:
+                        description = 'Start generator'
+                else:
+                    description = 'Call to'
+                lines += [u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}{filename}'.format(
+                    name=event.frame.f_code.co_name,
+                    filename=short_filename(event.frame.f_code),
+                    c=self.c,
+                    description=description,
+                )]
 
         statements = event.source.statements
         last_statement = statements[event.last_line_no]
@@ -155,7 +168,7 @@ class DefaultFormatter(object):
                     event.line_no = original_line_no
                     
         lines += [
-            self.format_variable(var, dots)
+            self.format_variable(var, dots, event.comprehension_type)
             for var in event.variables
             if '{} = {}'.format(*var) != last_source_line.strip()
         ]
@@ -167,6 +180,11 @@ class DefaultFormatter(object):
             if (event.arg is None
                     and event.opname not in ('RETURN_VALUE', 'YIELD_VALUE')):
                 lines += [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
+            elif event.comprehension_type:
+                lines += [u'<<< {type} result: {value}'.format(
+                    type=event.comprehension_type,
+                    value=highlight_python(cheap_repr(event.arg)),
+                )]
             else:
                 lines += [self.format_return_value(event)]
         elif event.event == 'exception':
@@ -177,7 +195,8 @@ class DefaultFormatter(object):
                 max_length=5,
             )
         else:
-            lines += statement_start_lines + [self.format_event(event)]
+            if not (event.comprehension_type and event.event == 'line'):
+                lines += statement_start_lines + [self.format_event(event)]
         return ''.join([
             (
                     prefix
@@ -205,10 +224,12 @@ class DefaultFormatter(object):
             **entry.__dict__
         )
 
-    def format_variable(self, entry, dots):
+    def format_variable(self, entry, dots, is_comprehension):
         name, value = entry
         if name.startswith('.') and name[1:].isdigit():
             description = 'Iterating over'
+        elif is_comprehension:
+            description = 'Values of {name}:'.format(name=name)
         else:
             description = '{name} ='.format(name=name)
         return u'......{dots} {description} {value}'.format(

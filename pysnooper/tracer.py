@@ -12,8 +12,8 @@ import six
 from cheap_repr import cheap_repr
 from littleutils import setattrs
 
-from .formatting import DefaultFormatter, Event
 from . import utils, pycompat
+from .formatting import DefaultFormatter, Event
 from .variables import CommonVariable, Exploding, BaseVariable
 
 ipython_filename_pattern = re.compile('^<ipython-input-([0-9]+)-.*>$')
@@ -57,11 +57,26 @@ class FrameInfo(object):
         self.frame = frame
         self.local_reprs = {}
         self.last_line_no = frame.f_lineno
+        self.comprehension_variables = collections.OrderedDict()
 
-    def update_variables(self, watch):
+    def update_variables(self, watch, event):
         self.last_line_no = self.frame.f_lineno
         old_local_reprs = self.local_reprs
         self.local_reprs = self.get_local_reprs(watch)
+
+        if utils.is_comprehension_frame(self.frame):
+            for name, value_repr in self.local_reprs.items():
+                values = self.comprehension_variables.setdefault(name, [])
+                if not values or values[-1] != value_repr:
+                    values.append(value_repr)
+                    values[:] = utils.truncate_list(values, 11)
+            if event in ('return', 'exception'):
+                return [
+                    (name, ', '.join(values))
+                    for name, values in self.comprehension_variables.items()
+                ]
+            else:
+                return []
 
         variables = []
         for name, value_repr in self.local_reprs.items():
@@ -233,7 +248,6 @@ class Tracer(object):
             if (
                     self.depth == 1
                     or self._is_internal_frame(frame)
-                    or frame.f_code.co_name in ('<listcomp>', '<dictcomp>', '<setcomp>')
             ):
                 # We did the most common and quickest check above, because the
                 # trace function runs so incredibly often, therefore it's
@@ -264,7 +278,7 @@ class Tracer(object):
 
         trace_event = Event(frame, event, arg, thread_global.depth, last_line_no=frame_info.last_line_no)
         if not (frame.f_code.co_name == '<genexpr>' and event not in ('return', 'exception')):
-            trace_event.variables = frame_info.update_variables(self.watch)
+            trace_event.variables = frame_info.update_variables(self.watch, event)
 
         if event == 'return':
             del self.frame_infos[frame]
