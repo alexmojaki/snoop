@@ -1,3 +1,4 @@
+import inspect
 import opcode
 import threading
 import traceback
@@ -25,6 +26,13 @@ class Event(object):
             line_no = frame.f_lineno
         self.line_no = line_no
         self.last_line_no = last_line_no
+
+        code_byte = frame.f_code.co_code[frame.f_lasti]
+        if not isinstance(code_byte, int):
+            code_byte = ord(code_byte)
+        self.opname = opcode.opname[code_byte]
+
+        self.is_generator = frame.f_code.co_flags & inspect.CO_GENERATOR
 
         if self.event == 'call' and self.source_line.lstrip().startswith('@'):
             # If a function decorator is found, skip lines until an actual
@@ -110,10 +118,18 @@ class DefaultFormatter(object):
         statement_start_lines = []
         
         if event.event == 'call':
-            lines += [u'{c.cyan}>>> Call to {c.reset}{}{c.cyan} in {c.reset}{}'.format(
-                event.frame.f_code.co_name,
-                short_filename(event.frame.f_code),
+            if event.is_generator:
+                if event.opname == 'YIELD_VALUE':
+                    description = 'Re-enter generator'
+                else:
+                    description = 'Start generator'
+            else:
+                description = 'Call to'
+            lines += [u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}{filename}'.format(
+                name=event.frame.f_code.co_name,
+                filename=short_filename(event.frame.f_code),
                 c=self.c,
+                description=description,
             )]
 
         statements = event.source.statements
@@ -148,12 +164,8 @@ class DefaultFormatter(object):
             # If a call ends due to an exception, we still get a 'return' event
             # with arg = None. This seems to be the only way to tell the difference
             # https://stackoverflow.com/a/12800909/2482744
-            code_byte = event.frame.f_code.co_code[event.frame.f_lasti]
-            if not isinstance(code_byte, int):
-                code_byte = ord(code_byte)
             if (event.arg is None
-                    and opcode.opname[code_byte]
-                    not in ('RETURN_VALUE', 'YIELD_VALUE')):
+                    and event.opname not in ('RETURN_VALUE', 'YIELD_VALUE')):
                 lines += [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
             else:
                 lines += [self.format_return_value(event)]
@@ -201,7 +213,8 @@ class DefaultFormatter(object):
         )
 
     def format_return_value(self, event):
-        return u'{c.green}<<< Return value from {func}:{c.reset} {value}'.format(
+        return u'{c.green}<<< {description} value from {func}:{c.reset} {value}'.format(
+            description='Yield' if event.opname == 'YIELD_VALUE' else 'Return',
             c=self.c,
             func=event.frame.f_code.co_name,
             value=highlight_python(cheap_repr(event.arg)),
