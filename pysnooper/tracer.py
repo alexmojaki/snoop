@@ -102,6 +102,29 @@ class FrameInfo(object):
 thread_global = threading.local()
 
 
+class Defaults:
+    out = None
+    depth = 1
+    prefix = ''
+    columns = 'time'
+    overwrite = False
+    color = None
+
+
+class TracerMeta(type):
+    def __new__(mcs, *args, **kwargs):
+        result = super(TracerMeta, mcs).__new__(mcs, *args, **kwargs)
+        result.default = result()
+        return result
+
+    def __enter__(self):
+        return self.default.__enter__(context=1)
+
+    def __exit__(self, *args):
+        return self.default.__exit__(*args, context=1)
+
+
+@six.add_metaclass(TracerMeta)
 class Tracer(object):
     '''
     Snoop on the function, writing everything it's doing to stderr.
@@ -218,8 +241,8 @@ class Tracer(object):
         else:
             return simple_wrapper
 
-    def __enter__(self):
-        calling_frame = inspect.currentframe().f_back
+    def __enter__(self, context=0):
+        calling_frame = sys._getframe(context + 1)
         if not self._is_internal_frame(calling_frame):
             calling_frame.f_trace = self.trace
             self.target_frames.add(calling_frame)
@@ -229,10 +252,10 @@ class Tracer(object):
         stack.append(sys.gettrace())
         sys.settrace(self.trace)
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type, exc_value, exc_traceback, context=0):
         stack = self.thread_local.original_trace_functions
         sys.settrace(stack.pop())
-        calling_frame = inspect.currentframe().f_back
+        calling_frame = sys._getframe(context + 1)
         self.target_frames.discard(calling_frame)
         self.frame_infos.pop(calling_frame, None)
 
@@ -289,15 +312,6 @@ class Tracer(object):
         self._write(formatted)
 
         return self.trace
-
-
-class Defaults:
-    out = None
-    depth = 1
-    prefix = ''
-    columns = 'time'
-    overwrite = False
-    color = None
 
 
 def install(name="snoop", **kwargs):
