@@ -4,15 +4,52 @@ import opcode
 import re
 import threading
 import traceback
+from collections import defaultdict
 from datetime import datetime
 
 import six
+import executing_node
 from cheap_repr import cheap_repr
 from colorama import Fore, Style
 
 from pysnooper.pycompat import try_statement
-from pysnooper.source import get_source_from_frame
 from pysnooper.utils import ensure_tuple, truncate_string, truncate_list, short_filename, is_comprehension_frame
+
+
+class StatementsDict(dict):
+    def __init__(self, source):
+        super(StatementsDict, self).__init__()
+        self.source = source
+
+    def __missing__(self, key):
+        try:
+            statements = self.source.statements_at_line(key)
+        except IndexError:
+            result = None
+        else:
+            if len(statements) == 1:
+                result = statements[0]
+            else:
+                result = None
+        self[key] = result
+        return result
+
+
+class Source(executing_node.Source):
+    def __init__(self, *args, **kwargs):
+        super(Source, self).__init__(*args, **kwargs)
+        if self.text:
+            self.lines = self.text.splitlines()
+        else:
+            self.lines = defaultdict(lambda: u'SOURCE IS UNAVAILABLE')
+        self.statements = StatementsDict(self)
+
+    @classmethod
+    def for_frame(cls, frame):
+        try:
+            return super(Source, cls).for_frame(frame)
+        except Exception:
+            return cls('', '', '')
 
 
 class Event(object):
@@ -23,7 +60,7 @@ class Event(object):
         self.depth = depth
 
         self.variables = []
-        self.source = get_source_from_frame(self.frame)
+        self.source = Source.for_frame(frame)
         if line_no is None:
             line_no = frame.f_lineno
         self.line_no = line_no
