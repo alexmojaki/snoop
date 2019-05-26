@@ -236,6 +236,16 @@ class DefaultFormatter(object):
                  for line in exception_string.splitlines()],
                 max_length=5,
             )
+            try:
+                call = Source.executing_node(event.frame)
+            except Exception:
+                pass
+            else:
+                if not isinstance(call.parent, ast.stmt):
+                    lines += ['{c.red}!!! When evaluating:{c.red} {source}'.format(
+                        c=self.c,
+                        source=event.source.asttokens().get_text(call),
+                    )]
         else:
             if not (event.comprehension_type and event.event == 'line'):
                 lines += statement_start_lines + [self.format_event(event)]

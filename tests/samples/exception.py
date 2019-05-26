@@ -7,7 +7,7 @@ def foo():
 
 def bar():
     try:
-        foo()
+        str(foo())
     except Exception:
         str(1)
         raise
@@ -33,14 +33,15 @@ expected_output = """
     12:34:56.78 >>> Call to bar in exception.py
     12:34:56.78    8 | def bar():
     12:34:56.78    9 |     try:
-    12:34:56.78   10 |         foo()
+    12:34:56.78   10 |         str(foo())
         12:34:56.78 >>> Call to foo in exception.py
         12:34:56.78    4 | def foo():
         12:34:56.78    5 |     raise TypeError('bad')
         12:34:56.78 !!! TypeError: bad
         12:34:56.78 !!! Call ended by exception
-    12:34:56.78   10 |         foo()
+    12:34:56.78   10 |         str(foo())
     12:34:56.78 !!! TypeError: bad
+    12:34:56.78 !!! When evaluating: foo()
     12:34:56.78   11 |     except Exception:
     12:34:56.78   12 |         str(1)
     12:34:56.78   13 |         raise
