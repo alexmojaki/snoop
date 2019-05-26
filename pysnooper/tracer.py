@@ -4,7 +4,6 @@
 import collections
 import functools
 import inspect
-import re
 import sys
 import threading
 from io import open
@@ -14,10 +13,8 @@ from cheap_repr import cheap_repr
 from littleutils import setattrs
 
 from . import utils, pycompat
-from .formatting import DefaultFormatter, Event
+from .formatting import DefaultFormatter, Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
-
-ipython_filename_pattern = re.compile('^<ipython-input-([0-9]+)-.*>$')
 
 
 def get_write_function(output, overwrite):
@@ -312,6 +309,30 @@ class Tracer(object):
         self._write(formatted)
 
         return self.trace
+
+
+def pp(*args):
+    frame = inspect.currentframe().f_back
+    try:
+        ast_tokens = Source.for_frame(frame).asttokens()
+        call = Source.executing_node(frame)
+        arg_sources = [
+            ast_tokens.get_text(arg).strip()  # TODO handle indentation better
+            for arg in call.args
+        ]
+    except Exception:
+        arg_sources = [''] * len(args)
+
+    tracer = Tracer.default
+    depth = getattr(thread_global, 'depth', 0)
+    event = Event(frame, 'log', None, depth)
+    formatted = tracer.formatter.format_log(event, zip(arg_sources, args))
+    tracer._write(formatted)
+
+    if len(args) == 1:
+        return args[0]
+    else:
+        return args
 
 
 def install(name="snoop", **kwargs):

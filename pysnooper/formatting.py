@@ -158,8 +158,6 @@ class DefaultFormatter(object):
         )
 
     def format(self, event):
-        prefix = self.full_prefix(event)
-
         lines = []
         dots = ''
         statement_start_lines = []
@@ -241,14 +239,8 @@ class DefaultFormatter(object):
         else:
             if not (event.comprehension_type and event.event == 'line'):
                 lines += statement_start_lines + [self.format_event(event)]
-        return ''.join([
-            (
-                    prefix
-                    + line
-                    + u'\n'
-            )
-            for line in lines
-        ])
+
+        return self.format_lines(event, lines)
 
     def columns_string(self, event):
         column_strings = []
@@ -291,11 +283,27 @@ class DefaultFormatter(object):
         )
 
     def format_line_only(self, event):
-        return (
-                self.full_prefix(event)
-                + self.format_event(event)
-                + u'\n'
-        )
+        return self.format_lines(event, [self.format_event(event)])
+
+    def format_log(self, event, pairs):
+        lines = ['LOG:']
+        for source, value in pairs:
+            value = cheap_repr(value)
+            string = highlight_python('{} = {}'.format(source, value))
+            lines += [u'.... {}'.format(line)
+                      for line in string.splitlines()]
+        return self.format_lines(event, lines)
+
+    def format_lines(self, event, lines):
+        prefix = self.full_prefix(event)
+        return ''.join([
+            (
+                    prefix
+                    + line
+                    + u'\n'
+            )
+            for line in lines
+        ])
 
 def get_leading_spaces(s):
     return s[:len(s) - len(s.lstrip())]
