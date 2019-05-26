@@ -7,6 +7,7 @@ import inspect
 import re
 import sys
 import threading
+from io import open
 
 import six
 from cheap_repr import cheap_repr
@@ -47,8 +48,8 @@ class FileWriter(object):
         self.overwrite = overwrite
 
     def write(self, s):
-        with open(self.path, 'w' if self.overwrite else 'a') as output_file:
-            output_file.write(s)
+        with open(self.path, 'w' if self.overwrite else 'a', encoding='utf-8') as f:
+            f.write(s)
         self.overwrite = False
 
 
