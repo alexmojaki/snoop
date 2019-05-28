@@ -1,6 +1,6 @@
 # Copyright 2019 Ram Rachum and collaborators.
 # This program is distributed under the MIT license.
-
+import ast
 import collections
 import functools
 import inspect
@@ -9,9 +9,12 @@ import threading
 from io import open
 
 import six
+# noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr
 from littleutils import setattrs
 
+from pysnooper.bird import deep_pp
+from pysnooper.pycompat import builtins
 from . import utils, pycompat
 from .formatting import DefaultFormatter, Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
@@ -313,20 +316,23 @@ class Tracer(object):
 
 def pp(*args):
     frame = inspect.currentframe().f_back
-    try:
-        ast_tokens = Source.for_frame(frame).asttokens()
-        call = Source.executing_node(frame)
-        arg_sources = [
-            ast_tokens.get_text(arg).strip()  # TODO handle indentation better
-            for arg in call.args
-        ]
-    except Exception:
-        arg_sources = [''] * len(args)
-
-    tracer = Tracer.default
     depth = getattr(thread_global, 'depth', 0)
     event = Event(frame, 'log', None, depth)
-    formatted = tracer.formatter.format_log(event, zip(arg_sources, args))
+
+    try:
+        ast_tokens = event.source.asttokens()
+        call = Source.executing_node(frame)
+        arg_sources = []
+        for call_arg, arg in zip(call.args, args):
+            if isinstance(call_arg, ast.Lambda):
+                arg_sources.extend(deep_pp(event, call_arg, frame))
+            else:
+                arg_sources.append((ast_tokens.get_text(call_arg).strip(), arg, 0))
+    except Exception:  # TODO narrow
+        arg_sources = zip([''] * len(args), args, [0] * len(args))
+
+    tracer = Tracer.default
+    formatted = tracer.formatter.format_log(event, arg_sources)
     tracer._write(formatted)
 
     if len(args) == 1:
@@ -336,10 +342,5 @@ def pp(*args):
 
 
 def install(name="snoop", **kwargs):
-    try:
-        builtins = __import__("__builtin__")
-    except ImportError:
-        builtins = __import__("builtins")
-
     setattr(builtins, name, Tracer)
     setattrs(Defaults, **kwargs)

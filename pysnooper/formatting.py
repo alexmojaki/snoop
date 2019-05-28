@@ -9,6 +9,7 @@ from datetime import datetime
 
 import six
 import executing_node
+# noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr
 from colorama import Fore, Style
 
@@ -43,6 +44,14 @@ class Source(executing_node.Source):
         else:
             self.lines = defaultdict(lambda: u'SOURCE IS UNAVAILABLE')
         self.statements = StatementsDict(self)
+        self.nodes = []
+        self.tree._depth = 0
+        for node in ast.walk(self.tree):
+            node._tree_index = len(self.nodes)
+            self.nodes.append(node)
+            for child in ast.iter_child_nodes(node):
+                child._depth = node._depth + 1
+
 
     @classmethod
     def for_frame(cls, frame):
@@ -295,12 +304,12 @@ class DefaultFormatter(object):
     def format_line_only(self, event):
         return self.format_lines(event, [self.format_event(event)])
 
-    def format_log(self, event, pairs):
+    def format_log(self, event, values):
         lines = ['LOG:']
-        for source, value in pairs:
+        for source, value, depth in values:
             value = cheap_repr(value)
             string = highlight_python('{} = {}'.format(source, value))
-            lines += [u'.... {}'.format(line)
+            lines += [u'....{} {}'.format(depth * 4 * '.', line)
                       for line in string.splitlines()]
         return self.format_lines(event, lines)
 

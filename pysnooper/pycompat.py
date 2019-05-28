@@ -49,3 +49,8 @@ try:
     try_statement = ast.Try
 except AttributeError:
     try_statement = ast.TryExcept
+
+try:
+    builtins = __import__("__builtin__")
+except ImportError:
+    builtins = __import__("builtins")
