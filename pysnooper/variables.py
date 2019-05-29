@@ -40,7 +40,7 @@ class BaseVariable(pycompat.ABC):
 
 class CommonVariable(BaseVariable):
     def _items(self, main_value):
-        result = [(self.source, cheap_repr(main_value))]
+        result = [(self.source, main_value)]
         for key in self._safe_keys(main_value):
             try:
                 if key in self.exclude:
@@ -50,7 +50,7 @@ class CommonVariable(BaseVariable):
                 continue
             result.append((
                 '{}{}'.format(self.unambiguous_source, self._format_key(key)),
-                cheap_repr(value)
+                value,
             ))
         return result
 

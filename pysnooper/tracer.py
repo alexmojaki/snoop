@@ -19,6 +19,12 @@ from . import utils, pycompat
 from .formatting import DefaultFormatter, Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
 
+try:
+    from django.db.models import QuerySet
+except ImportError:
+    class QuerySet(object):
+        pass
+
 
 def get_write_function(output, overwrite):
     is_path = isinstance(output, (pycompat.PathLike, str))
@@ -60,10 +66,10 @@ class FrameInfo(object):
         self.last_line_no = frame.f_lineno
         self.comprehension_variables = collections.OrderedDict()
 
-    def update_variables(self, watch, event):
+    def update_variables(self, watch, watch_extras, event):
         self.last_line_no = self.frame.f_lineno
         old_local_reprs = self.local_reprs
-        self.local_reprs = self.get_local_reprs(watch)
+        self.local_reprs = self.get_local_reprs(watch, watch_extras)
 
         if utils.is_comprehension_frame(self.frame):
             for name, value_repr in self.local_reprs.items():
@@ -85,18 +91,56 @@ class FrameInfo(object):
                 variables.append((name, value_repr))
         return variables
 
-    def get_local_reprs(self, watch):
+    def get_local_reprs(self, watch, watch_extras):
         frame = self.frame
         code = frame.f_code
         vars_order = code.co_varnames + code.co_cellvars + code.co_freevars + tuple(frame.f_locals.keys())
 
-        result_items = [(key, cheap_repr(value)) for key, value in frame.f_locals.items()]
+        result_items = [(key, value) for key, value in frame.f_locals.items()]
         result_items.sort(key=lambda key_value: vars_order.index(key_value[0]))
-        result = collections.OrderedDict(result_items)
 
         for variable in watch:
-            result.update(sorted(variable.items(frame)))
+            result_items += sorted(variable.items(frame))
+
+        result = collections.OrderedDict()
+        for source, value in result_items:
+            result[source] = cheap_repr(value)
+            for extra in watch_extras:
+
+                try:
+                    pair = extra(source, value)
+                except Exception:
+                    pass
+                else:
+                    if pair is not None:
+                        extra_source, extra_value = pair
+                        result[extra_source] = extra_value
+
         return result
+
+
+def len_watch(source, value):
+    if isinstance(value, QuerySet):
+        # Getting the length of a Django queryset evaluates it
+        return None
+
+    length = len(value)
+    if (
+            (isinstance(value, six.string_types)
+             and length < 50) or
+            (isinstance(value, (collections.Mapping, collections.Set, collections.Sequence))
+             and length == 0)
+    ):
+        return None
+
+    return 'len({})'.format(source), length
+
+
+def shape_watch(source, value):
+    shape = value.shape
+    if inspect.ismethod(shape):
+        return None
+    return '{}.shape'.format(source), shape
 
 
 thread_global = threading.local()
@@ -104,6 +148,8 @@ thread_global = threading.local()
 
 class Defaults:
     out = None
+    watch_extras = ()
+    replace_watch_extras = None
     depth = 1
     prefix = ''
     columns = 'time'
@@ -167,6 +213,8 @@ class Tracer(object):
             out=None,
             watch=(),
             watch_explode=(),
+            watch_extras=None,
+            replace_watch_extras=None,
             depth=None,
             prefix=None,
             columns=None,
@@ -175,6 +223,10 @@ class Tracer(object):
     ):
         if out is None:
             out = Defaults.out
+        if watch_extras is None:
+            watch_extras = Defaults.watch_extras
+        if replace_watch_extras is None:
+            replace_watch_extras = Defaults.replace_watch_extras
         if depth is None:
             depth = Defaults.depth
         if prefix is None:
@@ -201,6 +253,10 @@ class Tracer(object):
              v if isinstance(v, BaseVariable) else Exploding(v)
              for v in utils.ensure_tuple(watch_explode)
         ]
+        if replace_watch_extras is not None:
+            self.watch_extras = utils.ensure_tuple(replace_watch_extras)
+        else:
+            self.watch_extras = (len_watch, shape_watch) + utils.ensure_tuple(watch_extras)
         self.frame_infos = {}
         self.last_frame = None
         self.depth = depth
@@ -302,7 +358,7 @@ class Tracer(object):
 
         trace_event = Event(frame, event, arg, thread_global.depth, last_line_no=frame_info.last_line_no)
         if not (frame.f_code.co_name == '<genexpr>' and event not in ('return', 'exception')):
-            trace_event.variables = frame_info.update_variables(self.watch, event)
+            trace_event.variables = frame_info.update_variables(self.watch, self.watch_extras, event)
 
         if event == 'return':
             del self.frame_infos[frame]

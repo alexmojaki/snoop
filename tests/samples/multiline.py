@@ -24,6 +24,7 @@ expected_output = """
 12:34:56.78    8 |             bar(),  # 1
 12:34:56.78    9 |             bar(),  # 2
 12:34:56.78 .......... x = [None, None]
+12:34:56.78 .......... len(x) = 2
 12:34:56.78   12 |     return x
 12:34:56.78 <<< Return value from main: [None, None]
 """
