@@ -5,6 +5,7 @@ import io
 import os
 import re
 from importlib import import_module
+from threading import current_thread
 
 import pytest
 import six
@@ -16,6 +17,10 @@ from cheap_repr.utils import safe_qualname
 from snoop import snoop
 from snoop.utils import truncate_string, truncate_list
 from snoop.variables import needs_parentheses
+
+fix = 0
+
+current_thread()._ident = 123456789
 
 
 @register_repr(type(cheap_repr))
@@ -43,7 +48,6 @@ def assert_sample_output(module):
                 module.expected_output.strip()
         )
     except AssertionError:
-        fix = 0
         if fix:
             path = module.__file__.rstrip('c')
             contents = file_to_string(path)
