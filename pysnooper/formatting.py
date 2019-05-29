@@ -256,7 +256,7 @@ class DefaultFormatter(object):
                         source=event.source.asttokens().get_text(call),
                     )]
         else:
-            if not (event.comprehension_type and event.event == 'line'):
+            if not (event.comprehension_type and event.event == 'line' or event.event == 'exit'):
                 lines += statement_start_lines + [self.format_event(event)]
 
         return self.format_lines(event, lines)

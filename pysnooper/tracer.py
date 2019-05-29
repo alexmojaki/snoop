@@ -312,6 +312,7 @@ class Tracer(object):
         stack = self.thread_local.original_trace_functions
         sys.settrace(stack.pop())
         calling_frame = sys._getframe(context + 1)
+        self.trace(calling_frame, 'exit', None)
         self.target_frames.discard(calling_frame)
         self.frame_infos.pop(calling_frame, None)
 

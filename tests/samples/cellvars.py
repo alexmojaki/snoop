@@ -48,4 +48,6 @@ expected_output = """
     12:34:56.78 <<< Return value from f3: 42
 12:34:56.78   15 |     return f3(a)
 12:34:56.78 <<< Return value from f2: 42
+12:34:56.78   20 |         result1 = f2(42)
+12:34:56.78 .............. result1 = 42
 """
