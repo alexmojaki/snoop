@@ -17,7 +17,7 @@ def bar():
 
 
 expected_output = """
-12:34:56.78 >>> Call to main in multiline.py
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 5
 12:34:56.78    5 | def main():
 12:34:56.78    6 |     x = (
 12:34:56.78    7 |         [

@@ -24,7 +24,7 @@ def main():
 
 
 expected_output = """
-12:34:56.78 >>> Call to main in variables_classes.py
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 20
 12:34:56.78   20 | def main():
 12:34:56.78   21 |     _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
 12:34:56.78 .......... len(_d) = 3

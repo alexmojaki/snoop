@@ -39,13 +39,13 @@ if __name__ == '__main__':
 
 
 expected_output = """
-12:34:56.78 >>> Start generator f in generator.py
+12:34:56.78 >>> Start generator f in File "/path/to_file.py", line 12
 12:34:56.78 ...... x1 = 0
 12:34:56.78   12 | def f(x1):
 12:34:56.78   13 |     assert not original_tracer_active()
 12:34:56.78   14 |     _x2 = (yield x1)
 12:34:56.78 <<< Yield value from f: 0
-12:34:56.78 >>> Re-enter generator f in generator.py
+12:34:56.78 >>> Re-enter generator f in File "/path/to_file.py", line 14
 12:34:56.78 .......... x1 = 0
 12:34:56.78   14 |     _x2 = (yield x1)
 12:34:56.78 .......... _x2 = 'blabla'
@@ -54,7 +54,7 @@ expected_output = """
 12:34:56.78   17 |     assert not original_tracer_active()
 12:34:56.78   18 |     _x4 = (yield 2)
 12:34:56.78 <<< Yield value from f: 2
-12:34:56.78 >>> Re-enter generator f in generator.py
+12:34:56.78 >>> Re-enter generator f in File "/path/to_file.py", line 18
 12:34:56.78 .......... x1 = 0
 12:34:56.78 .......... _x2 = 'blabla'
 12:34:56.78 .......... _x3 = 'foo'

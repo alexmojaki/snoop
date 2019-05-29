@@ -17,7 +17,7 @@ def main():
     lst.append(10)
 
 expected_output = """
-12:34:56.78 >>> Call to main in watch_explode.py
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 13
 12:34:56.78   13 | def main():
 12:34:56.78   14 |     _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
 12:34:56.78 .......... len(_d) = 3

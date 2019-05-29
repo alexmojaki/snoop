@@ -185,12 +185,14 @@ class DefaultFormatter(object):
                     description = 'Call to'
                 else:
                     description = 'Enter with block in'
-                lines += [u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}{filename}'.format(
-                    name=event.frame.f_code.co_name,
-                    filename=short_filename(event.frame.f_code),
-                    c=self.c,
-                    description=description,
-                )]
+                lines += [
+                    u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}File "{filename}", line {lineno}'.format(
+                        name=event.frame.f_code.co_name,
+                        filename=_get_filename(event),
+                        lineno=event.line_no,
+                        c=self.c,
+                        description=description,
+                    )]
 
         statements = event.source.statements
         last_statement = statements[event.last_line_no]
@@ -335,6 +337,10 @@ class DefaultFormatter(object):
 
 def get_leading_spaces(s):
     return s[:len(s) - len(s.lstrip())]
+
+
+def _get_filename(event):
+    return event.frame.f_code.co_filename
 
 
 class NoColors(object):

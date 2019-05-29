@@ -15,7 +15,7 @@ def main():
 
 
 expected_output = """
-12:34:56.78 >>> Call to f in var_order.py
+12:34:56.78 >>> Call to f in File "/path/to_file.py", line 5
 12:34:56.78 ...... _one = 1
 12:34:56.78 ...... _two = 2
 12:34:56.78 ...... _three = 3

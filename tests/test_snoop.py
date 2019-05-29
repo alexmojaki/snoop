@@ -1,6 +1,3 @@
-# Copyright 2019 Ram Rachum and collaborators.
-# This program is distributed under the MIT license.
-
 import io
 import os
 import re
@@ -17,10 +14,13 @@ from cheap_repr.utils import safe_qualname
 from snoop import snoop
 from snoop.utils import truncate_string, truncate_list
 from snoop.variables import needs_parentheses
+from snoop import formatting
 
 fix = 0
 
 current_thread()._ident = 123456789
+
+formatting._get_filename = lambda _: "/path/to/file.py"
 
 
 @register_repr(type(cheap_repr))

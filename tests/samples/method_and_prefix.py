@@ -18,7 +18,7 @@ def main():
 
 
 expected_output = """
-ZZZ 12:34:56.78 >>> Call to square in method_and_prefix.py
+ZZZ 12:34:56.78 >>> Call to square in File "/path/to_file.py", line 9
 ZZZ 12:34:56.78 .......... self = <tests.samples.method_and_prefix.Baz object at 0xABC>
 ZZZ 12:34:56.78 .......... self.x = 2
 ZZZ 12:34:56.78    9 |     def square(self):

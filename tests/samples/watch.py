@@ -21,7 +21,7 @@ def main():
 
 
 expected_output = """
-12:34:56.78 >>> Call to main in watch.py
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 17
 12:34:56.78   17 | def main():
 12:34:56.78   18 |     foo = Foo()
 12:34:56.78 .......... foo = <tests.samples.watch.Foo object at 0xABC>
