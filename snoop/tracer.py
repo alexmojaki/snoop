@@ -389,6 +389,17 @@ def pp(*args):
         return args
 
 
+def spy(*args, **kwargs):
+    from birdseye import eye
+
+    def decorator(func):
+        func = eye(func)
+        func = Tracer(*args, **kwargs)(func)
+        return func
+
+    return decorator
+
+
 def install(name="snoop", **kwargs):
     setattr(builtins, name, Tracer)
     setattrs(Defaults, **kwargs)
