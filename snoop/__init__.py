@@ -15,7 +15,8 @@ changed in the decorated function.
 For more information, see https://github.com/cool-RR/PySnooper
 '''
 
-from .tracer import Tracer as snoop, install, pp, spy
+from .tracer import Tracer as snoop, pp, spy
+from .installer import install
 from .variables import Attrs, Exploding, Indices, Keys
 import collections
 import sys

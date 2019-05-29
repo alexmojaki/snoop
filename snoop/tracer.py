@@ -9,10 +9,8 @@ from io import open
 import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr
-from littleutils import setattrs
 
-from snoop.bird import deep_pp
-from snoop.pycompat import builtins
+from .bird import deep_pp
 from . import utils, pycompat
 from .formatting import DefaultFormatter, Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
@@ -398,8 +396,3 @@ def spy(*args, **kwargs):
         return func
 
     return decorator
-
-
-def install(name="snoop", **kwargs):
-    setattr(builtins, name, Tracer)
-    setattrs(Defaults, **kwargs)
