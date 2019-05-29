@@ -1,4 +1,4 @@
-from pysnooper import snoop, pp
+from snoop import snoop, pp
 
 
 @snoop()

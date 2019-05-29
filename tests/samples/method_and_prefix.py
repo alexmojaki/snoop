@@ -1,11 +1,11 @@
-import pysnooper
+import snoop
 
 
 class Baz(object):
     def __init__(self):
         self.x = 2
 
-    @pysnooper.snoop(watch=('self.x',), prefix='ZZZ')
+    @snoop.snoop(watch=('self.x',), prefix='ZZZ')
     def square(self):
         foo = 7
         self.x **= 2

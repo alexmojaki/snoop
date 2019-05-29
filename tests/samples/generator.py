@@ -2,13 +2,13 @@ import sys
 
 import pytest
 
-import pysnooper
+import snoop
 
 original_tracer = sys.gettrace()
 original_tracer_active = lambda: (sys.gettrace() is original_tracer)
 
 
-@pysnooper.snoop()
+@snoop.snoop()
 def f(x1):
     assert not original_tracer_active()
     _x2 = (yield x1)

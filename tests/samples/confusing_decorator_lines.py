@@ -1,4 +1,4 @@
-import pysnooper
+import snoop
 
 
 def empty_decorator(function):
@@ -6,7 +6,7 @@ def empty_decorator(function):
 
 
 @empty_decorator
-@pysnooper.snoop(
+@snoop.snoop(
     depth=2)  # Multi-line decorator for extra confusion!
 @empty_decorator
 @empty_decorator

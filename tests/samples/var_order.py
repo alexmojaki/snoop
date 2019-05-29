@@ -1,7 +1,7 @@
-import pysnooper
+import snoop
 
 
-@pysnooper.snoop()
+@snoop.snoop()
 def f(_one, _two, _three, _four):
     _five = None
     _six = None

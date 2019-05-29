@@ -13,9 +13,9 @@ from littleutils import file_to_string, string_to_file
 from cheap_repr import cheap_repr, register_repr
 from cheap_repr.utils import safe_qualname
 
-import pysnooper
-from pysnooper.utils import truncate_string, truncate_list
-from pysnooper.variables import needs_parentheses
+from snoop import snoop
+from snoop.utils import truncate_string, truncate_list
+from snoop.variables import needs_parentheses
 
 
 @register_repr(type(cheap_repr))
@@ -70,7 +70,7 @@ def test_samples():
 
 def test_string_io():
     string_io = io.StringIO()
-    tracer = pysnooper.snoop(string_io)
+    tracer = snoop(string_io)
     contents = u'stuff'
     tracer._write(contents)
     assert string_io.getvalue() == contents
@@ -83,17 +83,17 @@ def test_callable():
         string_io.write(msg)
 
     string_io = io.StringIO()
-    tracer = pysnooper.snoop(write)
+    tracer = snoop(write)
     contents = u'stuff'
     tracer._write(contents)
     assert string_io.getvalue() == contents
 
 
 def test_file_output():
-    with temp_file_tools.create_temp_folder(prefix='pysnooper') as folder:
+    with temp_file_tools.create_temp_folder(prefix='snoop') as folder:
         path = folder / 'foo.log'
 
-        tracer = pysnooper.snoop(path)
+        tracer = snoop(path)
         contents = u'stuff'
         tracer._write(contents)
         with path.open() as output_file:
@@ -102,11 +102,11 @@ def test_file_output():
 
 
 def test_no_overwrite_by_default():
-    with temp_file_tools.create_temp_folder(prefix='pysnooper') as folder:
+    with temp_file_tools.create_temp_folder(prefix='snoop') as folder:
         path = folder / 'foo.log'
         with path.open('w') as output_file:
             output_file.write(u'lala')
-        tracer = pysnooper.snoop(str(path))
+        tracer = snoop(str(path))
         tracer._write(u' doo be doo')
         with path.open() as output_file:
             output = output_file.read()
@@ -114,12 +114,12 @@ def test_no_overwrite_by_default():
 
 
 def test_overwrite():
-    with temp_file_tools.create_temp_folder(prefix='pysnooper') as folder:
+    with temp_file_tools.create_temp_folder(prefix='snoop') as folder:
         path = folder / 'foo.log'
         with path.open('w') as output_file:
             output_file.write(u'lala')
 
-        tracer = pysnooper.snoop(str(path), overwrite=True)
+        tracer = snoop(str(path), overwrite=True)
         tracer._write(u'doo be')
         tracer._write(u' doo')
 
@@ -129,9 +129,9 @@ def test_overwrite():
 
 
 def test_error_in_overwrite_argument():
-    with temp_file_tools.create_temp_folder(prefix='pysnooper'):
+    with temp_file_tools.create_temp_folder(prefix='snoop'):
         with pytest.raises(Exception, match='can only be used when writing'):
-            @pysnooper.snoop(overwrite=True)
+            @snoop(overwrite=True)
             def my_function():
                 x = 7
                 y = 8

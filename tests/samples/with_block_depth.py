@@ -1,4 +1,4 @@
-import pysnooper
+import snoop
 
 
 def f4(x4):
@@ -18,7 +18,7 @@ def f2(x2):
 
 def main():
     str(3)
-    with pysnooper.snoop(depth=3):
+    with snoop.snoop(depth=3):
         result1 = f2(5)
     return result1
 

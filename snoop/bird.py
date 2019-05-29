@@ -2,7 +2,7 @@ import ast
 from copy import deepcopy
 from uuid import uuid4
 
-from pysnooper.pycompat import builtins
+from snoop.pycompat import builtins
 
 
 class NodeVisitor(ast.NodeTransformer):

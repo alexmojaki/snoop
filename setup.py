@@ -1,40 +1,47 @@
-# Copyright 2019 Ram Rachum and collaborators.
-# This program is distributed under the MIT license.
-import setuptools
+import os
 import re
+from io import open
+
+from setuptools import setup
+
+package = 'snoop'
+dirname = os.path.dirname(__file__)
 
 
-def read_file(filename):
-    with open(filename) as file:
-        return file.read()
+def file_to_string(*path):
+    with open(os.path.join(dirname, *path), encoding='utf8') as f:
+        return f.read()
 
-version = re.search("__version__ = '([0-9.]*)'",
-                    read_file('pysnooper/__init__.py')).group(1)
+
+# __version__ is defined inside the package, but we can't import
+# it because it imports dependencies which may not be installed yet,
+# so we extract it manually
+contents = file_to_string(package, '__init__.py')
+__version__ = re.search(r"__version__ = '([.\d]+)'", contents).group(1)
 
 install_requires = [
-    'six', 
+    'six',
     'littleutils',
     'cheap_repr',
     'colorama',
 ]
 
-setuptools.setup(
-    name='PySnooper',
-    version=version,
-    author='Ram Rachum',
-    author_email='ram@rachum.com',
-    description="A poor man's debugger for Python.",
-    long_description=read_file('README.md'),
+setup(
+    name=package,
+    version=__version__,
+    description="Powerful debugging tools for Python",
+    long_description=file_to_string('README.md'),
     long_description_content_type='text/markdown',
-    url='https://github.com/cool-RR/PySnooper',
-    packages=setuptools.find_packages(exclude=['tests']),
+    url='http://github.com/alexmojaki/' + package,
+    author='Alex Hall',
+    author_email='alex.mojaki@gmail.com',
+    license='MIT',
+    packages=[package],
     install_requires=install_requires,
-    extras_require={
-        'tests': {
-            'pytest',
-            'python-toolbox',
-        },
-    },
+    tests_require=[
+        'pytest',
+        'python-toolbox',
+    ],
     classifiers=[
         'Environment :: Console',
         'Intended Audience :: Developers',

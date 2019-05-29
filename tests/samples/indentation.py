@@ -1,7 +1,7 @@
-import pysnooper
+import snoop
 
 
-@pysnooper.snoop(depth=2)
+@snoop.snoop(depth=2)
 def main():
     f2()
 
@@ -14,7 +14,7 @@ def f3():
     f4()
 
 
-@pysnooper.snoop(depth=2)
+@snoop.snoop(depth=2)
 def f4():
     f5()
 

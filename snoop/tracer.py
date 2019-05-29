@@ -1,5 +1,3 @@
-# Copyright 2019 Ram Rachum and collaborators.
-# This program is distributed under the MIT license.
 import ast
 import collections
 import functools
@@ -13,8 +11,8 @@ import six
 from cheap_repr import cheap_repr
 from littleutils import setattrs
 
-from pysnooper.bird import deep_pp
-from pysnooper.pycompat import builtins
+from snoop.bird import deep_pp
+from snoop.pycompat import builtins
 from . import utils, pycompat
 from .formatting import DefaultFormatter, Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
@@ -177,33 +175,33 @@ class Tracer(object):
 
     This is useful for debugging.
 
-    When you decorate a function with `@pysnooper.snoop()`
-    or wrap a block of code in `with pysnooper.snoop():`, you'll get a log of
+    When you decorate a function with `@snoop()`
+    or wrap a block of code in `with snoop():`, you'll get a log of
     every line that ran in the function and a play-by-play of every local
     variable that changed.
 
     If stderr is not easily accessible for you, you can redirect the output to
     a file::
 
-        @pysnooper.snoop('/my/log/file.log')
+        @snoop('/my/log/file.log')
 
     See values of some expressions that aren't local variables::
 
-        @pysnooper.snoop(watch=('foo.bar', 'self.x["whatever"]'))
+        @snoop(watch=('foo.bar', 'self.x["whatever"]'))
 
     Expand values to see all their attributes or items of lists/dictionaries:
 
-        @pysnooper.snoop(watch_explode=('foo', 'self'))
+        @snoop(watch_explode=('foo', 'self'))
 
     (see Advanced Usage in the README for more control)
 
     Show snoop lines for functions that your function calls::
 
-        @pysnooper.snoop(depth=2)
+        @snoop(depth=2)
 
     Start all snoop lines with a prefix, to grep for them easily::
 
-        @pysnooper.snoop(prefix='ZZZ ')
+        @snoop(prefix='ZZZ ')
     '''
 
     formatter_class = DefaultFormatter

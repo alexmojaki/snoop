@@ -1,4 +1,4 @@
-import pysnooper
+import snoop
 
 
 def foo():
@@ -13,7 +13,7 @@ def bar():
         raise
 
 
-@pysnooper.snoop(depth=3)
+@snoop.snoop(depth=3)
 def main():
     try:
         bar()

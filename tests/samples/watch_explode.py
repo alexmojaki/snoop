@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-import pysnooper
+import snoop
 
 
 class Foo(object):
@@ -9,7 +9,7 @@ class Foo(object):
         self.y = y
 
 
-@pysnooper.snoop(watch_explode=('_d', '_point', 'lst + []'))
+@snoop.snoop(watch_explode=('_d', '_point', 'lst + []'))
 def main():
     _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
     _point = Foo(x=3, y=4)

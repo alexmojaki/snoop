@@ -13,8 +13,8 @@ import executing_node
 from cheap_repr import cheap_repr
 from colorama import Fore, Style
 
-from pysnooper.pycompat import try_statement
-from pysnooper.utils import ensure_tuple, truncate_string, truncate_list, short_filename, is_comprehension_frame
+from snoop.pycompat import try_statement
+from snoop.utils import ensure_tuple, truncate_string, truncate_list, short_filename, is_comprehension_frame
 
 
 class StatementsDict(dict):

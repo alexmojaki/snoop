@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-import pysnooper
+import snoop
 
 
 class WithSlots(object):
@@ -11,11 +11,11 @@ class WithSlots(object):
         self.y = 4
 
 
-@pysnooper.snoop(watch=(
-        pysnooper.Keys('_d', exclude='c'),
-        pysnooper.Attrs('_s'),
-        pysnooper.Indices('_lst')[-3:],
-        pysnooper.Attrs('_lst'),  # doesn't have attributes
+@snoop.snoop(watch=(
+        snoop.Keys('_d', exclude='c'),
+        snoop.Attrs('_s'),
+        snoop.Indices('_lst')[-3:],
+        snoop.Attrs('_lst'),  # doesn't have attributes
 ))
 def main():
     _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])

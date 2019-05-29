@@ -1,4 +1,4 @@
-import pysnooper
+import snoop
 
 
 class Foo(object):
@@ -9,7 +9,7 @@ class Foo(object):
         self.x **= 2
 
 
-@pysnooper.snoop(watch=(
+@snoop.snoop(watch=(
         'foo.x',
         'io.__name__',
         'len(foo.__dict__["x"] * "abc")',

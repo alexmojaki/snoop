@@ -1,7 +1,7 @@
-import pysnooper
+import snoop
 
 
-@pysnooper.snoop()
+@snoop.snoop()
 def main():
     x = (
         [

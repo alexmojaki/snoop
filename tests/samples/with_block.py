@@ -1,7 +1,7 @@
 # Testing that a single Tracer can handle many mixed uses
-import pysnooper
+import snoop
 
-snoop = pysnooper.snoop()
+snoop = snoop.snoop()
 
 
 def foo(x):

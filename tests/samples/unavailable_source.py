@@ -1,7 +1,7 @@
 string = """
-import pysnooper
+from snoop import snoop
 
-@pysnooper.snoop()
+@snoop()
 def foo():
     return 3
     
