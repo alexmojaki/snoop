@@ -1,7 +1,7 @@
-# Testing that a single Tracer can handle many mixed uses
 import snoop
 
-snoop = snoop.snoop()
+# Testing that a single Tracer can handle many mixed uses
+snoop = snoop()
 
 
 def foo(x):

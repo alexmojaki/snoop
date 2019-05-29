@@ -13,7 +13,7 @@ def bar():
         raise
 
 
-@snoop.snoop(depth=3)
+@snoop(depth=3)
 def main():
     try:
         bar()

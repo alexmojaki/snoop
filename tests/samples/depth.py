@@ -16,7 +16,7 @@ def f2(x2):
     return result2
 
 
-@snoop.snoop(depth=3)
+@snoop(depth=3)
 def main():
     result1 = f2(8)
     return result1

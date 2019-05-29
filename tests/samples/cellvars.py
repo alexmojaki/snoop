@@ -16,7 +16,7 @@ def f2(a):
 
 
 def main():
-    with snoop.snoop(depth=4):
+    with snoop(depth=4):
         result1 = f2(42)
     return result1
 
