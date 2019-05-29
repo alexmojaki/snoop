@@ -303,6 +303,7 @@ class Tracer(object):
             calling_frame.f_trace = self.trace
             self.target_frames.add(calling_frame)
             self.last_frame = calling_frame
+            self.trace(calling_frame, 'enter', None)
 
         stack = self.thread_local.__dict__.setdefault('original_trace_functions', [])
         stack.append(sys.gettrace())
@@ -320,19 +321,11 @@ class Tracer(object):
         return frame.f_code.co_filename == Tracer.__enter__.__code__.co_filename
 
     def trace(self, frame, event, arg):
-
-        # We should trace this line either if it's in the decorated function,
-        # or the user asked to go a few levels deeper and we're within that
-        # number of levels deeper.
-
         if not (frame.f_code in self.target_codes or frame in self.target_frames):
             if (
                     self.depth == 1
                     or self._is_internal_frame(frame)
             ):
-                # We did the most common and quickest check above, because the
-                # trace function runs so incredibly often, therefore it's
-                # crucial to hyper-optimize it for the common case.
                 return None
             else:
                 _frame_candidate = frame
@@ -347,7 +340,7 @@ class Tracer(object):
 
         thread_global.__dict__.setdefault('depth', -1)
         frame_info = self.frame_infos.setdefault(frame, FrameInfo(frame))
-        if event == 'call':
+        if event in ('call', 'enter'):
             thread_global.depth += 1
         elif self.last_frame and self.last_frame is not frame:
             line_no = self.frame_infos[frame].last_line_no
@@ -361,7 +354,7 @@ class Tracer(object):
         if not (frame.f_code.co_name == '<genexpr>' and event not in ('return', 'exception')):
             trace_event.variables = frame_info.update_variables(self.watch, self.watch_extras, event)
 
-        if event == 'return':
+        if event in ('return', 'exit'):
             del self.frame_infos[frame]
             thread_global.depth -= 1
         

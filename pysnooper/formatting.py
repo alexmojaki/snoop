@@ -170,8 +170,8 @@ class DefaultFormatter(object):
         lines = []
         dots = ''
         statement_start_lines = []
-        
-        if event.event == 'call':
+
+        if event.event in ('call', 'enter'):
             if event.comprehension_type:
                 lines += ['>>> {type}:'.format(
                     type=event.comprehension_type)]
@@ -181,8 +181,10 @@ class DefaultFormatter(object):
                         description = 'Re-enter generator'
                     else:
                         description = 'Start generator'
-                else:
+                elif event.event == 'call':
                     description = 'Call to'
+                else:
+                    description = 'Enter with block in'
                 lines += [u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}{filename}'.format(
                     name=event.frame.f_code.co_name,
                     filename=short_filename(event.frame.f_code),
@@ -255,8 +257,15 @@ class DefaultFormatter(object):
                         c=self.c,
                         source=event.source.asttokens().get_text(call),
                     )]
+        elif event.event == 'enter':
+            pass
+        elif event.event == 'exit':
+            lines += [u'{c.green}<<< Exit with block in {func}{c.reset}'.format(
+                c=self.c,
+                func=event.frame.f_code.co_name,
+            )]
         else:
-            if not (event.comprehension_type and event.event == 'line' or event.event == 'exit'):
+            if not (event.comprehension_type and event.event == 'line'):
                 lines += statement_start_lines + [self.format_event(event)]
 
         return self.format_lines(event, lines)
