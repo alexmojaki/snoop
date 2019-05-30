@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 from io import open
 
 from setuptools import setup
@@ -26,6 +27,16 @@ install_requires = [
     'colorama',
 ]
 
+tests_require = [
+    'pytest',
+    'python-toolbox',
+]
+
+if sys.version_info[0] == 3:
+    tests_require += [
+        'django',
+    ]
+
 setup(
     name=package,
     version=__version__,
@@ -38,10 +49,7 @@ setup(
     license='MIT',
     packages=[package],
     install_requires=install_requires,
-    tests_require=[
-        'pytest',
-        'python-toolbox',
-    ],
+    tests_require=tests_require,
     classifiers=[
         'Environment :: Console',
         'Intended Audience :: Developers',

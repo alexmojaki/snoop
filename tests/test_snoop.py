@@ -20,7 +20,7 @@ fix = 0
 
 current_thread()._ident = 123456789
 
-formatting._get_filename = lambda _: "/path/to/file.py"
+formatting._get_filename = lambda _: "/path/to_file.py"
 
 
 @register_repr(type(cheap_repr))
@@ -66,8 +66,13 @@ def test_samples():
     samples_dir = os.path.join(os.path.dirname(__file__), 'samples')
     for filename in os.listdir(samples_dir):
         module_name = six.text_type(filename.split('.')[0])
+
         if module_name in '__init__ __pycache__':
             continue
+
+        if module_name in 'django' and six.PY2:
+            continue
+
         module = import_module('tests.samples.' + module_name)
         assert_sample_output(module)
 
