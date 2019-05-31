@@ -321,18 +321,21 @@ class Tracer(object):
             if (
                     self.depth == 1
                     or self._is_internal_frame(frame)
-            ):
+            ) and not utils.is_comprehension_frame(frame):
                 return None
             else:
-                _frame_candidate = frame
-                for i in range(1, self.depth):
-                    _frame_candidate = _frame_candidate.f_back
-                    if _frame_candidate is None:
-                        return None
-                    elif _frame_candidate.f_code in self.target_codes or _frame_candidate in self.target_frames:
+                candidate = frame
+                i = 0
+                while True:
+                    if utils.is_comprehension_frame(candidate):
+                        candidate = candidate.f_back
+                        continue
+                    i += 1
+                    if candidate.f_code in self.target_codes or candidate in self.target_frames:
                         break
-                else:
-                    return None
+                    candidate = candidate.f_back
+                    if i >= self.depth or candidate is None:
+                        return None
 
         thread_global.__dict__.setdefault('depth', -1)
         frame_info = self.frame_infos.setdefault(frame, FrameInfo(frame))

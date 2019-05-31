@@ -173,7 +173,7 @@ class DefaultFormatter(object):
 
         if event.event in ('call', 'enter'):
             if event.comprehension_type:
-                lines += ['>>> {type}:'.format(
+                lines += ['{type}:'.format(
                     type=event.comprehension_type)]
             else:
                 if event.is_generator:
@@ -236,7 +236,7 @@ class DefaultFormatter(object):
                     and event.opname not in ('RETURN_VALUE', 'YIELD_VALUE')):
                 lines += [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
             elif event.comprehension_type:
-                lines += [u'<<< {type} result: {value}'.format(
+                lines += [u'Result: {value}'.format(
                     type=event.comprehension_type,
                     value=highlight_python(cheap_repr(event.arg)),
                 )]
@@ -344,7 +344,7 @@ def _get_filename(event):
 
 
 class NoColors(object):
-    def __getattribute__(self, item):
+    def __getattr__(self, item):
         return ''
 
 
