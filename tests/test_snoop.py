@@ -92,7 +92,7 @@ def test_callable():
         string_io.write(msg)
 
     string_io = io.StringIO()
-    tracer = snoop(write)
+    tracer = snoop(out=write)
     contents = u'stuff'
     tracer._write(contents)
     assert string_io.getvalue() == contents

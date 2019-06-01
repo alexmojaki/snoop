@@ -162,6 +162,12 @@ class TracerMeta(type):
         result.default = result()
         return result
 
+    def __call__(cls, *args, **kwargs):
+        if len(args) == 1 and callable(args[0]) and not kwargs:
+            return cls.default(args[0])
+        else:
+            return super(TracerMeta, cls).__call__(*args, **kwargs)
+
     def __enter__(self):
         return self.default.__enter__(context=1)
 
