@@ -144,6 +144,8 @@ thread_global = threading.local()
 
 class Defaults:
     out = None
+    watch = ()
+    watch_explode = ()
     watch_extras = ()
     replace_watch_extras = None
     depth = 1
@@ -207,8 +209,8 @@ class Tracer(object):
     def __init__(
             self,
             out=None,
-            watch=(),
-            watch_explode=(),
+            watch=None,
+            watch_explode=None,
             watch_extras=None,
             replace_watch_extras=None,
             depth=None,
@@ -219,6 +221,10 @@ class Tracer(object):
     ):
         if out is None:
             out = Defaults.out
+        if watch is None:
+            watch = Defaults.watch
+        if watch_explode is None:
+            watch_explode = Defaults.watch_explode
         if watch_extras is None:
             watch_extras = Defaults.watch_extras
         if replace_watch_extras is None:
