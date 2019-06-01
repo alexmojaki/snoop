@@ -153,6 +153,7 @@ class Defaults:
     columns = 'time'
     overwrite = False
     color = None
+    enabled = True
 
 
 class TracerMeta(type):
@@ -218,6 +219,7 @@ class Tracer(object):
             columns=None,
             overwrite=None,
             color=None,
+            enabled=None,
     ):
         if out is None:
             out = Defaults.out
@@ -239,6 +241,8 @@ class Tracer(object):
             overwrite = Defaults.overwrite
         if color is None:
             color = Defaults.color
+        if enabled is None:
+            enabled = Defaults.enabled
 
         if color is None:
             color = (
@@ -267,6 +271,7 @@ class Tracer(object):
         self.target_frames = set()
         self.thread_local = threading.local()
         self.formatter = self.formatter_class(prefix, columns, color)
+        self.enabled = enabled
 
     def __call__(self, function):
         self.target_codes.add(function.__code__)
@@ -300,6 +305,9 @@ class Tracer(object):
             return simple_wrapper
 
     def __enter__(self, context=0):
+        if not self.enabled:
+            return
+
         calling_frame = sys._getframe(context + 1)
         if not self._is_internal_frame(calling_frame):
             calling_frame.f_trace = self.trace
@@ -312,6 +320,9 @@ class Tracer(object):
         sys.settrace(self.trace)
 
     def __exit__(self, exc_type, exc_value, exc_traceback, context=0):
+        if not self.enabled:
+            return
+
         stack = self.thread_local.original_trace_functions
         sys.settrace(stack.pop())
         calling_frame = sys._getframe(context + 1)
