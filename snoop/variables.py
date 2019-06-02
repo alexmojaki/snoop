@@ -90,7 +90,7 @@ class Keys(CommonVariable):
         return main_value.keys()
 
     def _format_key(self, key):
-        return '[{}]'.format(cheap_repr(key))
+        return '[{}]'.format(cheap_repr(key).replace('\n', ' ').replace('\r', ' '))
 
     def _get_value(self, main_value, key):
         return main_value[key]
