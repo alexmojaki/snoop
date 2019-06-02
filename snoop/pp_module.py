@@ -1,8 +1,41 @@
 import ast
+import inspect
 from copy import deepcopy
 from uuid import uuid4
 
+from snoop.formatting import Event, Source
 from snoop.pycompat import builtins
+from snoop.tracer import thread_global
+
+
+class PP(object):
+    def __init__(self, config):
+        self.config = config
+
+    def __call__(self, *args):
+        frame = inspect.currentframe().f_back
+        depth = getattr(thread_global, 'depth', 0)
+        event = Event(frame, 'log', None, depth)
+
+        try:
+            ast_tokens = event.source.asttokens()
+            call = Source.executing_node(frame)
+            arg_sources = []
+            for call_arg, arg in zip(call.args, args):
+                if isinstance(call_arg, ast.Lambda):
+                    arg_sources.extend(deep_pp(event, call_arg, frame))
+                else:
+                    arg_sources.append((ast_tokens.get_text(call_arg).strip(), arg, 0))
+        except Exception:  # TODO narrow
+            arg_sources = zip([''] * len(args), args, [0] * len(args))
+
+        formatted = self.config.formatter.format_log(event, arg_sources)
+        self.config.write(formatted)
+
+        if len(args) == 1:
+            return args[0]
+        else:
+            return args
 
 
 class NodeVisitor(ast.NodeTransformer):

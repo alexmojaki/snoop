@@ -1,7 +1,9 @@
-from snoop import snoop
+from snoop.configuration import Config
+
+snoop = Config(columns='').snoop
 
 
-@snoop(columns='')
+@snoop
 def main():
     x = 1
     y = x + 2
@@ -10,10 +12,10 @@ def main():
 main()
 
 expected_output = """
->>> Call to main in File "/path/to_file.py", line 5
-    5 | def main():
-    6 |     x = 1
-    7 |     y = x + 2
+>>> Call to main in File "/path/to_file.py", line 7
+    7 | def main():
+    8 |     x = 1
+    9 |     y = x + 2
  .......... y = 3
  <<< Return value from main: None
 """

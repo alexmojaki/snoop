@@ -15,8 +15,7 @@ changed in the decorated function.
 For more information, see https://github.com/cool-RR/PySnooper
 '''
 
-from .tracer import Tracer as snoop, pp, spy
-from .installer import install
+from .configuration import install, Config
 from .variables import Attrs, Exploding, Indices, Keys
 import collections
 import sys
@@ -27,11 +26,17 @@ __VersionInfo = collections.namedtuple('VersionInfo',
 __version__ = '0.1.0'
 __version_info__ = __VersionInfo(*(map(int, __version__.split('.'))))
 
+config = Config()
+snoop = config.snoop
+pp = config.pp
+spy = config.spy
+
+
 sys.modules['snoop'] = snoop  # make the module callable
 
 # Add all the attributes to the 'module' so things can be imported normally
 for key, value in list(globals().items()):
-    if key in 'collections sys __VersionInfo key value':
+    if key in 'collections sys __VersionInfo key value config Config':
         # Avoid polluting the namespace
         continue
 

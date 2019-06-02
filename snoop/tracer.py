@@ -1,18 +1,16 @@
-import ast
 import collections
 import functools
 import inspect
 import sys
 import threading
-from io import open
 
 import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr
 
-from .bird import deep_pp
+from snoop.configuration import Config
 from . import utils, pycompat
-from .formatting import DefaultFormatter, Event, Source
+from .formatting import Event
 from .variables import CommonVariable, Exploding, BaseVariable
 
 try:
@@ -20,39 +18,6 @@ try:
 except ImportError:
     class QuerySet(object):
         pass
-
-
-def get_write_function(output, overwrite):
-    is_path = isinstance(output, (pycompat.PathLike, str))
-    if overwrite and not is_path:
-        raise Exception('`overwrite=True` can only be used when writing '
-                        'content to file.')
-    if output is None:
-        def write(s):
-            stderr = sys.stderr
-            try:
-                stderr.write(s)
-            except UnicodeEncodeError:
-                # God damn Python 2
-                stderr.write(utils.shitcode(s))
-    elif is_path:
-        return FileWriter(output, overwrite).write
-    elif callable(output):
-        write = output
-    else:
-        write = output.write
-    return write
-
-
-class FileWriter(object):
-    def __init__(self, path, overwrite):
-        self.path = six.text_type(path)
-        self.overwrite = overwrite
-
-    def write(self, s):
-        with open(self.path, 'w' if self.overwrite else 'a', encoding='utf-8') as f:
-            f.write(s)
-        self.overwrite = False
 
 
 class FrameInfo(object):
@@ -142,20 +107,6 @@ def shape_watch(source, value):
 thread_global = threading.local()
 
 
-class Defaults:
-    out = None
-    watch = ()
-    watch_explode = ()
-    watch_extras = ()
-    replace_watch_extras = None
-    depth = 1
-    prefix = ''
-    columns = 'time'
-    overwrite = False
-    color = None
-    enabled = True
-
-
 class TracerMeta(type):
     def __new__(mcs, *args, **kwargs):
         result = super(TracerMeta, mcs).__new__(mcs, *args, **kwargs)
@@ -211,53 +162,14 @@ class Tracer(object):
         @snoop(prefix='ZZZ ')
     '''
 
-    formatter_class = DefaultFormatter
-    
     def __init__(
             self,
-            out=None,
-            watch=None,
-            watch_explode=None,
-            watch_extras=None,
+            watch=(),
+            watch_explode=(),
+            watch_extras=(),
             replace_watch_extras=None,
-            depth=None,
-            prefix=None,
-            columns=None,
-            overwrite=None,
-            color=None,
-            enabled=None,
+            depth=1,
     ):
-        if out is None:
-            out = Defaults.out
-        if watch is None:
-            watch = Defaults.watch
-        if watch_explode is None:
-            watch_explode = Defaults.watch_explode
-        if watch_extras is None:
-            watch_extras = Defaults.watch_extras
-        if replace_watch_extras is None:
-            replace_watch_extras = Defaults.replace_watch_extras
-        if depth is None:
-            depth = Defaults.depth
-        if prefix is None:
-            prefix = Defaults.prefix
-        if columns is None:
-            columns = Defaults.columns
-        if overwrite is None:
-            overwrite = Defaults.overwrite
-        if color is None:
-            color = Defaults.color
-        if enabled is None:
-            enabled = Defaults.enabled
-
-        if color is None:
-            color = (
-                    out is None and sys.stderr.isatty()
-                    or getattr(out, 'isatty', lambda: False)()
-            )
-
-        self._write = get_write_function(out, overwrite)
-
         self.watch = [
             v if isinstance(v, BaseVariable) else CommonVariable(v)
             for v in utils.ensure_tuple(watch)
@@ -276,8 +188,6 @@ class Tracer(object):
         self.target_codes = set()
         self.target_frames = set()
         self.thread_local = threading.local()
-        self.formatter = self.formatter_class(prefix, columns, color)
-        self.enabled = enabled
 
     def __call__(self, function):
         self.target_codes.add(function.__code__)
@@ -311,7 +221,7 @@ class Tracer(object):
             return simple_wrapper
 
     def __enter__(self, context=0):
-        if not self.enabled:
+        if not self.config.enabled:
             return
 
         calling_frame = sys._getframe(context + 1)
@@ -326,7 +236,7 @@ class Tracer(object):
         sys.settrace(self.trace)
 
     def __exit__(self, exc_type, exc_value, exc_traceback, context=0):
-        if not self.enabled:
+        if not self.config.enabled:
             return
 
         stack = self.thread_local.original_trace_functions
@@ -367,8 +277,8 @@ class Tracer(object):
         elif self.last_frame and self.last_frame is not frame:
             line_no = self.frame_infos[frame].last_line_no
             trace_event = Event(frame, event, arg, thread_global.depth, line_no=line_no)
-            line = self.formatter.format_line_only(trace_event)
-            self._write(line)
+            line = self.config.formatter.format_line_only(trace_event)
+            self.config.write(line)
         
         self.last_frame = frame
 
@@ -379,46 +289,33 @@ class Tracer(object):
         if event in ('return', 'exit'):
             del self.frame_infos[frame]
             thread_global.depth -= 1
-        
-        formatted = self.formatter.format(trace_event)
-        self._write(formatted)
+
+        formatted = self.config.formatter.format(trace_event)
+        self.config.write(formatted)
 
         return self.trace
 
 
-def pp(*args):
-    frame = inspect.currentframe().f_back
-    depth = getattr(thread_global, 'depth', 0)
-    event = Event(frame, 'log', None, depth)
+class Spy(object):
+    def __init__(self, config):
+        self.config = config
 
-    try:
-        ast_tokens = event.source.asttokens()
-        call = Source.executing_node(frame)
-        arg_sources = []
-        for call_arg, arg in zip(call.args, args):
-            if isinstance(call_arg, ast.Lambda):
-                arg_sources.extend(deep_pp(event, call_arg, frame))
-            else:
-                arg_sources.append((ast_tokens.get_text(call_arg).strip(), arg, 0))
-    except Exception:  # TODO narrow
-        arg_sources = zip([''] * len(args), args, [0] * len(args))
+    def __call__(self, *args, **kwargs):
+        from birdseye import eye
 
-    tracer = Tracer.default
-    formatted = tracer.formatter.format_log(event, arg_sources)
-    tracer._write(formatted)
+        def decorator(func):
+            traced = eye(func)
+            traced = self.config.snoop(*args, **kwargs)(traced)
 
-    if len(args) == 1:
-        return args[0]
-    else:
-        return args
+            @functools.wraps(func)
+            def wrapper(*func_args, **func_kwargs):
+                if self.config.enabled:
+                    final_func = traced
+                else:
+                    final_func = func
 
+                return final_func(*func_args, **func_kwargs)
 
-def spy(*args, **kwargs):
-    from birdseye import eye
+            return wrapper
 
-    def decorator(func):
-        func = eye(func)
-        func = Tracer(*args, **kwargs)(func)
-        return func
-
-    return decorator
+        return decorator

@@ -6,15 +6,15 @@ from threading import current_thread
 
 import pytest
 import six
-from python_toolbox import sys_tools, temp_file_tools
-from littleutils import file_to_string, string_to_file
 from cheap_repr import cheap_repr, register_repr
 from cheap_repr.utils import safe_qualname
+from littleutils import file_to_string, string_to_file
+from python_toolbox import sys_tools, temp_file_tools
 
-from snoop import snoop
+from snoop import formatting
+from snoop.configuration import Config
 from snoop.utils import truncate_string, truncate_list
 from snoop.variables import needs_parentheses
-from snoop import formatting
 
 fix = 0
 
@@ -79,9 +79,9 @@ def test_samples():
 
 def test_string_io():
     string_io = io.StringIO()
-    tracer = snoop(string_io)
+    config = Config(out=string_io)
     contents = u'stuff'
-    tracer._write(contents)
+    config.write(contents)
     assert string_io.getvalue() == contents
 
 
@@ -92,9 +92,9 @@ def test_callable():
         string_io.write(msg)
 
     string_io = io.StringIO()
-    tracer = snoop(out=write)
+    config = Config(out=write)
     contents = u'stuff'
-    tracer._write(contents)
+    config.write(contents)
     assert string_io.getvalue() == contents
 
 
@@ -102,9 +102,9 @@ def test_file_output():
     with temp_file_tools.create_temp_folder(prefix='snoop') as folder:
         path = folder / 'foo.log'
 
-        tracer = snoop(path)
+        config = Config(out=path)
         contents = u'stuff'
-        tracer._write(contents)
+        config.write(contents)
         with path.open() as output_file:
             output = output_file.read()
         assert output == contents
@@ -115,8 +115,8 @@ def test_no_overwrite_by_default():
         path = folder / 'foo.log'
         with path.open('w') as output_file:
             output_file.write(u'lala')
-        tracer = snoop(str(path))
-        tracer._write(u' doo be doo')
+        config = Config(str(path))
+        config.write(u' doo be doo')
         with path.open() as output_file:
             output = output_file.read()
         assert output == u'lala doo be doo'
@@ -128,9 +128,9 @@ def test_overwrite():
         with path.open('w') as output_file:
             output_file.write(u'lala')
 
-        tracer = snoop(str(path), overwrite=True)
-        tracer._write(u'doo be')
-        tracer._write(u' doo')
+        config = Config(out=str(path), overwrite=True)
+        config.write(u'doo be')
+        config.write(u' doo')
 
         with path.open() as output_file:
             output = output_file.read()
@@ -138,13 +138,8 @@ def test_overwrite():
 
 
 def test_error_in_overwrite_argument():
-    with temp_file_tools.create_temp_folder(prefix='snoop'):
-        with pytest.raises(Exception, match='can only be used when writing'):
-            @snoop(overwrite=True)
-            def my_function():
-                x = 7
-                y = 8
-                return y + x
+    with pytest.raises(Exception, match='can only be used when writing'):
+        Config(overwrite=True)
 
 
 def test_needs_parentheses():
