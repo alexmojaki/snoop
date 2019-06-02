@@ -8,7 +8,6 @@ import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr
 
-from snoop.configuration import Config
 from . import utils, pycompat
 from .formatting import Event
 from .variables import CommonVariable, Exploding, BaseVariable
@@ -187,7 +186,6 @@ class Tracer(object):
         assert self.depth >= 1
         self.target_codes = set()
         self.target_frames = set()
-        self.thread_local = threading.local()
 
     def __call__(self, function):
         self.target_codes.add(function.__code__)
@@ -231,7 +229,7 @@ class Tracer(object):
             self.last_frame = calling_frame
             self.trace(calling_frame, 'enter', None)
 
-        stack = self.thread_local.__dict__.setdefault('original_trace_functions', [])
+        stack = thread_global.__dict__.setdefault('original_trace_functions', [])
         stack.append(sys.gettrace())
         sys.settrace(self.trace)
 
@@ -239,7 +237,7 @@ class Tracer(object):
         if not self.config.enabled:
             return
 
-        stack = self.thread_local.original_trace_functions
+        stack = thread_global.original_trace_functions
         sys.settrace(stack.pop())
         calling_frame = sys._getframe(context + 1)
         self.trace(calling_frame, 'exit', None)
@@ -301,6 +299,7 @@ class Spy(object):
         self.config = config
 
     def __call__(self, *args, **kwargs):
+        # noinspection PyUnresolvedReferences
         from birdseye import eye
 
         def decorator(func):
