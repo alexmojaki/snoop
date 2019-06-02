@@ -6,7 +6,7 @@ import threading
 
 import six
 # noinspection PyUnresolvedReferences
-from cheap_repr import cheap_repr
+from cheap_repr import cheap_repr, find_repr_function
 
 from . import utils, pycompat
 from .formatting import Event
@@ -17,6 +17,13 @@ try:
 except ImportError:
     class QuerySet(object):
         pass
+
+
+find_repr_function(six.text_type).maxparts = 100
+find_repr_function(six.binary_type).maxparts = 100
+find_repr_function(object).maxparts = 100
+find_repr_function(int).maxparts = 999999
+cheap_repr.suppression_threshold = 999999
 
 
 class FrameInfo(object):
@@ -211,8 +218,7 @@ class Tracer(object):
                     method, incoming = gen.throw, e
 
         if pycompat.iscoroutinefunction(function):
-            # return decorate(function, coroutine_wrapper)
-            raise NotImplementedError
+            raise NotImplementedError("coroutines are not supported, sorry!")
         elif inspect.isgeneratorfunction(function):
             return generator_wrapper
         else:
