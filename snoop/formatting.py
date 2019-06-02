@@ -215,18 +215,16 @@ class DefaultFormatter(object):
                         event.line_no = n
                         statement_start_lines.append(self.format_event(event))
                     event.line_no = original_line_no
-                    
-        lines += [
-            self.format_variable(var, dots, event.comprehension_type)
-            for var in event.variables
+
+        for var in event.variables:
             if ('{} = {}'.format(*var) != last_source_line.strip()
-                and not (
+                    and not (
                             isinstance(last_statement, ast.FunctionDef)
                             and not last_statement.decorator_list
                             and var[0] == last_statement.name
                     )
-                )
-        ]
+            ):
+                lines += self.format_variable(var, dots, event.comprehension_type)
         
         if event.event == 'return':
             # If a call ends due to an exception, we still get a 'return' event
@@ -298,11 +296,15 @@ class DefaultFormatter(object):
             description = 'Values of {name}:'.format(name=name)
         else:
             description = '{name} ='.format(name=name)
-        return u'......{dots} {description} {value}'.format(
+        prefix = u'......{dots} {description} '.format(
             description=description,
-            value=highlight_python(value),
             dots=dots,
         )
+        lines = six.text_type(highlight_python(value)).splitlines()
+        return [prefix + lines[0]] + [
+            ' ' * len(prefix) + line 
+            for line in lines[1:]
+        ]
 
     def format_return_value(self, event):
         return u'{c.green}<<< {description} value from {func}:{c.reset} {value}'.format(

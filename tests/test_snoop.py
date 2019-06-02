@@ -1,6 +1,7 @@
 import io
 import os
 import re
+import sys
 from importlib import import_module
 from threading import current_thread
 
@@ -27,6 +28,12 @@ formatting._get_filename = lambda _: "/path/to_file.py"
 def repr_function(func, _helper):
     return '<function %s at %#x>' % (
         safe_qualname(func), id(func))
+
+
+@register_repr(type(sys))
+def repr_module(module, _helper):
+    return "<module '%s'>" % module.__name__
+
 
 
 def assert_sample_output(module):
@@ -71,6 +78,9 @@ def test_samples():
             continue
 
         if module_name in 'django' and six.PY2:
+            continue
+
+        if module_name in 'pandas' and 'pypy' in sys.version.lower():
             continue
 
         module = import_module('tests.samples.' + module_name)

@@ -32,6 +32,13 @@ tests_require = [
     'python-toolbox',
 ]
 
+if 'pypy' not in sys.version.lower():
+    tests_require += [
+        'numpy>=1.16.3',
+        'pandas>=0.24.2',
+    ]
+
+
 if sys.version_info[0] == 3:
     tests_require += [
         'django',

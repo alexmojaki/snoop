@@ -17,7 +17,7 @@ expected_output = """
 12:34:56.78    5 | def main():
 12:34:56.78    6 |     os.environ['DJANGO_SETTINGS_MODULE'] = 'tests.fake_django_settings'
 12:34:56.78    7 |     import django
-12:34:56.78 .......... django = <module 'django' from '/User...packages/django/__init__.py'>
+12:34:56.78 .......... django = <module 'django'>
 12:34:56.78    9 |     django.setup()
 12:34:56.78   10 |     from django.contrib.contenttypes.models import ContentType
 12:34:56.78 .......... ContentType = <class 'django.contrib.contenttypes.models.ContentType'>
