@@ -7,6 +7,7 @@ import pandas as pd
 def main():
     _df = pd.DataFrame([[1, 2], [3, 4]])
     _arr = np.array([[1, 2], [3, 4]])
+    return _arr
 
 
 expected_output = """
@@ -23,5 +24,7 @@ expected_output = """
 12:34:56.78                          [3, 4]])
 12:34:56.78 .......... len(_arr) = 2
 12:34:56.78 .......... _arr.shape = (2, 2)
-12:34:56.78 <<< Return value from main: None
+12:34:56.78   10 |     return _arr
+12:34:56.78 <<< Return value from main: array([[1, 2],
+12:34:56.78                                    [3, 4]])
 """

@@ -234,12 +234,10 @@ class DefaultFormatter(object):
                     and event.opname not in ('RETURN_VALUE', 'YIELD_VALUE')):
                 lines += [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
             elif event.comprehension_type:
-                lines += [u'Result: {value}'.format(
-                    type=event.comprehension_type,
-                    value=highlight_python(cheap_repr(event.arg)),
-                )]
+                value = highlight_python(cheap_repr(event.arg))
+                lines += indented_lines(u'Result: ', value)
             else:
-                lines += [self.format_return_value(event)]
+                lines += self.format_return_value(event)
         elif event.event == 'exception':
             exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
             lines += truncate_list(
@@ -300,19 +298,16 @@ class DefaultFormatter(object):
             description=description,
             dots=dots,
         )
-        lines = six.text_type(highlight_python(value)).splitlines()
-        return [prefix + lines[0]] + [
-            ' ' * len(prefix) + line 
-            for line in lines[1:]
-        ]
+        return indented_lines(prefix, highlight_python(value))
 
     def format_return_value(self, event):
-        return u'{c.green}<<< {description} value from {func}:{c.reset} {value}'.format(
+        value = highlight_python(cheap_repr(event.arg))
+        prefix = u'{c.green}<<< {description} value from {func}:{c.reset} '.format(
             description='Yield' if event.opname == 'YIELD_VALUE' else 'Return',
             c=self.c,
             func=event.frame.f_code.co_name,
-            value=highlight_python(cheap_repr(event.arg)),
         )
+        return indented_lines(prefix, value)
 
     def format_line_only(self, event):
         return self.format_lines(event, [self.format_event(event)])
@@ -356,3 +351,12 @@ class Colors(object):
     green = Fore.GREEN + Style.BRIGHT
     cyan = Fore.CYAN + Style.BRIGHT
     reset = Style.RESET_ALL
+
+
+def indented_lines(prefix, string):
+    # TODO colors
+    lines = six.text_type(string).splitlines()
+    return [prefix + lines[0]] + [
+        ' ' * len(prefix) + line
+        for line in lines[1:]
+    ]
