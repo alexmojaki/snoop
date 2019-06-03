@@ -302,12 +302,15 @@ class DefaultFormatter(object):
 
     def format_return_value(self, event):
         value = highlight_python(cheap_repr(event.arg))
-        prefix = u'{c.green}<<< {description} value from {func}:{c.reset} '.format(
+        plain_prefix = u'<<< {description} value from {func}: '.format(
             description='Yield' if event.opname == 'YIELD_VALUE' else 'Return',
-            c=self.c,
             func=event.frame.f_code.co_name,
         )
-        return indented_lines(prefix, value)
+        prefix = u'{c.green}{}{c.reset}'.format(
+            plain_prefix,
+            c=self.c,
+        )
+        return indented_lines(prefix, value, plain_prefix=plain_prefix)
 
     def format_line_only(self, event):
         return self.format_lines(event, [self.format_event(event)])
@@ -353,10 +356,9 @@ class Colors(object):
     reset = Style.RESET_ALL
 
 
-def indented_lines(prefix, string):
-    # TODO colors
+def indented_lines(prefix, string, plain_prefix=None):
     lines = six.text_type(string).splitlines()
     return [prefix + lines[0]] + [
-        ' ' * len(prefix) + line
+        ' ' * len(plain_prefix or prefix) + line
         for line in lines[1:]
     ]
