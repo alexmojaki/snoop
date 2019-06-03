@@ -59,7 +59,7 @@ def assert_sample_output(module):
             path = module.__file__.rstrip('c')
             contents = file_to_string(path)
             match = re.search(
-                r'expected_output = """',
+                r'expected_output = r?"""',
                 contents,
             )
             contents = contents[:match.end(0)] + '\n{}\n"""\n'.format(normalised)
