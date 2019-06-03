@@ -240,11 +240,13 @@ class DefaultFormatter(object):
                 lines += self.format_return_value(event)
         elif event.event == 'exception':
             exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
-            lines += truncate_list(
-                [u'{c.red}!!! {line}{c.reset}'.format(c=self.c, line=truncate_string(line, 200))
-                 for line in exception_string.splitlines()],
-                max_length=5,
-            )
+            lines += [
+                u'{c.red}!!! {line}{c.reset}'.format(
+                    c=self.c,
+                    line=line,
+                )
+                for line in exception_string.splitlines()
+            ]
             try:
                 call = Source.executing_node(event.frame)
             except Exception:
