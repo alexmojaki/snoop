@@ -5,15 +5,9 @@ from copy import deepcopy
 
 from cheap_repr import cheap_repr
 
+from snoop.utils import with_needed_parentheses
 from . import utils
 from . import pycompat
-
-
-def needs_parentheses(source):
-    def code(s):
-        return compile(s, '<variable>', 'eval').co_code
-
-    return code('{}.x'.format(source)) != code('({}).x'.format(source))
 
 
 class BaseVariable(pycompat.ABC):
@@ -21,10 +15,7 @@ class BaseVariable(pycompat.ABC):
         self.source = source
         self.exclude = utils.ensure_tuple(exclude)
         self.code = compile(source, '<variable>', 'eval')
-        if needs_parentheses(source):
-            self.unambiguous_source = '({})'.format(source)
-        else:
-            self.unambiguous_source = source
+        self.unambiguous_source = with_needed_parentheses(source)
 
     def items(self, frame):
         try:

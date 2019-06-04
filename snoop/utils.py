@@ -53,3 +53,24 @@ def short_filename(code):
 
 def is_comprehension_frame(frame):
     return frame.f_code.co_name in ('<listcomp>', '<dictcomp>', '<setcomp>')
+
+
+def needs_parentheses(source):
+    def code(s):
+        return compile(s.format(source), '<variable>', 'eval').co_code
+
+    try:
+        without_parens = code('{}.x')
+    except SyntaxError:
+        # Likely a multiline expression that needs parentheses to be valid
+        code('({})')
+        return True
+    else:
+        return without_parens != code('({}).x')
+
+
+def with_needed_parentheses(source):
+    if needs_parentheses(source):
+        return '({})'.format(source)
+    else:
+        return source

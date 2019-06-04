@@ -14,8 +14,7 @@ from python_toolbox import sys_tools, temp_file_tools
 
 from snoop import formatting
 from snoop.configuration import Config
-from snoop.utils import truncate_string, truncate_list
-from snoop.variables import needs_parentheses
+from snoop.utils import truncate_string, truncate_list, needs_parentheses
 
 fix = 0
 

@@ -7,14 +7,14 @@ import traceback
 from collections import defaultdict
 from datetime import datetime
 
-import six
 import executing_node
+import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr
 from colorama import Fore, Style
 
 from snoop.pycompat import try_statement
-from snoop.utils import ensure_tuple, truncate_string, truncate_list, short_filename, is_comprehension_frame
+from snoop.utils import ensure_tuple, short_filename, is_comprehension_frame, with_needed_parentheses
 
 
 class StatementsDict(dict):
@@ -247,16 +247,7 @@ class DefaultFormatter(object):
                 )
                 for line in exception_string.splitlines()
             ]
-            try:
-                call = Source.executing_node(event.frame)
-            except Exception:
-                pass
-            else:
-                if not isinstance(call.parent, ast.stmt):
-                    lines += ['{c.red}!!! When evaluating:{c.red} {source}'.format(
-                        c=self.c,
-                        source=event.source.asttokens().get_text(call),
-                    )]
+            lines += self.format_executing_node_exception(event)
         elif event.event == 'enter':
             pass
         elif event.event == 'exit':
@@ -269,6 +260,34 @@ class DefaultFormatter(object):
                 lines += statement_start_lines + [self.format_event(event)]
 
         return self.format_lines(event, lines)
+
+    def format_executing_node_exception(self, event):
+        try:
+            call = Source.executing_node(event.frame)
+            if not isinstance(call, ast.Call):
+                return []
+            
+            if any(
+                    getattr(call, attr, None)
+                    for attr in 'args keywords starargs kwargs'.split()
+            ):
+                args_source = '...'
+            else:
+                args_source = ''
+    
+            source = '{func}({args})'.format(
+                func=with_needed_parentheses(event.source.asttokens().get_text(call.func)),
+                args=args_source,
+            )
+            plain_prefix = '!!! When calling: '
+            prefix = '{c.red}{}{c.reset}'.format(plain_prefix, c=self.c)
+            return indented_lines(
+                prefix,
+                source,
+                plain_prefix=plain_prefix
+            )
+        except Exception:
+            return []
 
     def columns_string(self, event):
         column_strings = []
