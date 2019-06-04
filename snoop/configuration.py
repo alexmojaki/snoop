@@ -50,6 +50,8 @@ class Config(object):
         self.snoop = ConfiguredTracer
         self.spy = Spy(self)
 
+        self.last_frame = None
+
 
 def get_write_function(output, overwrite):
     is_path = isinstance(output, (pycompat.PathLike, str))

@@ -188,7 +188,6 @@ class Tracer(object):
         else:
             self.watch_extras = (len_watch, shape_watch) + utils.ensure_tuple(watch_extras)
         self.frame_infos = {}
-        self.last_frame = None
         self.depth = depth
         assert self.depth >= 1
         self.target_codes = set()
@@ -232,7 +231,7 @@ class Tracer(object):
         if not self._is_internal_frame(calling_frame):
             calling_frame.f_trace = self.trace
             self.target_frames.add(calling_frame)
-            self.last_frame = calling_frame
+            self.config.last_frame = calling_frame
             self.trace(calling_frame, 'enter', None)
 
         stack = thread_global.__dict__.setdefault('original_trace_functions', [])
@@ -278,13 +277,13 @@ class Tracer(object):
         frame_info = self.frame_infos.setdefault(frame, FrameInfo(frame))
         if event in ('call', 'enter'):
             thread_global.depth += 1
-        elif self.last_frame and self.last_frame is not frame:
+        elif self.config.last_frame and self.config.last_frame is not frame:
             line_no = self.frame_infos[frame].last_line_no
             trace_event = Event(frame, event, arg, thread_global.depth, line_no=line_no)
             line = self.config.formatter.format_line_only(trace_event)
             self.config.write(line)
         
-        self.last_frame = frame
+        self.config.last_frame = frame
 
         trace_event = Event(frame, event, arg, thread_global.depth, last_line_no=frame_info.last_line_no)
         if not (frame.f_code.co_name == '<genexpr>' and event not in ('return', 'exception')):

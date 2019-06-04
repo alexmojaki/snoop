@@ -86,11 +86,13 @@ expected_output = """
         12:34:56.78    5 | def foo(x):
         12:34:56.78    6 |     return x ** 2
         12:34:56.78 <<< Return value from foo: 1
+    12:34:56.78   24 |     str([foo(x) for x in [1, 2]])
         12:34:56.78 >>> Call to foo in File "/path/to_file.py", line 5
         12:34:56.78 ...... x = 2
         12:34:56.78    5 | def foo(x):
         12:34:56.78    6 |     return x ** 2
         12:34:56.78 <<< Return value from foo: 4
+    12:34:56.78   24 |     str([foo(x) for x in [1, 2]])
     12:34:56.78 .......... Iterating over <tuple_iterator object at 0xABC>
     12:34:56.78 .......... Values of x: 1, 2
     12:34:56.78 Result: [1, 4]
@@ -125,5 +127,6 @@ expected_output = """
         12:34:56.78 Result: [3, 3]
     12:34:56.78   15 |     str([no_trace(x) for x in [1, 2]])
     12:34:56.78 <<< Return value from bar: None
+12:34:56.78   26 |     bar()
 12:34:56.78 <<< Return value from main: None
 """
