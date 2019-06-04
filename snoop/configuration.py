@@ -1,4 +1,5 @@
 import sys
+import threading
 
 import six
 
@@ -51,6 +52,7 @@ class Config(object):
         self.spy = Spy(self)
 
         self.last_frame = None
+        self.thread_local = threading.local()
 
 
 def get_write_function(output, overwrite):

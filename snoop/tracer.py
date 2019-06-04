@@ -273,25 +273,26 @@ class Tracer(object):
                     if i >= self.depth or candidate is None:
                         return None
 
-        thread_global.__dict__.setdefault('depth', -1)
+        thread_local = self.config.thread_local
+        thread_local.__dict__.setdefault('depth', -1)
         frame_info = self.frame_infos.setdefault(frame, FrameInfo(frame))
         if event in ('call', 'enter'):
-            thread_global.depth += 1
+            thread_local.depth += 1
         elif self.config.last_frame and self.config.last_frame is not frame:
             line_no = self.frame_infos[frame].last_line_no
-            trace_event = Event(frame, event, arg, thread_global.depth, line_no=line_no)
+            trace_event = Event(frame, event, arg, thread_local.depth, line_no=line_no)
             line = self.config.formatter.format_line_only(trace_event)
             self.config.write(line)
         
         self.config.last_frame = frame
 
-        trace_event = Event(frame, event, arg, thread_global.depth, last_line_no=frame_info.last_line_no)
+        trace_event = Event(frame, event, arg, thread_local.depth, last_line_no=frame_info.last_line_no)
         if not (frame.f_code.co_name == '<genexpr>' and event not in ('return', 'exception')):
             trace_event.variables = frame_info.update_variables(self.watch, self.watch_extras, event)
 
         if event in ('return', 'exit'):
             del self.frame_infos[frame]
-            thread_global.depth -= 1
+            thread_local.depth -= 1
 
         formatted = self.config.formatter.format(trace_event)
         self.config.write(formatted)
