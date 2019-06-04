@@ -1,5 +1,6 @@
 import ast
 import inspect
+import pprint
 from copy import deepcopy
 from uuid import uuid4
 
@@ -23,9 +24,13 @@ class PP(object):
             arg_sources = []
             for call_arg, arg in zip(call.args, args):
                 if isinstance(call_arg, ast.Lambda):
-                    arg_sources.extend(deep_pp(event, call_arg, frame))
+                    arg_sources.extend(deep_pp(event, call_arg.body, frame))
                 else:
-                    arg_sources.append((ast_tokens.get_text(call_arg).strip(), arg, 0))
+                    arg_sources.append((
+                        ast_tokens.get_text(call_arg).strip(),
+                        pprint.pformat(arg),
+                        0,
+                    ))
         except Exception:  # TODO narrow
             arg_sources = zip([''] * len(args), args, [0] * len(args))
 
@@ -111,12 +116,17 @@ def deep_pp(event, call_arg, frame):
             is_obvious = True
 
         if not is_obvious:
-            arg_sources.append((source, value, node._depth - call_arg._depth - 1))
+            if call_arg is node:
+                value_string = pprint.pformat(value)
+            else:
+                value_string = repr(value)
+
+            arg_sources.append([source, value_string, node._depth - call_arg._depth])
         return value
 
     after_expr.name = 'after_' + uuid4().hex
 
-    new_node = deepcopy(call_arg.body)
+    new_node = deepcopy(call_arg)
     new_node = NodeVisitor(before_expr.name, after_expr.name).visit(new_node)
     expr = ast.Expression(new_node)
     ast.copy_location(expr, new_node)

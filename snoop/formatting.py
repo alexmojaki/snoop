@@ -339,10 +339,14 @@ class DefaultFormatter(object):
     def format_log(self, event, values):
         lines = ['LOG:']
         for source, value, depth in values:
-            value = cheap_repr(value)
-            string = highlight_python('{} = {}'.format(source, value))
-            lines += [u'....{} {}'.format(depth * 4 * '.', line)
-                      for line in string.splitlines()]
+            source_lines = indented_lines(
+                u'....{} '.format(depth * 4 * '.'),
+                source
+            )
+            lines += source_lines[:-1] + indented_lines(
+                source_lines[-1] + ' = ',
+                value,
+            )
         return self.format_lines(event, lines)
 
     def format_lines(self, event, lines):
