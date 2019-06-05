@@ -6,6 +6,7 @@ import threading
 import traceback
 from collections import defaultdict
 from datetime import datetime
+from textwrap import dedent
 
 import executing_node
 import six
@@ -60,6 +61,14 @@ class Source(executing_node.Source):
         except Exception:
             return cls('', '', '')
 
+    def get_text_with_indentation(self, node):
+        result = self.asttokens().get_text(node)
+        if '\n' in result:
+            result = ' ' * node.first_token.start[1] + result
+            result = dedent(result)
+        else:
+            result = result.strip()
+        return result
 
 class Event(object):
     def __init__(self, frame, event, arg, depth, line_no=None, last_line_no=None):
@@ -276,7 +285,7 @@ class DefaultFormatter(object):
                 args_source = ''
     
             source = '{func}({args})'.format(
-                func=with_needed_parentheses(event.source.asttokens().get_text(call.func)),
+                func=with_needed_parentheses(event.source.get_text_with_indentation(call.func)),
                 args=args_source,
             )
             plain_prefix = '!!! When calling: '

@@ -93,7 +93,7 @@ expected_output = r"""
 12:34:56.78   37 |             2
 12:34:56.78 !!! TypeError: bar() takes 0 positional arguments but 2 were given
 12:34:56.78 !!! When calling: (None
-12:34:56.78                            or bar)(...)
+12:34:56.78                   or bar)(...)
 12:34:56.78   39 |     except:
 12:34:56.78   40 |         pass
 12:34:56.78 <<< Return value from main: None

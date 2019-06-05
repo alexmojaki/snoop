@@ -19,7 +19,6 @@ class PP(object):
         event = Event(frame, 'log', None, depth)
 
         try:
-            ast_tokens = event.source.asttokens()
             call = Source.executing_node(frame)
             arg_sources = []
             for call_arg, arg in zip(call.args, args):
@@ -27,7 +26,7 @@ class PP(object):
                     arg_sources.extend(deep_pp(event, call_arg.body, frame))
                 else:
                     arg_sources.append((
-                        ast_tokens.get_text(call_arg).strip(),
+                        event.source.get_text_with_indentation(call_arg),
                         pprint.pformat(arg),
                         0,
                     ))
@@ -95,7 +94,6 @@ class NodeVisitor(ast.NodeTransformer):
 
 
 def deep_pp(event, call_arg, frame):
-    ast_tokens = event.source.asttokens()
     arg_sources = []
 
     def before_expr(tree_index):
@@ -106,7 +104,7 @@ def deep_pp(event, call_arg, frame):
     before_expr.name = 'before_' + uuid4().hex
 
     def after_expr(node, value):
-        source = ast_tokens.get_text(node).strip()
+        source = event.source.get_text_with_indentation(node)
 
         try:
             ast.literal_eval(node)
