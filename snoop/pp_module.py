@@ -20,18 +20,26 @@ class PP(object):
 
         try:
             call = Source.executing_node(frame)
+            assert isinstance(call, ast.Call)
+            assert len(args) == len(call.args)
+        except Exception:
+            arg_sources = [
+                arg_source_placeholder(i, arg, args)
+                for i, arg in enumerate(args)
+            ]
+        else:
             arg_sources = []
-            for call_arg, arg in zip(call.args, args):
+            for i, (call_arg, arg) in enumerate(zip(call.args, args)):
                 if isinstance(call_arg, ast.Lambda):
                     arg_sources.extend(deep_pp(event, call_arg.body, frame))
                 else:
-                    arg_sources.append((
-                        event.source.get_text_with_indentation(call_arg),
-                        pprint.pformat(arg),
-                        0,
-                    ))
-        except Exception:  # TODO narrow
-            arg_sources = zip([''] * len(args), args, [0] * len(args))
+                    try:
+                        source = event.source.get_text_with_indentation(call_arg)
+                    except Exception:
+                        arg_source = arg_source_placeholder(i, arg, args)
+                    else:
+                        arg_source = root_arg_source(arg, source)
+                    arg_sources.append(arg_source)
 
         formatted = self.config.formatter.format_log(event, arg_sources)
         self.config.write(formatted)
@@ -40,6 +48,19 @@ class PP(object):
             return args[0]
         else:
             return args
+
+
+def root_arg_source(arg, source=None, args=None, i=None):
+    if source is None:
+        if len(args) == 1:
+            source = '<argument>'
+        else:
+            source = '<argument {}>'.format(i + 1)
+    return source, pprint.pformat(arg), 0
+
+
+def arg_source_placeholder(i, arg, args):
+    return root_arg_source(arg, args=args, i=i)
 
 
 class NodeVisitor(ast.NodeTransformer):
