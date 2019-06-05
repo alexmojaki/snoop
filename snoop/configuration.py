@@ -8,6 +8,11 @@ from snoop import pycompat, utils
 from snoop.formatting import DefaultFormatter
 from snoop.pycompat import builtins as builtins_module
 
+try:
+    import colorama
+except ImportError:
+    colorama = None
+
 
 def install(builtins=True, snoop="snoop", pp="pp", spy="spy", **kwargs):
     if builtins:
@@ -30,6 +35,7 @@ class Config(object):
             color=None,
             enabled=True,
             formatter_class=DefaultFormatter,
+            use_colorama=True,
     ):
         from .tracer import Spy, Tracer
         from .pp_module import PP
@@ -40,7 +46,7 @@ class Config(object):
                     or getattr(out, 'isatty', lambda: False)()
             )
 
-        self.write = get_write_function(out, overwrite)
+        self.write = get_write_function(out, overwrite, use_colorama and color and colorama)
         self.formatter = formatter_class(prefix, columns, color)
         self.enabled = enabled
         self.pp = PP(self)
@@ -55,25 +61,31 @@ class Config(object):
         self.thread_local = threading.local()
 
 
-def get_write_function(output, overwrite):
+def get_write_function(output, overwrite, use_colorama):
     is_path = isinstance(output, (pycompat.PathLike, str))
     if overwrite and not is_path:
         raise Exception('`overwrite=True` can only be used when writing '
                         'content to file.')
-    if output is None:
-        def write(s):
-            stderr = sys.stderr
-            try:
-                stderr.write(s)
-            except UnicodeEncodeError:
-                # God damn Python 2
-                stderr.write(utils.shitcode(s))
-    elif is_path:
+
+    if is_path:
         return FileWriter(output, overwrite).write
     elif callable(output):
         write = output
     else:
-        write = output.write
+        def write(s):
+            stream = output
+
+            if stream is None:
+                stream = sys.stderr
+
+            if stream in (sys.stderr, sys.stdout) and use_colorama:
+                stream = colorama.AnsiToWin32(stream)
+
+            try:
+                stream.write(s)
+            except UnicodeEncodeError:
+                # God damn Python 2
+                output.write(utils.shitcode(s))
     return write
 
 

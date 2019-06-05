@@ -24,8 +24,19 @@ install_requires = [
     'six',
     'littleutils',
     'cheap_repr',
-    'colorama',
 ]
+
+try:
+    import ctypes
+    from ctypes import LibraryLoader
+
+    windll = LibraryLoader(ctypes.WinDLL)
+except Exception:
+    pass
+else:
+    install_requires += [
+        'colorama',
+    ]
 
 tests_require = [
     'pytest',
