@@ -11,11 +11,10 @@ from textwrap import dedent
 import executing_node
 import six
 # noinspection PyUnresolvedReferences
-from cheap_repr import cheap_repr
 from colorama import Fore, Style
 
 from snoop.pycompat import try_statement
-from snoop.utils import ensure_tuple, short_filename, is_comprehension_frame, with_needed_parentheses
+from snoop.utils import ensure_tuple, short_filename, is_comprehension_frame, with_needed_parentheses, my_cheap_repr
 
 
 class StatementsDict(dict):
@@ -243,7 +242,7 @@ class DefaultFormatter(object):
                     and event.opname not in ('RETURN_VALUE', 'YIELD_VALUE')):
                 lines += [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
             elif event.comprehension_type:
-                value = highlight_python(cheap_repr(event.arg))
+                value = highlight_python(my_cheap_repr(event.arg))
                 lines += indented_lines(u'Result: ', value)
             else:
                 lines += self.format_return_value(event)
@@ -331,7 +330,7 @@ class DefaultFormatter(object):
         return indented_lines(prefix, highlight_python(value))
 
     def format_return_value(self, event):
-        value = highlight_python(cheap_repr(event.arg))
+        value = highlight_python(my_cheap_repr(event.arg))
         plain_prefix = u'<<< {description} value from {func}: '.format(
             description='Yield' if event.opname == 'YIELD_VALUE' else 'Return',
             func=event.frame.f_code.co_name,

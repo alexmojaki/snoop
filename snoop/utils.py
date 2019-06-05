@@ -1,6 +1,7 @@
 import os
 
 import six
+from cheap_repr import cheap_repr
 
 MAX_VARIABLE_LENGTH = 100
 MAX_EXCEPTION_LENGTH = 200
@@ -74,3 +75,10 @@ def with_needed_parentheses(source):
         return '({})'.format(source)
     else:
         return source
+
+
+REPR_TARGET_LENGTH = 100
+
+
+def my_cheap_repr(x):
+    return cheap_repr(x, target_length=REPR_TARGET_LENGTH)

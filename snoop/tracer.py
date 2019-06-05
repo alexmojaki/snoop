@@ -9,6 +9,7 @@ import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr, find_repr_function
 
+from snoop.utils import my_cheap_repr
 from . import utils, pycompat
 from .formatting import Event
 from .variables import CommonVariable, Exploding, BaseVariable
@@ -72,7 +73,7 @@ class FrameInfo(object):
 
         result = collections.OrderedDict()
         for source, value in result_items:
-            result[source] = cheap_repr(value)
+            result[source] = my_cheap_repr(value)
             for extra in watch_extras:
 
                 try:

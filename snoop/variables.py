@@ -1,13 +1,11 @@
-import itertools
 import abc
+import itertools
 from collections import Mapping, Sequence
 from copy import deepcopy
 
-from cheap_repr import cheap_repr
-
-from snoop.utils import with_needed_parentheses
-from . import utils
+from snoop.utils import with_needed_parentheses, my_cheap_repr
 from . import pycompat
+from . import utils
 
 
 class BaseVariable(pycompat.ABC):
@@ -81,7 +79,7 @@ class Keys(CommonVariable):
         return main_value.keys()
 
     def _format_key(self, key):
-        return '[{}]'.format(cheap_repr(key).replace('\n', ' ').replace('\r', ' '))
+        return '[{}]'.format(my_cheap_repr(key).replace('\n', ' ').replace('\r', ' '))
 
     def _get_value(self, main_value, key):
         return main_value[key]
