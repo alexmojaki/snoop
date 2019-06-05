@@ -382,7 +382,7 @@ class Colors(object):
 
 
 def indented_lines(prefix, string, plain_prefix=None):
-    lines = six.text_type(string).splitlines()
+    lines = six.text_type(string).splitlines() or ['']
     return [prefix + lines[0]] + [
         ' ' * len(plain_prefix or prefix) + line
         for line in lines[1:]

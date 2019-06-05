@@ -1,7 +1,7 @@
 from snoop import snoop, pp
 
 
-@snoop()
+@snoop(depth=30)
 def main():
     x = 1
     y = 2

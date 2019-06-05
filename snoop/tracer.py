@@ -3,6 +3,7 @@ import functools
 import inspect
 import sys
 import threading
+import os
 
 import six
 # noinspection PyUnresolvedReferences
@@ -111,6 +112,7 @@ def shape_watch(source, value):
 
 
 thread_global = threading.local()
+directory = os.path.dirname(shape_watch.__code__.co_filename)
 
 
 class TracerMeta(type):
@@ -250,7 +252,7 @@ class Tracer(object):
         self.frame_infos.pop(calling_frame, None)
 
     def _is_internal_frame(self, frame):
-        return frame.f_code.co_filename == Tracer.__enter__.__code__.co_filename
+        return frame.f_code.co_filename.startswith(directory)
 
     def trace(self, frame, event, arg):
         if not (frame.f_code in self.target_codes or frame in self.target_frames):
@@ -270,7 +272,7 @@ class Tracer(object):
                     if candidate.f_code in self.target_codes or candidate in self.target_frames:
                         break
                     candidate = candidate.f_back
-                    if i >= self.depth or candidate is None:
+                    if i >= self.depth or candidate is None or self._is_internal_frame(candidate):
                         return None
 
         thread_local = self.config.thread_local
