@@ -1,4 +1,4 @@
-from snoop import spy, pp
+
 from birdseye import eye
 
 

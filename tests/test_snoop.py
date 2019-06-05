@@ -12,7 +12,7 @@ from cheap_repr.utils import safe_qualname
 from littleutils import file_to_string, string_to_file
 from python_toolbox import sys_tools, temp_file_tools
 
-from snoop import formatting
+from snoop import formatting, install
 from snoop.configuration import Config
 from snoop.utils import truncate_string, truncate_list, needs_parentheses
 
@@ -21,6 +21,8 @@ fix = 0
 current_thread()._ident = 123456789
 
 formatting._get_filename = lambda _: "/path/to_file.py"
+
+install()
 
 
 @register_repr(type(cheap_repr))

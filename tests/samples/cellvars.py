@@ -1,4 +1,4 @@
-import snoop
+
 
 
 def f2(a):
