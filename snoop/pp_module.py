@@ -15,10 +15,18 @@ class PP(object):
         self.config = config
 
     def __call__(self, *args):
-        frame = inspect.currentframe().f_back
+        if self.config.enabled:
+            frame = inspect.currentframe().f_back
+            self._pp(args, frame)
+
+        if len(args) == 1:
+            return args[0]
+        else:
+            return args
+
+    def _pp(self, args, frame):
         depth = getattr(thread_global, 'depth', 0)
         event = Event(frame, 'log', None, depth)
-
         try:
             call = Source.executing_node(frame)
             assert isinstance(call, ast.Call)
@@ -41,14 +49,8 @@ class PP(object):
                     else:
                         arg_source = root_arg_source(arg, source)
                     arg_sources.append(arg_source)
-
         formatted = self.config.formatter.format_log(event, arg_sources)
         self.config.write(formatted)
-
-        if len(args) == 1:
-            return args[0]
-        else:
-            return args
 
 
 def root_arg_source(arg, source=None, args=None, i=None):
