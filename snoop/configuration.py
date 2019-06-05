@@ -41,10 +41,7 @@ class Config(object):
         from .pp_module import PP
 
         if color is None:
-            color = (
-                    out is None and sys.stderr.isatty()
-                    or getattr(out, 'isatty', lambda: False)()
-            )
+            color = getattr(out or sys.stderr, 'isatty', lambda: False)()
 
         self.write = get_write_function(out, overwrite, use_colorama and color and colorama)
         self.formatter = formatter_class(prefix, columns, color)
