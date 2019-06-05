@@ -12,6 +12,12 @@ def main():
         for b in [3, 4]
     ] + list(range(30)))
     pp(set(range(30)))
+    pp(lambda: BadRepr() and 1)
+
+
+class BadRepr(object):
+    def __repr__(self):
+        raise ValueError('bad')
 
 
 expected_output = """
@@ -126,5 +132,10 @@ expected_output = """
 12:34:56.78                        27,
 12:34:56.78                        28,
 12:34:56.78                        29}
+12:34:56.78   15 |     pp(lambda: BadRepr() and 1)
+12:34:56.78 LOG:
+12:34:56.78 ............ BadRepr = <class 'tests.samples.pp.BadRepr'>
+12:34:56.78 ........ BadRepr() = <Exception in repr(): ValueError: bad>
+12:34:56.78 .... BadRepr() and 1 = 1
 12:34:56.78 <<< Return value from main: None
 """

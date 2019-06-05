@@ -1,6 +1,7 @@
 import ast
 import inspect
 import pprint
+import traceback
 from copy import deepcopy
 from uuid import uuid4
 
@@ -138,7 +139,11 @@ def deep_pp(event, call_arg, frame):
             if call_arg is node:
                 value_string = pprint.pformat(value)
             else:
-                value_string = repr(value)
+                try:
+                    value_string = repr(value)
+                except Exception as e:
+                    exception_string = ''.join(traceback.format_exception_only(type(e), e)).strip()
+                    value_string = '<Exception in repr(): {}>'.format(exception_string)
 
             arg_sources.append([source, value_string, node._depth - call_arg._depth])
         return value
