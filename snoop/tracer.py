@@ -308,22 +308,31 @@ class Spy(object):
         self.config = config
 
     def __call__(self, *args, **kwargs):
+        # Decorator without parentheses
+        if len(args) == 1 and inspect.isfunction(args[0]) and not kwargs:
+            return self._trace(args[0])
+
+        # Decorator with parentheses and perhaps arguments
+        def decorator(func):
+            return self._trace(func, *args, **kwargs)
+
+        return decorator
+
+    def _trace(self, func, *args, **kwargs):
         # noinspection PyUnresolvedReferences
         from birdseye import eye
 
-        def decorator(func):
-            traced = eye(func)
-            traced = self.config.snoop(*args, **kwargs)(traced)
+        traced = eye(func)
+        traced = self.config.snoop(*args, **kwargs)(traced)
 
-            @functools.wraps(func)
-            def wrapper(*func_args, **func_kwargs):
-                if self.config.enabled:
-                    final_func = traced
-                else:
-                    final_func = func
+        @functools.wraps(func)
+        def wrapper(*func_args, **func_kwargs):
+            if self.config.enabled:
+                final_func = traced
+            else:
+                final_func = func
 
-                return final_func(*func_args, **func_kwargs)
+            return final_func(*func_args, **func_kwargs)
 
-            return wrapper
-
-        return decorator
+        return wrapper
+        

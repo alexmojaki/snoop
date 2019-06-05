@@ -9,12 +9,19 @@ def foo():
     return x + y
 
 
+# Testing spy with and without parentheses
+@spy
+def bar():
+    return 10
+
+
 def main():
-    foo()
-    call_id = eye._last_call_id
-    with eye.db.session_scope() as session:
-        call = session.query(eye.db.Call).filter_by(id=call_id).one()
-        assert call.result == '10'
+    for func in [foo, bar]:
+        func()
+        call_id = eye._last_call_id
+        with eye.db.session_scope() as session:
+            call = session.query(eye.db.Call).filter_by(id=call_id).one()
+            assert call.result == '10'
 
 
 expected_output = """
@@ -31,4 +38,8 @@ expected_output = """
 12:34:56.78 .......... y = 7
 12:34:56.78    9 |     return x + y
 12:34:56.78 <<< Return value from foo: 10
+12:34:56.78 >>> Call to bar in File "/path/to_file.py", line 14
+12:34:56.78   14 | def bar():
+12:34:56.78   15 |     return 10
+12:34:56.78 <<< Return value from bar: 10
 """
