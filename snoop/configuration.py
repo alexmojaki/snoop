@@ -1,3 +1,4 @@
+import os
 import sys
 import threading
 
@@ -40,10 +41,12 @@ class Config(object):
         from .tracer import Spy, Tracer
         from .pp_module import PP
 
+        isatty = getattr(out or sys.stderr, 'isatty', lambda: False)()
         if color is None:
-            color = getattr(out or sys.stderr, 'isatty', lambda: False)()
+            color = isatty
+        use_colorama = use_colorama and color and colorama and isatty and os.name == 'nt'
 
-        self.write = get_write_function(out, overwrite, use_colorama and color and colorama)
+        self.write = get_write_function(out, overwrite, use_colorama)
         self.formatter = formatter_class(prefix, columns, color)
         self.enabled = enabled
         self.pp = PP(self)
@@ -76,7 +79,7 @@ def get_write_function(output, overwrite, use_colorama):
                 stream = sys.stderr
 
             if stream in (sys.stderr, sys.stdout) and use_colorama:
-                stream = colorama.AnsiToWin32(stream)
+                stream = colorama.AnsiToWin32(stream, convert=True)
 
             try:
                 stream.write(s)

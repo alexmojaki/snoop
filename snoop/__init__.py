@@ -36,7 +36,7 @@ sys.modules['snoop'] = snoop  # make the module callable
 
 # Add all the attributes to the 'module' so things can be imported normally
 for key, value in list(globals().items()):
-    if key in 'collections sys __VersionInfo key value config Config':
+    if key in 'collections sys __VersionInfo key value config':
         # Avoid polluting the namespace
         continue
 
