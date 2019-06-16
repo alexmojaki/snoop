@@ -8,7 +8,7 @@ from collections import defaultdict
 from datetime import datetime
 from textwrap import dedent
 
-import executing_node
+import executing
 import six
 # noinspection PyUnresolvedReferences
 from colorama import Fore, Style
@@ -36,7 +36,7 @@ class StatementsDict(dict):
         return result
 
 
-class Source(executing_node.Source):
+class Source(executing.Source):
     def __init__(self, *args, **kwargs):
         super(Source, self).__init__(*args, **kwargs)
         if self.text:
@@ -45,20 +45,13 @@ class Source(executing_node.Source):
             self.lines = defaultdict(lambda: u'SOURCE IS UNAVAILABLE')
         self.statements = StatementsDict(self)
         self.nodes = []
-        self.tree._depth = 0
-        for node in ast.walk(self.tree):
-            node._tree_index = len(self.nodes)
-            self.nodes.append(node)
-            for child in ast.iter_child_nodes(node):
-                child._depth = node._depth + 1
-
-
-    @classmethod
-    def for_frame(cls, frame):
-        try:
-            return super(Source, cls).for_frame(frame)
-        except Exception:
-            return cls('', '', '')
+        if self.tree:
+            self.tree._depth = 0
+            for node in ast.walk(self.tree):
+                node._tree_index = len(self.nodes)
+                self.nodes.append(node)
+                for child in ast.iter_child_nodes(node):
+                    child._depth = node._depth + 1
 
     def get_text_with_indentation(self, node):
         result = self.asttokens().get_text(node)
@@ -271,7 +264,7 @@ class DefaultFormatter(object):
 
     def format_executing_node_exception(self, event):
         try:
-            call = Source.executing_node(event.frame)
+            call = Source.executing(event.frame).node
             if not isinstance(call, ast.Call):
                 return []
             

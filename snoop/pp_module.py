@@ -28,7 +28,7 @@ class PP(object):
         depth = getattr(thread_global, 'depth', 0)
         event = Event(frame, 'log', None, depth)
         try:
-            call = Source.executing_node(frame)
+            call = Source.executing(frame).node
             assert isinstance(call, ast.Call)
             assert len(args) == len(call.args)
         except Exception:
