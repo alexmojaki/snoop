@@ -20,7 +20,7 @@ def main():
 
 
 expected_output = """
-ZZZ 12:34:56.78 >>> Call to square in File "/path/to_file.py", line 11
+ZZZ 12:34:56.78 >>> Call to Baz.square in File "/path/to_file.py", line 11
 ZZZ 12:34:56.78 .......... self = <tests.samples.method_and_prefix.Baz object at 0xABC>
 ZZZ 12:34:56.78 .......... self.x = 2
 ZZZ 12:34:56.78   11 |     def square(self):
@@ -28,5 +28,5 @@ ZZZ 12:34:56.78   12 |         foo = 7
 ZZZ 12:34:56.78   13 |         self.x **= 2
 ZZZ 12:34:56.78 .............. self.x = 4
 ZZZ 12:34:56.78   14 |         return self
-ZZZ 12:34:56.78 <<< Return value from square: <tests.samples.method_and_prefix.Baz object at 0xABC>
+ZZZ 12:34:56.78 <<< Return value from Baz.square: <tests.samples.method_and_prefix.Baz object at 0xABC>
 """

@@ -106,6 +106,9 @@ class Event(object):
     @property
     def source_line(self):
         return self.source.lines[self.line_no - 1]
+    
+    def code_qualname(self):
+        return self.source.code_qualname(self.frame.f_code)
 
 
 def highlight_python(code):
@@ -188,7 +191,7 @@ class DefaultFormatter(object):
                     description = 'Enter with block in'
                 lines += [
                     u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}File "{filename}", line {lineno}'.format(
-                        name=event.frame.f_code.co_name,
+                        name=event.code_qualname(),
                         filename=_get_filename(event),
                         lineno=event.line_no,
                         c=self.c,
@@ -254,7 +257,7 @@ class DefaultFormatter(object):
         elif event.event == 'exit':
             lines += [u'{c.green}<<< Exit with block in {func}{c.reset}'.format(
                 c=self.c,
-                func=event.frame.f_code.co_name,
+                func=event.code_qualname(),
             )]
         else:
             if not (event.comprehension_type and event.event == 'line'):
@@ -326,7 +329,7 @@ class DefaultFormatter(object):
         value = highlight_python(my_cheap_repr(event.arg))
         plain_prefix = u'<<< {description} value from {func}: '.format(
             description='Yield' if event.opname == 'YIELD_VALUE' else 'Return',
-            func=event.frame.f_code.co_name,
+            func=event.code_qualname(),
         )
         prefix = u'{c.green}{}{c.reset}'.format(
             plain_prefix,
