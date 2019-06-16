@@ -10,8 +10,6 @@ from textwrap import dedent
 
 import executing
 import six
-# noinspection PyUnresolvedReferences
-from colorama import Fore, Style
 
 from snoop.pycompat import try_statement
 from snoop.utils import ensure_tuple, short_filename, is_comprehension_frame, with_needed_parentheses, my_cheap_repr
@@ -378,11 +376,11 @@ class NoColors(object):
 
 
 class Colors(object):
-    grey = Fore.LIGHTBLACK_EX
-    red = Fore.RED + Style.BRIGHT
-    green = Fore.GREEN + Style.BRIGHT
-    cyan = Fore.CYAN + Style.BRIGHT
-    reset = Style.RESET_ALL
+    grey = '\x1b[90m'
+    red = '\x1b[31m\x1b[1m'
+    green = '\x1b[32m\x1b[1m'
+    cyan = '\x1b[36m\x1b[1m'
+    reset = '\x1b[0m'
 
 
 def indented_lines(prefix, string, plain_prefix=None):
