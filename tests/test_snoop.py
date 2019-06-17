@@ -96,9 +96,11 @@ def assert_sample_output(module):
 def test_samples():
     samples_dir = os.path.join(os.path.dirname(__file__), 'samples')
     for filename in os.listdir(samples_dir):
+        if filename.endswith('.pyc'):
+            continue
         module_name = six.text_type(filename.split('.')[0])
 
-        if module_name in '__init__ __pycache__ threads':
+        if module_name in '__init__ __pycache__':
             continue
 
         if module_name in 'django_sample' and six.PY2:
