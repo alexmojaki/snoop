@@ -2,6 +2,7 @@ import io
 import os
 import re
 import sys
+import traceback
 from importlib import import_module
 from threading import current_thread
 
@@ -42,6 +43,17 @@ def repr_set(x, helper):
         return repr(x)
     return helper.repr_iterable(x, '{', '}')
 
+
+def sample_traceback():
+    raw = ''.join(
+        traceback.format_exception(*sys.exc_info())
+    ).splitlines(True)
+    tb = ''.join(
+        line for line in raw
+        if not line.strip().startswith("File")
+        if not line.strip() == "raise value"  # part of six.reraise
+    )
+    sys.stderr.write(tb)
 
 
 def assert_sample_output(module):
@@ -85,7 +97,7 @@ def test_samples():
     for filename in os.listdir(samples_dir):
         module_name = six.text_type(filename.split('.')[0])
 
-        if module_name in '__init__ __pycache__':
+        if module_name in '__init__ __pycache__ threads':
             continue
 
         if module_name in 'django_sample' and six.PY2:

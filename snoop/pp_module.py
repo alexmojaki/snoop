@@ -1,9 +1,12 @@
 import ast
 import inspect
 import pprint
+import sys
 import traceback
 from copy import deepcopy
 from uuid import uuid4
+
+import six
 
 from snoop.formatting import Event, Source
 from snoop.pycompat import builtins
@@ -27,6 +30,7 @@ class PP(object):
     def _pp(self, args, frame):
         depth = getattr(thread_global, 'depth', 0)
         event = Event(frame, 'log', None, depth)
+        exc_info = None
         try:
             call = Source.executing(frame).node
             assert isinstance(call, ast.Call)
@@ -40,7 +44,10 @@ class PP(object):
             arg_sources = []
             for i, (call_arg, arg) in enumerate(zip(call.args, args)):
                 if isinstance(call_arg, ast.Lambda):
-                    arg_sources.extend(deep_pp(event, call_arg.body, frame))
+                    arg_sources_here, result, exc_info = deep_pp(event, call_arg.body, frame)
+                    arg_sources.extend(arg_sources_here)
+                    if exc_info:
+                        break
                 else:
                     try:
                         source = event.source.get_text_with_indentation(call_arg)
@@ -51,6 +58,8 @@ class PP(object):
                     arg_sources.append(arg_source)
         formatted = self.config.formatter.format_log(event, arg_sources)
         self.config.write(formatted)
+        if exc_info:
+            six.reraise(*exc_info)
 
 
 def root_arg_source(arg, source=None, args=None, i=None):
@@ -156,11 +165,17 @@ def deep_pp(event, call_arg, frame):
     new_node = NodeVisitor(before_expr.name, after_expr.name).visit(new_node)
     expr = ast.Expression(new_node)
     ast.copy_location(expr, new_node)
-    code = compile(expr, '<node>', 'eval')
+    code = compile(expr, frame.f_code.co_filename, 'eval')
     frame.f_globals[before_expr.name] = before_expr
     frame.f_globals[after_expr.name] = after_expr
-    eval(code, frame.f_globals, frame.f_locals)
+    try:
+        result = eval(code, frame.f_globals, frame.f_locals)
+        exc_info = None
+    except:
+        result = None
+        exc_info = sys.exc_info()
+    
     frame.f_globals[before_expr.name] = lambda x: x
     frame.f_globals[after_expr.name] = lambda node, value: value
 
-    return arg_sources
+    return arg_sources, result, exc_info
