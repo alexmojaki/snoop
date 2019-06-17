@@ -1,3 +1,4 @@
+import __future__
 import ast
 import inspect
 import pprint
@@ -150,6 +151,12 @@ class NodeVisitor(ast.NodeTransformer):
         return after_marker
 
 
+future_flags = sum(
+    getattr(__future__, fname).compiler_flag
+    for fname in __future__.all_feature_names
+)
+
+
 def deep_pp(event, call_arg, frame):
     arg_sources = []
 
@@ -189,7 +196,13 @@ def deep_pp(event, call_arg, frame):
     new_node = NodeVisitor(before_expr.name, after_expr.name).visit(new_node)
     expr = ast.Expression(new_node)
     ast.copy_location(expr, new_node)
-    code = compile(expr, frame.f_code.co_filename, 'eval')
+    code = compile(
+        expr,
+        frame.f_code.co_filename,
+        'eval',
+        dont_inherit=True,
+        flags=future_flags & frame.f_code.co_flags,
+    )
     frame.f_globals[before_expr.name] = before_expr
     frame.f_globals[after_expr.name] = after_expr
     try:

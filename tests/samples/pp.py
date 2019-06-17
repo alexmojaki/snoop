@@ -1,5 +1,5 @@
-# import snoop
-# snoop.install()
+from __future__ import division
+
 
 @snoop(depth=30)
 def main():
@@ -15,6 +15,7 @@ def main():
     ) + lst)
     pp(dict.fromkeys(range(30), 4))
     pp(lambda: BadRepr() and 1)
+    pp(lambda: 1 / 2)
 
 
 class BadRepr(object):
@@ -151,5 +152,8 @@ expected_output = """
 12:34:56.78 ............ BadRepr = <class 'tests.samples.pp.BadRepr'>
 12:34:56.78 ........ BadRepr() = <Exception in repr(): ValueError: bad>
 12:34:56.78 .... BadRepr() and 1 = 1
+12:34:56.78   18 |     pp(lambda: 1 / 2)
+12:34:56.78 LOG:
+12:34:56.78 .... 1 / 2 = 0.5
 12:34:56.78 <<< Return value from main: None
 """
