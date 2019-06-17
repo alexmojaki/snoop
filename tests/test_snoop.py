@@ -15,6 +15,7 @@ from python_toolbox import sys_tools, temp_file_tools
 
 from snoop import formatting, install
 from snoop.configuration import Config
+from snoop.pp_module import is_deep_arg
 from snoop.utils import truncate_string, truncate_list, needs_parentheses
 
 fix = 0
@@ -214,3 +215,26 @@ def test_truncate_list():
         else:
             assert truncated == ['a', 'a', '...', 'a', 'a']
             assert len(truncated) == max_length
+
+
+class Foo(object):
+    def bar1(self):
+        pass
+
+    @staticmethod
+    def bar2():
+        pass
+
+
+def test_is_deep_arg():
+    assert is_deep_arg(lambda: 0)
+    assert not is_deep_arg(lambda x: 0)
+    assert not is_deep_arg(lambda x=None: 0)
+    assert not is_deep_arg(lambda *x: 0)
+    assert not is_deep_arg(lambda **x: 0)
+    assert not is_deep_arg(test_is_deep_arg)
+    assert not is_deep_arg(Foo)
+    assert not is_deep_arg(Foo.bar1)
+    assert not is_deep_arg(Foo().bar1)
+    assert not is_deep_arg(Foo.bar2)
+    assert not is_deep_arg(Foo().bar2)
