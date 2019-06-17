@@ -12,7 +12,8 @@ def foo():
 # Testing spy with and without parentheses
 @spy
 def bar():
-    return 10
+    result = pp(lambda: 4 + 6, 7 + 8)
+    return result[0]
 
 
 def main():
@@ -40,6 +41,12 @@ expected_output = """
 12:34:56.78 <<< Return value from foo: 10
 12:34:56.78 >>> Call to bar in File "/path/to_file.py", line 14
 12:34:56.78   14 | def bar():
-12:34:56.78   15 |     return 10
+12:34:56.78   15 |     result = pp(lambda: 4 + 6, 7 + 8)
+12:34:56.78 LOG:
+12:34:56.78 .... <argument 1> = 10
+12:34:56.78 .... <argument 2> = 15
+12:34:56.78 .......... result = (10, 15)
+12:34:56.78 .......... len(result) = 2
+12:34:56.78   16 |     return result[0]
 12:34:56.78 <<< Return value from bar: 10
 """
