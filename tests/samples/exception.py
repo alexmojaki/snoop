@@ -7,7 +7,7 @@ def foo():
     bad''')
 
 
-def bar():
+def bar(*_):
     try:
         str(foo())
     except Exception:
@@ -23,7 +23,7 @@ def main():
         pass
 
     try:
-        bar(
+        bob(
             1,
             2
         )
@@ -32,13 +32,20 @@ def main():
 
     try:
         (None
-         or bar)(
+         or bob)(
             1,
             2
         )
     except:
         pass
 
+
+def bob(*_):
+    pass
+
+
+bob()
+bob = None
 
 
 if __name__ == '__main__':
@@ -51,7 +58,8 @@ expected_output = r"""
 12:34:56.78   20 |     try:
 12:34:56.78   21 |         bar()
     12:34:56.78 >>> Call to bar in File "/path/to_file.py", line 10
-    12:34:56.78   10 | def bar():
+    12:34:56.78 ...... _ = ()
+    12:34:56.78   10 | def bar(*_):
     12:34:56.78   11 |     try:
     12:34:56.78   12 |         str(foo())
         12:34:56.78 >>> Call to foo in File "/path/to_file.py", line 4
@@ -79,21 +87,21 @@ expected_output = r"""
 12:34:56.78   22 |     except:
 12:34:56.78   23 |         pass
 12:34:56.78   25 |     try:
-12:34:56.78   26 |         bar(
+12:34:56.78   26 |         bob(
 12:34:56.78   27 |             1,
 12:34:56.78   28 |             2
-12:34:56.78 !!! TypeError: bar() takes 0 positional arguments but 2 were given
-12:34:56.78 !!! When calling: bar(...)
+12:34:56.78 !!! TypeError: 'NoneType' object is not callable
+12:34:56.78 !!! When calling: bob(...)
 12:34:56.78   30 |     except:
 12:34:56.78   31 |         pass
 12:34:56.78   33 |     try:
 12:34:56.78   34 |         (None
-12:34:56.78   35 |          or bar)(
+12:34:56.78   35 |          or bob)(
 12:34:56.78   36 |             1,
 12:34:56.78   37 |             2
-12:34:56.78 !!! TypeError: bar() takes 0 positional arguments but 2 were given
+12:34:56.78 !!! TypeError: 'NoneType' object is not callable
 12:34:56.78 !!! When calling: (None
-12:34:56.78                   or bar)(...)
+12:34:56.78                   or bob)(...)
 12:34:56.78   39 |     except:
 12:34:56.78   40 |         pass
 12:34:56.78 <<< Return value from main: None

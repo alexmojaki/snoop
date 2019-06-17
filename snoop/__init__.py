@@ -30,6 +30,7 @@ config = Config()
 snoop = config.snoop
 pp = config.pp
 spy = config.spy
+install = staticmethod(install)
 
 
 sys.modules['snoop'] = snoop  # make the module callable

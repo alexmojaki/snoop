@@ -24,6 +24,8 @@ install_requires = [
     'six',
     'littleutils',
     'cheap_repr',
+    'executing',
+    'asttokens',
 ]
 
 try:
@@ -40,7 +42,8 @@ else:
 
 tests_require = [
     'pytest',
-    'python-toolbox',
+    'python_toolbox',
+    'birdseye',
 ]
 
 if 'pypy' not in sys.version.lower():
@@ -68,6 +71,9 @@ setup(
     packages=[package],
     install_requires=install_requires,
     tests_require=tests_require,
+    extras_require={
+        'tests': tests_require,
+    },
     classifiers=[
         'Environment :: Console',
         'Intended Audience :: Developers',

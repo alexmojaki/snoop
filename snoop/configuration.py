@@ -1,6 +1,7 @@
 import os
 import sys
 import threading
+from io import open
 
 import six
 

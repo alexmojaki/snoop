@@ -27,7 +27,7 @@ class StatementsDict(dict):
             result = None
         else:
             if len(statements) == 1:
-                result = statements[0]
+                result = list(statements)[0]
             else:
                 result = None
         self[key] = result
@@ -208,6 +208,7 @@ class DefaultFormatter(object):
                 this_statement = statements[event.line_no]
 
                 if (
+                        this_statement and
                         this_statement != last_statement and
                         this_statement.lineno != event.line_no and
                         not isinstance(this_statement, try_statement)

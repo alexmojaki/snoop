@@ -18,7 +18,7 @@ from snoop.utils import truncate_string, truncate_list, needs_parentheses
 
 fix = 0
 
-current_thread()._ident = 123456789
+current_thread()._ident = current_thread()._Thread__ident = 123456789
 
 formatting._get_filename = lambda _: "/path/to_file.py"
 
@@ -36,6 +36,13 @@ def repr_module(module, _helper):
     return "<module '%s'>" % module.__name__
 
 
+@register_repr(set)
+def repr_set(x, helper):
+    if not x:
+        return repr(x)
+    return helper.repr_iterable(x, '{', '}')
+
+
 
 def assert_sample_output(module):
     with sys_tools.OutputCapturer(stdout=False,
@@ -49,6 +56,9 @@ def assert_sample_output(module):
 
     normalised = re.sub(time_pattern, time, output).strip()
     normalised = re.sub(r'at 0x\w+>', 'at 0xABC>', normalised)
+    normalised = normalised.replace('<genexpr>.<genexpr>', '<genexpr>')
+    normalised = normalised.replace('<list_iterator', '<listiterator')
+    normalised = normalised.replace('<tuple_iterator', '<tupleiterator')
 
     try:
         assert (
@@ -78,10 +88,10 @@ def test_samples():
         if module_name in '__init__ __pycache__':
             continue
 
-        if module_name in 'django' and six.PY2:
+        if module_name in 'django_sample' and six.PY2:
             continue
 
-        if module_name in 'pandas' and 'pypy' in sys.version.lower():
+        if module_name in 'pandas_sample' and 'pypy' in sys.version.lower():
             continue
 
         module = import_module('tests.samples.' + module_name)
