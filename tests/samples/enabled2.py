@@ -8,7 +8,7 @@ config = Config(enabled=False)
 @config.snoop
 def main():
     assert config.pp(1 + 2) == 3
-    assert config.pp(lambda: 1 + 3, 6) == (4, 6)
+    assert config.pp(1 + 3, 6) == (4, 6)
 
 
 expected_output = """

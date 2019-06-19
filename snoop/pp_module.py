@@ -22,40 +22,50 @@ class PP(object):
     def __call__(self, *args):
         if self.config.enabled:
             frame = inspect.currentframe().f_back
-            returns = self._pp(args, frame)
-        else:
-            returns = returns_for_unknown_args(args)
+            self._pp(args, frame, deep=False)
 
-        if len(returns) == 1:
-            return returns[0]
+        if len(args) == 1:
+            return args[0]
         else:
-            return tuple(returns)
+            return args
 
-    def _pp(self, args, frame):
+    def deep(self, arg):
+        if not is_deep_arg(arg):
+            raise TypeError("Argument must be a lambda without arguments")
+
+        if self.config.enabled:
+            frame = inspect.currentframe().f_back
+            return self._pp([arg], frame, deep=True)[0]
+
+        return arg()
+
+    def _pp(self, args, frame, deep):
         depth = getattr(thread_global, 'depth', 0)
         event = Event(frame, 'log', None, depth)
-        exc_info = None
+        exc_info = returns = None
         try:
             assert not NO_ASTTOKENS
             call = Source.executing(frame).node
             assert isinstance(call, ast.Call)
             assert len(args) == len(call.args)
         except Exception:
-            returns = returns_for_unknown_args(args)
+            if deep:
+                returns = [args[0]()]
+            else:
+                returns = args
             arg_sources = [
                 arg_source_placeholder(i, arg, returns)
                 for i, arg in enumerate(returns)
             ]
         else:
             arg_sources = []
-            returns = []
             for i, (call_arg, arg) in enumerate(zip(call.args, args)):
-                if isinstance(call_arg, ast.Lambda):
+                if deep:
+                    assert isinstance(call_arg, ast.Lambda)
                     arg_sources_here, result, exc_info = deep_pp(event, call_arg.body, frame)
+                    returns = [result]
                     arg_sources.extend(arg_sources_here)
-                    if exc_info:
-                        break
-                    returns.append(result)
+                    assert len(args) == 1
                 else:
                     try:
                         source = event.source.get_text_with_indentation(call_arg)
@@ -64,7 +74,6 @@ class PP(object):
                     else:
                         arg_source = root_arg_source(arg, source)
                     arg_sources.append(arg_source)
-                    returns.append(arg)
         formatted = self.config.formatter.format_log(event, arg_sources)
         self.config.write(formatted)
         if exc_info:
@@ -78,15 +87,6 @@ def is_deep_arg(x):
             and x.__code__.co_name == '<lambda>'
             and not any(inspect.getargspec(x))
     )
-
-
-def returns_for_unknown_args(args):
-    return [
-        arg()
-        if is_deep_arg(arg) else
-        arg
-        for arg in args
-    ]
 
 
 def root_arg_source(arg, source=None, args=None, i=None):

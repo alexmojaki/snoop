@@ -6,16 +6,16 @@ def main():
     x = 1
     y = 2
     pp(pp(x + 1) + max(*pp(y + 2, y + 3)))
-    assert pp(lambda: x + 1 + max(y + 2, y + 3)) == 7
-    assert pp(lambda: x + 1, y + 2) == (2, 4)
+    assert pp.deep(lambda: x + 1 + max(y + 2, y + 3)) == 7
     lst = list(range(30))
-    pp(lambda: list(
+    pp.deep(lambda: list(
         list(a + b for a in [1, 2])
         for b in [3, 4]
     ) + lst)
     pp(dict.fromkeys(range(30), 4))
-    pp(lambda: BadRepr() and 1)
-    pp(lambda: 1 / 2)
+    pp.deep(lambda: BadRepr() and 1)
+    pp.deep(lambda: 1 / 2)
+    
 
 
 class BadRepr(object):
@@ -37,7 +37,7 @@ expected_output = """
 12:34:56.78 .... y + 3 = 5
 12:34:56.78 LOG:
 12:34:56.78 .... pp(x + 1) + max(*pp(y + 2, y + 3)) = 7
-12:34:56.78    9 |     assert pp(lambda: x + 1 + max(y + 2, y + 3)) == 7
+12:34:56.78    9 |     assert pp.deep(lambda: x + 1 + max(y + 2, y + 3)) == 7
 12:34:56.78 LOG:
 12:34:56.78 ............ x = 1
 12:34:56.78 ........ x + 1 = 2
@@ -47,15 +47,10 @@ expected_output = """
 12:34:56.78 ............ y + 3 = 5
 12:34:56.78 ........ max(y + 2, y + 3) = 5
 12:34:56.78 .... x + 1 + max(y + 2, y + 3) = 7
-12:34:56.78   10 |     assert pp(lambda: x + 1, y + 2) == (2, 4)
-12:34:56.78 LOG:
-12:34:56.78 ........ x = 1
-12:34:56.78 .... x + 1 = 2
-12:34:56.78 .... y + 2 = 4
-12:34:56.78   11 |     lst = list(range(30))
+12:34:56.78   10 |     lst = list(range(30))
 12:34:56.78 .......... lst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, ..., 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
 12:34:56.78 .......... len(lst) = 30
-12:34:56.78   12 |     pp(lambda: list(
+12:34:56.78   11 |     pp.deep(lambda: list(
 12:34:56.78 LOG:
 12:34:56.78 ............ list(a + b for a in [1, 2])
 12:34:56.78              for b in [3, 4] = <generator object <genexpr> at 0xABC>
@@ -75,12 +70,12 @@ expected_output = """
 12:34:56.78 ............................ b = 4
 12:34:56.78 ........................ a + b = 6
 12:34:56.78 ................ list(a + b for a in [1, 2]) = [5, 6]
-12:34:56.78 ........            list(
+12:34:56.78 ........                 list(
 12:34:56.78              list(a + b for a in [1, 2])
 12:34:56.78              for b in [3, 4]
 12:34:56.78          ) = [[4, 5], [5, 6]]
 12:34:56.78 ........ lst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
-12:34:56.78 ....            list(
+12:34:56.78 ....                 list(
 12:34:56.78          list(a + b for a in [1, 2])
 12:34:56.78          for b in [3, 4]
 12:34:56.78      ) + lst = [[4, 5],
@@ -115,7 +110,7 @@ expected_output = """
 12:34:56.78                 27,
 12:34:56.78                 28,
 12:34:56.78                 29]
-12:34:56.78   16 |     pp(dict.fromkeys(range(30), 4))
+12:34:56.78   15 |     pp(dict.fromkeys(range(30), 4))
 12:34:56.78 LOG:
 12:34:56.78 .... dict.fromkeys(range(30), 4) = {0: 4,
 12:34:56.78                                     1: 4,
@@ -147,12 +142,12 @@ expected_output = """
 12:34:56.78                                     27: 4,
 12:34:56.78                                     28: 4,
 12:34:56.78                                     29: 4}
-12:34:56.78   17 |     pp(lambda: BadRepr() and 1)
+12:34:56.78   16 |     pp.deep(lambda: BadRepr() and 1)
 12:34:56.78 LOG:
 12:34:56.78 ............ BadRepr = <class 'tests.samples.pp.BadRepr'>
 12:34:56.78 ........ BadRepr() = <Exception in repr(): ValueError: bad>
 12:34:56.78 .... BadRepr() and 1 = 1
-12:34:56.78   18 |     pp(lambda: 1 / 2)
+12:34:56.78   17 |     pp.deep(lambda: 1 / 2)
 12:34:56.78 LOG:
 12:34:56.78 .... 1 / 2 = 0.5
 12:34:56.78 <<< Return value from main: None

@@ -8,8 +8,7 @@ config = Config(enabled=False)
 @config.spy
 def foo():
     assert config.pp(1 + 2) == 3
-    assert config.pp(lambda: 1 + 3, 6) == (4, 6)
-
+    assert config.pp(1 + 3, 6) == (4, 6)
 
 def main():
     call_id = eye._last_call_id
