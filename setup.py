@@ -43,13 +43,13 @@ else:
 tests_require = [
     'pytest',
     'python_toolbox',
-    'birdseye',
 ]
 
 if 'pypy' not in sys.version.lower() and sys.version_info[:2] != (3, 4):
     tests_require += [
         'numpy>=1.16.3',
         'pandas>=0.24.2',
+        'birdseye',
     ]
 
 
