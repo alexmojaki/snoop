@@ -113,7 +113,14 @@ def shape_watch(source, value):
 
 
 thread_global = threading.local()
-directory = os.path.dirname(shape_watch.__code__.co_filename)
+internal_directories = (os.path.dirname(shape_watch.__code__.co_filename),)
+
+try:
+    import birdseye.tracer
+except ImportError:
+    pass
+else:
+    internal_directories += (os.path.dirname(birdseye.BirdsEye.trace_function.__code__.co_filename),)
 
 
 class TracerMeta(type):
@@ -253,7 +260,7 @@ class Tracer(object):
         self.frame_infos.pop(calling_frame, None)
 
     def _is_internal_frame(self, frame):
-        return frame.f_code.co_filename.startswith(directory)
+        return frame.f_code.co_filename.startswith(internal_directories)
 
     def trace(self, frame, event, arg):
         if not (frame.f_code in self.target_codes or frame in self.target_frames):

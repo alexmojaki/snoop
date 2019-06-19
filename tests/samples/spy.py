@@ -2,7 +2,7 @@
 from birdseye import eye
 
 
-@spy()
+@spy(depth=4)
 def foo():
     x = pp(1 + 2)
     y = pp(3 + 4, 5 + 6)[0]
