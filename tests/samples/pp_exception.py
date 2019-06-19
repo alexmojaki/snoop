@@ -33,7 +33,7 @@ expected_output = """
 12:34:56.78   11 |         sample_traceback()
 Traceback (most recent call last):
     pp.deep(lambda: x + y + bad() + 2)
-    return self._pp([arg], frame, deep=True)[0]
+    return self._pp([arg], frame, deep=True)
     six.reraise(*exc_info)
     result = eval(code, frame.f_globals, frame.f_locals)
     pp.deep(lambda: x + y + bad() + 2)

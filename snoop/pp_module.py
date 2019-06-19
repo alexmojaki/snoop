@@ -8,6 +8,7 @@ from copy import deepcopy
 from uuid import uuid4
 
 import six
+from executing import only
 
 from snoop.formatting import Event, Source
 from snoop.pycompat import builtins
@@ -35,7 +36,7 @@ class PP(object):
 
         if self.config.enabled:
             frame = inspect.currentframe().f_back
-            return self._pp([arg], frame, deep=True)[0]
+            return self._pp([arg], frame, deep=True)
 
         return arg()
 
@@ -50,30 +51,20 @@ class PP(object):
             assert len(args) == len(call.args)
         except Exception:
             if deep:
-                returns = [args[0]()]
-            else:
-                returns = args
+                returns = args[0] = args[0]()
             arg_sources = [
-                arg_source_placeholder(i, arg, returns)
-                for i, arg in enumerate(returns)
+                arg_source_placeholder(i, arg, args)
+                for i, arg in enumerate(args)
             ]
         else:
-            arg_sources = []
-            for i, (call_arg, arg) in enumerate(zip(call.args, args)):
-                if deep:
-                    assert isinstance(call_arg, ast.Lambda)
-                    arg_sources_here, result, exc_info = deep_pp(event, call_arg.body, frame)
-                    returns = [result]
-                    arg_sources.extend(arg_sources_here)
-                    assert len(args) == 1
-                else:
-                    try:
-                        source = event.source.get_text_with_indentation(call_arg)
-                    except Exception:
-                        arg_source = arg_source_placeholder(i, arg, args)
-                    else:
-                        arg_source = root_arg_source(arg, source)
-                    arg_sources.append(arg_source)
+            if deep:
+                call_arg = only(call.args)
+                assert isinstance(call_arg, ast.Lambda)
+                arg_sources, returns, exc_info = deep_pp(event, call_arg.body, frame)
+            else:
+                # noinspection PyTypeChecker
+                arg_sources = list(pp_arg_sources(args, call, event))
+
         formatted = self.config.formatter.format_log(event, arg_sources)
         self.config.write(formatted)
         if exc_info:
@@ -81,7 +72,18 @@ class PP(object):
         return returns
 
 
+def pp_arg_sources(args, call, event):
+    for i, (call_arg, arg) in enumerate(zip(call.args, args)):
+        try:
+            source = event.source.get_text_with_indentation(call_arg)
+        except Exception:
+            yield arg_source_placeholder(i, arg, args)
+        else:
+            yield root_arg_source(arg, source)
+
+
 def is_deep_arg(x):
+    # noinspection PyDeprecation
     return (
             inspect.isfunction(x)
             and x.__code__.co_name == '<lambda>'
@@ -213,7 +215,7 @@ def deep_pp(event, call_arg, frame):
     except:
         result = None
         exc_info = sys.exc_info()
-    
+
     frame.f_globals[before_expr.name] = lambda x: x
     frame.f_globals[after_expr.name] = lambda node, value: value
 
