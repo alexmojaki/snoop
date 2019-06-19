@@ -12,7 +12,6 @@ def main():
     ) + lst)
     pp(dict.fromkeys(range(30), 4))
     pp(lambda: BadRepr() and 1)
-    pp(lambda: 1 / 2)
 
 
 class BadRepr(object):
@@ -113,8 +112,5 @@ expected_output = """
 12:34:56.78   14 |     pp(lambda: BadRepr() and 1)
 12:34:56.78 LOG:
 12:34:56.78 .... <argument> = 1
-12:34:56.78   15 |     pp(lambda: 1 / 2)
-12:34:56.78 LOG:
-12:34:56.78 .... <argument> = 0
 12:34:56.78 <<< Return value from main: None
 """

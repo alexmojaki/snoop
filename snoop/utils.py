@@ -4,7 +4,7 @@ import sys
 import six
 from cheap_repr import cheap_repr
 
-NO_ASTTOKENS = True or (
+NO_ASTTOKENS = (
         'pypy' in sys.version.lower()
         or sys.version_info[:2] == (3, 4)
 )
