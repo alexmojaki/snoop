@@ -4,6 +4,7 @@ import inspect
 import pprint
 import sys
 import traceback
+import warnings
 from copy import deepcopy
 from uuid import uuid4
 
@@ -83,12 +84,14 @@ def pp_arg_sources(args, call, event):
 
 
 def is_deep_arg(x):
-    # noinspection PyDeprecation
-    return (
-            inspect.isfunction(x)
-            and x.__code__.co_name == '<lambda>'
-            and not any(inspect.getargspec(x))
-    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        # noinspection PyDeprecation
+        return (
+                inspect.isfunction(x)
+                and x.__code__.co_name == '<lambda>'
+                and not any(inspect.getargspec(x))
+        )
 
 
 def root_arg_source(arg, source=None, args=None, i=None):
