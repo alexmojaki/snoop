@@ -12,7 +12,8 @@ import executing
 import six
 
 from snoop.pycompat import try_statement
-from snoop.utils import ensure_tuple, short_filename, is_comprehension_frame, with_needed_parentheses, my_cheap_repr
+from snoop.utils import ensure_tuple, short_filename, is_comprehension_frame, with_needed_parentheses, my_cheap_repr, \
+    NO_ASTTOKENS
 
 
 class StatementsDict(dict):
@@ -266,6 +267,7 @@ class DefaultFormatter(object):
 
     def format_executing_node_exception(self, event):
         try:
+            assert not NO_ASTTOKENS
             call = Source.executing(event.frame).node
             if not isinstance(call, ast.Call):
                 return []

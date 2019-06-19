@@ -12,6 +12,7 @@ import six
 from snoop.formatting import Event, Source
 from snoop.pycompat import builtins
 from snoop.tracer import thread_global
+from snoop.utils import NO_ASTTOKENS
 
 
 class PP(object):
@@ -35,6 +36,7 @@ class PP(object):
         event = Event(frame, 'log', None, depth)
         exc_info = None
         try:
+            assert not NO_ASTTOKENS
             call = Source.executing(frame).node
             assert isinstance(call, ast.Call)
             assert len(args) == len(call.args)

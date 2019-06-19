@@ -13,10 +13,10 @@ from cheap_repr.utils import safe_qualname
 from littleutils import file_to_string, string_to_file
 from python_toolbox import sys_tools, temp_file_tools
 
-from snoop import formatting, install
+from snoop import formatting, install, spy
 from snoop.configuration import Config
 from snoop.pp_module import is_deep_arg
-from snoop.utils import truncate_string, truncate_list, needs_parentheses
+from snoop.utils import truncate_string, truncate_list, needs_parentheses, NO_ASTTOKENS
 
 fix = 0
 
@@ -107,15 +107,13 @@ def test_samples():
 
         if module_name in 'django_sample' and six.PY2:
             continue
-
-        pypy = 'pypy' in sys.version.lower()
-        if module_name in 'pandas_sample spy pp pp_exception enabled' and (
-                pypy or sys.version_info[:2] == (3, 4)
-        ):
-            continue
-        
-        if module_name in 'exception color' and pypy:
-            continue
+    
+        if NO_ASTTOKENS:
+            if module_name in 'pandas_sample spy pp pp_exception enabled exception color':
+                continue
+        else:
+            if module_name.startswith('no_asttokens'):
+                continue
 
         module = import_module('tests.samples.' + module_name)
         assert_sample_output(module)
@@ -248,3 +246,9 @@ def test_is_deep_arg():
     assert not is_deep_arg(Foo().bar1)
     assert not is_deep_arg(Foo.bar2)
     assert not is_deep_arg(Foo().bar2)
+
+
+def test_no_asttokens_spy():
+    if NO_ASTTOKENS:
+        with pytest.raises(Exception, match="birdseye doesn't support this version of Python"):
+            spy(test_is_deep_arg)

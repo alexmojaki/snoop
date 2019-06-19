@@ -9,7 +9,7 @@ import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr, find_repr_function
 
-from snoop.utils import my_cheap_repr
+from snoop.utils import my_cheap_repr, NO_ASTTOKENS
 from . import utils, pycompat
 from .formatting import Event
 from .variables import CommonVariable, Exploding, BaseVariable
@@ -308,6 +308,14 @@ class Spy(object):
         self.config = config
 
     def __call__(self, *args, **kwargs):
+        if NO_ASTTOKENS:
+            raise Exception("birdseye doesn't support this version of Python")
+        
+        try:
+            import birdseye
+        except ImportError:
+            raise Exception("You must install birdseye separately to use spy: pip install birdseye")
+        
         # Decorator without parentheses
         if len(args) == 1 and inspect.isfunction(args[0]) and not kwargs:
             return self._trace(args[0])

@@ -1,10 +1,13 @@
 import os
+import sys
 
 import six
 from cheap_repr import cheap_repr
 
-MAX_VARIABLE_LENGTH = 100
-MAX_EXCEPTION_LENGTH = 200
+NO_ASTTOKENS = True or (
+        'pypy' in sys.version.lower()
+        or sys.version_info[:2] == (3, 4)
+)
 
 
 file_reading_errors = (
