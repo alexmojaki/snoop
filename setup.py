@@ -23,7 +23,7 @@ __version__ = re.search(r"__version__ = '([.\d]+)'", contents).group(1)
 install_requires = [
     'six',
     'littleutils',
-    'cheap_repr',
+    'cheap_repr>=0.4.0',
     'executing',
     'asttokens',
 ]
@@ -46,7 +46,7 @@ tests_require = [
     'birdseye',
 ]
 
-if 'pypy' not in sys.version.lower():
+if 'pypy' not in sys.version.lower() and sys.version_info[:2] != (3, 4):
     tests_require += [
         'numpy>=1.16.3',
         'pandas>=0.24.2',

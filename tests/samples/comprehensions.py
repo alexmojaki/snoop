@@ -31,14 +31,14 @@ expected_output = """
 12:34:56.78   20 |     str({x for x in list(range(100))})
     12:34:56.78 Set comprehension:
     12:34:56.78   20 |     str({x for x in list(range(100))})
-    12:34:56.78 .......... Iterating over <listiterator object at 0xABC>
+    12:34:56.78 .......... Iterating over <tupleiterator object at 0xABC>
     12:34:56.78 .......... Values of x: 0, 1, 2, 3, 4, ..., 95, 96, 97, 98, 99
     12:34:56.78 Result: {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, ...}
 12:34:56.78   20 |     str({x for x in list(range(100))})
 12:34:56.78   21 |     str({x: x for x in list(range(100))})
     12:34:56.78 Dict comprehension:
     12:34:56.78   21 |     str({x: x for x in list(range(100))})
-    12:34:56.78 .......... Iterating over <listiterator object at 0xABC>
+    12:34:56.78 .......... Iterating over <tupleiterator object at 0xABC>
     12:34:56.78 .......... Values of x: 0, 1, 2, 3, 4, ..., 95, 96, 97, 98, 99
     12:34:56.78 Result: {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, 11: 11, 12: 12, 13: 13, 14: 14, ...}
 12:34:56.78   21 |     str({x: x for x in list(range(100))})
@@ -47,26 +47,26 @@ expected_output = """
     12:34:56.78   22 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
         12:34:56.78 Set comprehension:
         12:34:56.78   22 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
-        12:34:56.78 .......... Iterating over <listiterator object at 0xABC>
+        12:34:56.78 .......... Iterating over <tupleiterator object at 0xABC>
         12:34:56.78 .......... Values of y: 0
         12:34:56.78 .......... Values of x: 0, 1, 2
         12:34:56.78 Result: {0, 1, 2}
     12:34:56.78   22 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
         12:34:56.78 Set comprehension:
         12:34:56.78   22 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
-        12:34:56.78 .......... Iterating over <listiterator object at 0xABC>
+        12:34:56.78 .......... Iterating over <tupleiterator object at 0xABC>
         12:34:56.78 .......... Values of y: 1
         12:34:56.78 .......... Values of x: 0, 1, 2
         12:34:56.78 Result: {1, 2, 3}
     12:34:56.78   22 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
         12:34:56.78 Set comprehension:
         12:34:56.78   22 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
-        12:34:56.78 .......... Iterating over <listiterator object at 0xABC>
+        12:34:56.78 .......... Iterating over <tupleiterator object at 0xABC>
         12:34:56.78 .......... Values of y: 2
         12:34:56.78 .......... Values of x: 0, 1, 2
         12:34:56.78 Result: {2, 3, 4}
     12:34:56.78   22 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
-    12:34:56.78 .......... Iterating over <listiterator object at 0xABC>
+    12:34:56.78 .......... Iterating over <tupleiterator object at 0xABC>
     12:34:56.78 .......... Values of y: 0, 1, 2
     12:34:56.78 Result: {0: {0, 1, 2}, 1: {1, 2, 3}, 2: {2, 3, 4}}
 12:34:56.78   22 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})

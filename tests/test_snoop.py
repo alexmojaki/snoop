@@ -70,8 +70,10 @@ def assert_sample_output(module):
     normalised = re.sub(time_pattern, time, output).strip()
     normalised = re.sub(r'at 0x\w+>', 'at 0xABC>', normalised)
     normalised = normalised.replace('<genexpr>.<genexpr>', '<genexpr>')
-    normalised = normalised.replace('<list_iterator', '<listiterator')
+    normalised = normalised.replace('<list_iterator', '<tupleiterator')
+    normalised = normalised.replace('<listiterator', '<tupleiterator')
     normalised = normalised.replace('<tuple_iterator', '<tupleiterator')
+    normalised = normalised.replace('<sequenceiterator', '<tupleiterator')
 
     try:
         assert (
@@ -106,7 +108,13 @@ def test_samples():
         if module_name in 'django_sample' and six.PY2:
             continue
 
-        if module_name in 'pandas_sample' and 'pypy' in sys.version.lower():
+        pypy = 'pypy' in sys.version.lower()
+        if module_name in 'pandas_sample spy pp pp_exception enabled' and (
+                pypy or sys.version_info[:2] == (3, 4)
+        ):
+            continue
+        
+        if module_name in 'exception color' and pypy:
             continue
 
         module = import_module('tests.samples.' + module_name)
