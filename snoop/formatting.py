@@ -22,15 +22,11 @@ class StatementsDict(dict):
         self.source = source
 
     def __missing__(self, key):
-        try:
-            statements = self.source.statements_at_line(key)
-        except IndexError:
-            result = None
+        statements = self.source.statements_at_line(key)
+        if len(statements) == 1:
+            result = list(statements)[0]
         else:
-            if len(statements) == 1:
-                result = list(statements)[0]
-            else:
-                result = None
+            result = None
         self[key] = result
         return result
 
