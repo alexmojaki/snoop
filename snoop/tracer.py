@@ -75,7 +75,6 @@ class FrameInfo(object):
         for source, value in result_items:
             result[source] = my_cheap_repr(value)
             for extra in watch_extras:
-
                 try:
                     pair = extra(source, value)
                 except Exception:
@@ -83,7 +82,7 @@ class FrameInfo(object):
                 else:
                     if pair is not None:
                         extra_source, extra_value = pair
-                        result[extra_source] = extra_value
+                        result[extra_source] = my_cheap_repr(extra_value)
 
         return result
 
@@ -116,7 +115,8 @@ thread_global = threading.local()
 internal_directories = (os.path.dirname(shape_watch.__code__.co_filename),)
 
 try:
-    import birdseye.tracer
+    # noinspection PyUnresolvedReferences
+    import birdseye
 except ImportError:
     pass
 else:
