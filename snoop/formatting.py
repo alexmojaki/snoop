@@ -38,7 +38,7 @@ class StatementsDict(dict):
 class Source(executing.Source):
     def __init__(self, *args, **kwargs):
         super(Source, self).__init__(*args, **kwargs)
-        if self.text:
+        if self.tree:
             self.lines = self.text.splitlines()
         else:
             self.lines = defaultdict(lambda: u'SOURCE IS UNAVAILABLE')
