@@ -9,13 +9,11 @@ NO_ASTTOKENS = (
         or sys.version_info[:2] == (3, 4)
 )
 
-
 file_reading_errors = (
     IOError,
     OSError,
-    ValueError # IronPython weirdness.
+    ValueError  # IronPython weirdness.
 )
-
 
 
 def shitcode(s):
@@ -93,5 +91,5 @@ class ArgDefaultDict(dict):
         self.factory = factory
 
     def __missing__(self, key):
-       result = self[key] = self.factory(key)
-       return result
+        result = self[key] = self.factory(key)
+        return result

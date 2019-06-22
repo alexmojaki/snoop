@@ -32,7 +32,6 @@ pp = config.pp
 spy = config.spy
 install = staticmethod(install)
 
-
 sys.modules['snoop'] = snoop  # make the module callable
 
 # Add all the attributes to the 'module' so things can be imported normally

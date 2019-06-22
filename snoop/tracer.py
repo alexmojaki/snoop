@@ -21,7 +21,6 @@ except ImportError:
     class QuerySet(object):
         pass
 
-
 find_repr_function(six.text_type).maxparts = 100
 find_repr_function(six.binary_type).maxparts = 100
 find_repr_function(object).maxparts = 100
@@ -303,7 +302,7 @@ class Tracer(object):
             trace_event = Event(frame_info, event, arg, thread_local.depth, line_no=line_no)
             line = self.config.formatter.format_line_only(trace_event)
             self.config.write(line)
-        
+
         self.config.last_frame = frame
 
         trace_event = Event(frame_info, event, arg, thread_local.depth)
@@ -327,12 +326,12 @@ class Spy(object):
     def __call__(self, *args, **kwargs):
         if NO_ASTTOKENS:
             raise Exception("birdseye doesn't support this version of Python")
-        
+
         try:
             import birdseye
         except ImportError:
             raise Exception("You must install birdseye separately to use spy: pip install birdseye")
-        
+
         # Decorator without parentheses
         if len(args) == 1 and inspect.isfunction(args[0]) and not kwargs:
             return self._trace(args[0])
@@ -360,4 +359,3 @@ class Spy(object):
             return final_func(*func_args, **func_kwargs)
 
         return wrapper
-        

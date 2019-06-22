@@ -55,6 +55,7 @@ class Source(executing.Source):
             result = result.strip()
         return result
 
+
 class Event(object):
     def __init__(self, frame_info, event, arg, depth, line_no=None):
         self.frame_info = frame_info
@@ -88,7 +89,7 @@ class Event(object):
     @property
     def source_line(self):
         return self.source.lines[self.line_no - 1]
-    
+
     def code_qualname(self):
         return self.source.code_qualname(self.code)
 
@@ -98,6 +99,7 @@ class Event(object):
         if not isinstance(code_byte, int):
             code_byte = ord(code_byte)
         return opcode.opname[code_byte]
+
 
 def highlight_python(code):
     return code
@@ -130,7 +132,7 @@ class DefaultFormatter(object):
             self.c = Colors
         else:
             self.c = NoColors()
-            
+
     def thread_column(self, _event):
         return threading.current_thread().name
 
@@ -291,7 +293,7 @@ class DefaultFormatter(object):
             call = Source.executing(event.frame).node
             if not isinstance(call, ast.Call):
                 return []
-            
+
             if any(
                     getattr(call, attr, None)
                     for attr in 'args keywords starargs kwargs'.split()
@@ -299,7 +301,7 @@ class DefaultFormatter(object):
                 args_source = '...'
             else:
                 args_source = ''
-    
+
             source = '{func}({args})'.format(
                 func=with_needed_parentheses(event.source.get_text_with_indentation(call.func)),
                 args=args_source,
@@ -372,6 +374,7 @@ class DefaultFormatter(object):
             )
             for line in lines
         ])
+
 
 def get_leading_spaces(s):
     return s[:len(s) - len(s.lstrip())]
