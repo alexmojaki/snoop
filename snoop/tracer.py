@@ -36,6 +36,7 @@ class FrameInfo(object):
         self.comprehension_variables = collections.OrderedDict()
         self.source = Source.for_frame(frame)
         self.is_generator = frame.f_code.co_flags & inspect.CO_GENERATOR
+        self.had_exception = False
         if is_comprehension_frame(frame):
             self.comprehension_type = (
                     re.match(r'<(\w+)comp>', frame.f_code.co_name).group(1).title()
@@ -302,6 +303,9 @@ class Tracer(object):
             trace_event = Event(frame_info, event, arg, thread_local.depth, line_no=line_no)
             line = self.config.formatter.format_line_only(trace_event)
             self.config.write(line)
+
+        if event == 'exception':
+            frame_info.had_exception = True
 
         self.config.last_frame = frame
 

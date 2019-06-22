@@ -211,8 +211,13 @@ class DefaultFormatter(object):
         # https://stackoverflow.com/a/12800909/2482744
         opname = event.opname
         arg = event.arg
-        if arg is None and opname not in ('RETURN_VALUE', 'YIELD_VALUE'):
-            return [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
+        if arg is None:
+            if opname == 'END_FINALLY':
+                if event.frame_info.had_exception:
+                    return [u'{c.red}??? Call either returned None or ended by exception{c.reset}'
+                                .format(c=self.c)]
+            elif opname not in ('RETURN_VALUE', 'YIELD_VALUE'):
+                return [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
 
         value = highlight_python(my_cheap_repr(arg))
         if event.comprehension_type:
