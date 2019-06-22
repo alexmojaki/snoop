@@ -9,6 +9,8 @@ import snoop as package
 from snoop import pycompat, utils
 from snoop.formatting import DefaultFormatter
 from snoop.pycompat import builtins as builtins_module
+from snoop.tracer import Spy, Tracer
+from snoop.pp_module import PP
 
 try:
     import colorama
@@ -39,9 +41,6 @@ class Config(object):
             formatter_class=DefaultFormatter,
             use_colorama=True,
     ):
-        from .tracer import Spy, Tracer
-        from .pp_module import PP
-
         isatty = getattr(out or sys.stderr, 'isatty', lambda: False)()
         if color is None:
             color = isatty

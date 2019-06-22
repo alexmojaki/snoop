@@ -70,12 +70,7 @@ class Event(object):
             line_no = frame.f_lineno
         self.line_no = line_no
         self.last_line_no = last_line_no
-        code = frame.f_code
-
-        code_byte = code.co_code[frame.f_lasti]
-        if not isinstance(code_byte, int):
-            code_byte = ord(code_byte)
-        self.opname = opcode.opname[code_byte]
+        self.code = code = frame.f_code
 
         self.is_generator = code.co_flags & inspect.CO_GENERATOR
         if is_comprehension_frame(frame):
@@ -103,8 +98,14 @@ class Event(object):
         return self.source.lines[self.line_no - 1]
     
     def code_qualname(self):
-        return self.source.code_qualname(self.frame.f_code)
+        return self.source.code_qualname(self.code)
 
+    @property
+    def opname(self):
+        code_byte = self.code.co_code[self.frame.f_lasti]
+        if not isinstance(code_byte, int):
+            code_byte = ord(code_byte)
+        return opcode.opname[code_byte]
 
 def highlight_python(code):
     return code
@@ -152,10 +153,16 @@ class DefaultFormatter(object):
         return result
 
     def file_column(self, event):
-        return short_filename(event.frame.f_code)
+        return short_filename(event.code)
+
+    def full_file_column(self, event):
+        return event.code.co_filename
 
     def function_column(self, event):
-        return event.frame.f_code.co_name
+        return event.code.co_name
+
+    def function_qualname_column(self, event):
+        return event.code_qualname()
 
     def full_prefix(self, event):
         return u'{c.grey}{self.prefix}{indent}{columns} {c.reset}'.format(
@@ -166,78 +173,21 @@ class DefaultFormatter(object):
         )
 
     def format(self, event):
+        # type: (Event) -> str
         lines = []
-        dots = ''
-        statement_start_lines = []
 
         if event.event in ('call', 'enter'):
-            if event.comprehension_type:
-                lines += ['{type}:'.format(
-                    type=event.comprehension_type)]
-            else:
-                if event.is_generator:
-                    if event.opname == 'YIELD_VALUE':
-                        description = 'Re-enter generator'
-                    else:
-                        description = 'Start generator'
-                elif event.event == 'call':
-                    description = 'Call to'
-                else:
-                    description = 'Enter with block in'
-                lines += [
-                    u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}File "{filename}", line {lineno}'.format(
-                        name=event.code_qualname(),
-                        filename=_get_filename(event),
-                        lineno=event.line_no,
-                        c=self.c,
-                        description=description,
-                    )]
+            lines += self.format_start(event)
 
         statements = event.source.statements
+        this_statement = statements[event.line_no]
         last_statement = statements[event.last_line_no]
-        last_source_line = ''
-        if last_statement:
-            last_lineno = last_statement.lineno
-            last_source_line = event.source.lines[last_lineno - 1]
-            spaces = get_leading_spaces(last_source_line)
-            dots = spaces.replace(' ', '.').replace('\t', '....')
-            if event.event != 'call':
-                this_statement = statements[event.line_no]
+        statement_start_lines = self.get_statement_start_lines(event, this_statement, last_statement)
 
-                if (
-                        this_statement and
-                        this_statement != last_statement and
-                        this_statement.lineno != event.line_no and
-                        not isinstance(this_statement, try_statement)
-                ):
-                    original_line_no = event.line_no
-                    for n in range(this_statement.lineno, original_line_no):
-                        event.line_no = n
-                        statement_start_lines.append(self.format_event(event))
-                    event.line_no = original_line_no
+        lines += self.format_variables(event, last_statement)
 
-        for var in event.variables:
-            if ('{} = {}'.format(*var) != last_source_line.strip()
-                    and not (
-                            isinstance(last_statement, ast.FunctionDef)
-                            and not last_statement.decorator_list
-                            and var[0] == last_statement.name
-                    )
-            ):
-                lines += self.format_variable(var, dots, event.comprehension_type)
-        
         if event.event == 'return':
-            # If a call ends due to an exception, we still get a 'return' event
-            # with arg = None. This seems to be the only way to tell the difference
-            # https://stackoverflow.com/a/12800909/2482744
-            if (event.arg is None
-                    and event.opname not in ('RETURN_VALUE', 'YIELD_VALUE')):
-                lines += [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
-            elif event.comprehension_type:
-                value = highlight_python(my_cheap_repr(event.arg))
-                lines += indented_lines(u'Result: ', value)
-            else:
-                lines += self.format_return_value(event)
+            lines += self.format_return(event)
         elif event.event == 'exception':
             exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
             lines += [
@@ -260,6 +210,88 @@ class DefaultFormatter(object):
                 lines += statement_start_lines + [self.format_event(event)]
 
         return self.format_lines(event, lines)
+
+    def format_return(self, event):
+        # If a call ends due to an exception, we still get a 'return' event
+        # with arg = None. This seems to be the only way to tell the difference
+        # https://stackoverflow.com/a/12800909/2482744
+        opname = event.opname
+        arg = event.arg
+        if arg is None and opname not in ('RETURN_VALUE', 'YIELD_VALUE'):
+            return [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
+
+        value = highlight_python(my_cheap_repr(arg))
+        if event.comprehension_type:
+            prefix = plain_prefix = u'Result: '
+        else:
+            plain_prefix = u'<<< {description} value from {func}: '.format(
+                description='Yield' if opname == 'YIELD_VALUE' else 'Return',
+                func=event.code_qualname(),
+            )
+            prefix = u'{c.green}{}{c.reset}'.format(
+                plain_prefix,
+                c=self.c,
+            )
+        return indented_lines(prefix, value, plain_prefix=plain_prefix)
+
+    def get_statement_start_lines(self, event, this_statement, last_statement):
+        result = []
+        if (
+                event.event != 'call' and
+                this_statement and last_statement and
+                this_statement != last_statement and
+                this_statement.lineno != event.line_no and
+                not isinstance(this_statement, try_statement)
+        ):
+            original_line_no = event.line_no
+            for n in range(this_statement.lineno, original_line_no):
+                event.line_no = n
+                result.append(self.format_event(event))
+            event.line_no = original_line_no
+        return result
+
+    def format_variables(self, event, last_statement):
+        if last_statement:
+            last_source_line = event.source.lines[last_statement.lineno - 1]
+            dots = (get_leading_spaces(last_source_line)
+                    .replace(' ', '.')
+                    .replace('\t', '....'))
+        else:
+            dots = ''
+            last_source_line = ''
+        lines = []
+        for var in event.variables:
+            if ('{} = {}'.format(*var) != last_source_line.strip()
+                    and not (
+                            isinstance(last_statement, ast.FunctionDef)
+                            and not last_statement.decorator_list
+                            and var[0] == last_statement.name
+                    )
+            ):
+                lines += self.format_variable(var, dots, event.comprehension_type)
+        return lines
+
+    def format_start(self, event):
+        if event.comprehension_type:
+            return ['{type}:'.format(type=event.comprehension_type)]
+        else:
+            if event.is_generator:
+                if event.opname == 'YIELD_VALUE':
+                    description = 'Re-enter generator'
+                else:
+                    description = 'Start generator'
+            elif event.event == 'call':
+                description = 'Call to'
+            else:
+                description = 'Enter with block in'
+            return [
+                u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}File "{filename}", line {lineno}'.format(
+                    name=event.code_qualname(),
+                    filename=_get_filename(event),
+                    lineno=event.line_no,
+                    c=self.c,
+                    description=description,
+                )]
 
     def format_executing_node_exception(self, event):
         try:
@@ -322,18 +354,6 @@ class DefaultFormatter(object):
         )
         return indented_lines(prefix, highlight_python(value))
 
-    def format_return_value(self, event):
-        value = highlight_python(my_cheap_repr(event.arg))
-        plain_prefix = u'<<< {description} value from {func}: '.format(
-            description='Yield' if event.opname == 'YIELD_VALUE' else 'Return',
-            func=event.code_qualname(),
-        )
-        prefix = u'{c.green}{}{c.reset}'.format(
-            plain_prefix,
-            c=self.c,
-        )
-        return indented_lines(prefix, value, plain_prefix=plain_prefix)
-
     def format_line_only(self, event):
         return self.format_lines(event, [self.format_event(event)])
 
@@ -366,7 +386,7 @@ def get_leading_spaces(s):
 
 
 def _get_filename(event):
-    return event.frame.f_code.co_filename
+    return event.code.co_filename
 
 
 class NoColors(object):
