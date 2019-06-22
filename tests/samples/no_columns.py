@@ -9,8 +9,6 @@ def main():
     y = x + 2
 
 
-main()
-
 expected_output = """
 >>> Call to main in File "/path/to_file.py", line 7
     7 | def main():

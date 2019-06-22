@@ -22,7 +22,6 @@ class BadRepr(object):
     def __repr__(self):
         raise ValueError('bad')
 
-main()
 
 expected_output = """
 12:34:56.78 >>> Call to main in File "/path/to_file.py", line 5
