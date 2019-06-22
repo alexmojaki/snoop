@@ -1,6 +1,7 @@
 import collections
 import functools
 import inspect
+import re
 import sys
 import threading
 import os
@@ -9,9 +10,9 @@ import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr, find_repr_function
 
-from snoop.utils import my_cheap_repr, NO_ASTTOKENS
+from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, is_comprehension_frame
 from . import utils, pycompat
-from .formatting import Event
+from .formatting import Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
 
 try:
@@ -34,13 +35,22 @@ class FrameInfo(object):
         self.local_reprs = {}
         self.last_line_no = frame.f_lineno
         self.comprehension_variables = collections.OrderedDict()
+        self.source = Source.for_frame(frame)
+        self.is_generator = frame.f_code.co_flags & inspect.CO_GENERATOR
+        if is_comprehension_frame(frame):
+            self.comprehension_type = (
+                    re.match(r'<(\w+)comp>', frame.f_code.co_name).group(1).title()
+                    + u' comprehension'
+            )
+        else:
+            self.comprehension_type = ''
 
     def update_variables(self, watch, watch_extras, event):
         self.last_line_no = self.frame.f_lineno
         old_local_reprs = self.local_reprs
         self.local_reprs = self.get_local_reprs(watch, watch_extras)
 
-        if utils.is_comprehension_frame(self.frame):
+        if self.comprehension_type:
             for name, value_repr in self.local_reprs.items():
                 values = self.comprehension_variables.setdefault(name, [])
                 if not values or values[-1] != value_repr:
@@ -197,7 +207,7 @@ class Tracer(object):
             self.watch_extras = utils.ensure_tuple(replace_watch_extras)
         else:
             self.watch_extras = (len_watch, shape_watch) + utils.ensure_tuple(watch_extras)
-        self.frame_infos = {}
+        self.frame_infos = ArgDefaultDict(FrameInfo)
         self.depth = depth
         assert self.depth >= 1
         self.target_codes = set()
@@ -285,18 +295,18 @@ class Tracer(object):
 
         thread_local = self.config.thread_local
         thread_local.__dict__.setdefault('depth', -1)
-        frame_info = self.frame_infos.setdefault(frame, FrameInfo(frame))
+        frame_info = self.frame_infos[frame]
         if event in ('call', 'enter'):
             thread_local.depth += 1
         elif self.config.last_frame and self.config.last_frame is not frame:
-            line_no = self.frame_infos[frame].last_line_no
-            trace_event = Event(frame, event, arg, thread_local.depth, line_no=line_no)
+            line_no = frame_info.last_line_no
+            trace_event = Event(frame_info, event, arg, thread_local.depth, line_no=line_no)
             line = self.config.formatter.format_line_only(trace_event)
             self.config.write(line)
         
         self.config.last_frame = frame
 
-        trace_event = Event(frame, event, arg, thread_local.depth, last_line_no=frame_info.last_line_no)
+        trace_event = Event(frame_info, event, arg, thread_local.depth)
         if not (frame.f_code.co_name == '<genexpr>' and event not in ('return', 'exception')):
             trace_event.variables = frame_info.update_variables(self.watch, self.watch_extras, event)
 

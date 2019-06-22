@@ -1,7 +1,5 @@
 import ast
-import inspect
 import opcode
-import re
 import threading
 import traceback
 from collections import defaultdict
@@ -12,7 +10,7 @@ import executing
 import six
 
 from snoop.pycompat import try_statement
-from snoop.utils import ensure_tuple, short_filename, is_comprehension_frame, with_needed_parentheses, my_cheap_repr, \
+from snoop.utils import ensure_tuple, short_filename, with_needed_parentheses, my_cheap_repr, \
     NO_ASTTOKENS
 
 
@@ -58,28 +56,22 @@ class Source(executing.Source):
         return result
 
 class Event(object):
-    def __init__(self, frame, event, arg, depth, line_no=None, last_line_no=None):
-        self.frame = frame
+    def __init__(self, frame_info, event, arg, depth, line_no=None):
+        self.frame_info = frame_info
+        self.frame = frame = frame_info.frame
+        self.source = frame_info.source
+        self.last_line_no = frame_info.last_line_no
+        self.comprehension_type = frame_info.comprehension_type
+
         self.event = event
         self.arg = arg
         self.depth = depth
 
         self.variables = []
-        self.source = Source.for_frame(frame)
         if line_no is None:
             line_no = frame.f_lineno
         self.line_no = line_no
-        self.last_line_no = last_line_no
-        self.code = code = frame.f_code
-
-        self.is_generator = code.co_flags & inspect.CO_GENERATOR
-        if is_comprehension_frame(frame):
-            self.comprehension_type = (
-                    re.match(r'<(\w+)comp>', code.co_name).group(1).title()
-                    + u' comprehension'
-            )
-        else:
-            self.comprehension_type = ''
+        self.code = frame.f_code
 
         if self.event == 'call' and self.source_line.lstrip().startswith('@'):
             # If a function decorator is found, skip lines until an actual
@@ -275,7 +267,7 @@ class DefaultFormatter(object):
         if event.comprehension_type:
             return ['{type}:'.format(type=event.comprehension_type)]
         else:
-            if event.is_generator:
+            if event.frame_info.is_generator:
                 if event.opname == 'YIELD_VALUE':
                     description = 'Re-enter generator'
                 else:

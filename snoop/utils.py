@@ -85,3 +85,13 @@ REPR_TARGET_LENGTH = 100
 
 def my_cheap_repr(x):
     return cheap_repr(x, target_length=REPR_TARGET_LENGTH)
+
+
+class ArgDefaultDict(dict):
+    def __init__(self, factory):
+        super(ArgDefaultDict, self).__init__()
+        self.factory = factory
+
+    def __missing__(self, key):
+       result = self[key] = self.factory(key)
+       return result
