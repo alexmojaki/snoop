@@ -41,8 +41,16 @@ def qux():
     return 9  # not traced, mustn't show up
 
 
+def gen():
+    for i in [1, 2]:
+        if i == 1:
+            with snoop:
+                yield i
+
+
 def main():
     foo(2)
+    list(gen())
     
     
 if __name__ == '__main__':
@@ -91,4 +99,12 @@ expected_output = """
 12:34:56.78   36 | def bar3(_x):
 12:34:56.78   37 |     qux()
 12:34:56.78 <<< Return value from bar3: None
+12:34:56.78 >>> Enter with block in gen in File "/path/to_file.py", line 47
+12:34:56.78 .................. i = 1
+12:34:56.78   48 |                 yield i
+12:34:56.78 <<< Yield value from gen: 1
+12:34:56.78 >>> Re-enter generator gen in File "/path/to_file.py", line 48
+12:34:56.78 ...................... i = 1
+12:34:56.78   48 |                 yield i
+12:34:56.78 <<< Exit with block in gen
 """

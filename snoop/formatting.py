@@ -183,15 +183,7 @@ class DefaultFormatter(object):
         if event.event == 'return':
             lines += self.format_return(event)
         elif event.event == 'exception':
-            exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
-            lines += [
-                u'{c.red}!!! {line}{c.reset}'.format(
-                    c=self.c,
-                    line=line,
-                )
-                for line in exception_string.splitlines()
-            ]
-            lines += self.format_executing_node_exception(event)
+            lines += self.format_exception(event)
         elif event.event == 'enter':
             pass
         elif event.event == 'exit':
@@ -204,6 +196,19 @@ class DefaultFormatter(object):
                 lines += statement_start_lines + [self.format_event(event)]
 
         return self.format_lines(event, lines)
+
+    def format_exception(self, event):
+        lines = []
+        exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
+        lines += [
+            u'{c.red}!!! {line}{c.reset}'.format(
+                c=self.c,
+                line=line,
+            )
+            for line in exception_string.splitlines()
+        ]
+        lines += self.format_executing_node_exception(event)
+        return lines
 
     def format_return(self, event):
         # If a call ends due to an exception, we still get a 'return' event
@@ -274,15 +279,17 @@ class DefaultFormatter(object):
         if event.comprehension_type:
             return ['{type}:'.format(type=event.comprehension_type)]
         else:
-            if event.frame_info.is_generator:
-                if event.opname == 'YIELD_VALUE':
-                    description = 'Re-enter generator'
-                else:
-                    description = 'Start generator'
-            elif event.event == 'call':
-                description = 'Call to'
-            else:
+            if event.event == 'enter':
                 description = 'Enter with block in'
+            else:
+                assert event.event == 'call'
+                if event.frame_info.is_generator:
+                    if event.opname == 'YIELD_VALUE':
+                        description = 'Re-enter generator'
+                    else:
+                        description = 'Start generator'
+                else:
+                    description = 'Call to'
             return [
                 u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}File "{filename}", line {lineno}'.format(
                     name=event.code_qualname(),
