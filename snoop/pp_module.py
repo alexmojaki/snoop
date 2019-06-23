@@ -13,7 +13,7 @@ from executing import only
 
 from snoop.formatting import Event, Source
 from snoop.pycompat import builtins
-from snoop.tracer import thread_global, FrameInfo
+from snoop.tracer import FrameInfo
 from snoop.utils import NO_ASTTOKENS
 
 
@@ -42,7 +42,7 @@ class PP(object):
         return arg()
 
     def _pp(self, args, frame, deep):
-        depth = getattr(thread_global, 'depth', 0)
+        depth = getattr(self.config.thread_local, 'depth', 0)
         event = Event(FrameInfo(frame), 'log', None, depth)
         exc_info = returns = None
         try:

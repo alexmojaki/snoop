@@ -2,7 +2,7 @@ import snoop
 
 
 def f4(x4):
-    result4 = x4 * 2
+    result4 = snoop.pp(x4 * 2)
     return result4
 
 
@@ -38,6 +38,8 @@ expected_output = """
         12:34:56.78 ...... x3 = 8
         12:34:56.78    9 | def f3(x3):
         12:34:56.78   10 |     result3 = f4(x3)
+        12:34:56.78 LOG:
+        12:34:56.78 .... x4 * 2 = 16
         12:34:56.78 .......... result3 = 16
         12:34:56.78   11 |     return result3
         12:34:56.78 <<< Return value from f3: 16
