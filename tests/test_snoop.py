@@ -115,6 +115,9 @@ def test_samples():
             if module_name.startswith('no_asttokens'):
                 continue
 
+        if module_name in 'f_string' and sys.version_info[:2] < (3, 6):
+            continue
+
         module = import_module('tests.samples.' + module_name)
         assert_sample_output(module)
 

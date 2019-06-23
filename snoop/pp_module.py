@@ -12,7 +12,7 @@ from executing import only
 from snoop.formatting import Event, Source
 from snoop.pycompat import builtins
 from snoop.tracer import FrameInfo
-from snoop.utils import NO_ASTTOKENS
+from snoop.utils import NO_ASTTOKENS, optional_numeric_label
 
 
 class PP(object):
@@ -88,10 +88,7 @@ class PPEvent(object):
         self.write(source, value, depth=depth)
 
     def write_placeholder(self, i, arg):
-        if len(self.args) == 1:
-            source = '<argument>'
-        else:
-            source = '<argument {}>'.format(i + 1)
+        source = '<argument{}>'.format(optional_numeric_label(i, self.args))
         return self.write(source, arg)
 
     def plain_pp(self, args, call_args):
@@ -191,13 +188,18 @@ class NodeVisitor(ast.NodeTransformer):
         )
 
         ast.copy_location(before_marker, node)
+        
+        if isinstance(node, ast.FormattedValue):
+            arg = node
+        else:
+            arg = super(NodeVisitor, self).generic_visit(node)
 
         after_marker = ast.Call(
             func=ast.Name(id=self.after_name,
                           ctx=ast.Load()),
             args=[
                 before_marker,
-                super(NodeVisitor, self).generic_visit(node),
+                arg,
             ],
             keywords=[],
         )

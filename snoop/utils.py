@@ -93,3 +93,10 @@ class ArgDefaultDict(dict):
     def __missing__(self, key):
         result = self[key] = self.factory(key)
         return result
+
+
+def optional_numeric_label(i, lst):
+    if len(lst) == 1:
+        return ''
+    else:
+        return ' ' + str(i + 1)

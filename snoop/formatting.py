@@ -11,7 +11,7 @@ import six
 
 from snoop.pycompat import try_statement
 from snoop.utils import ensure_tuple, short_filename, with_needed_parentheses, my_cheap_repr, \
-    NO_ASTTOKENS
+    NO_ASTTOKENS, optional_numeric_label
 
 
 class StatementsDict(dict):
@@ -48,6 +48,22 @@ class Source(executing.Source):
 
     def get_text_with_indentation(self, node):
         result = self.asttokens().get_text(node)
+        
+        if not result:
+            if isinstance(node, ast.FormattedValue):
+                fvals = [
+                    n for n in node.parent.values
+                    if isinstance(n, ast.FormattedValue)
+                ]
+                return '<f-string value{}>'.format(
+                    optional_numeric_label(
+                        fvals.index(node),
+                        fvals,
+                    )
+                )
+            else:
+                return "<unknown>"
+        
         if '\n' in result:
             result = ' ' * node.first_token.start[1] + result
             result = dedent(result)
