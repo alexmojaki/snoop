@@ -9,9 +9,8 @@ from textwrap import dedent
 import executing
 import six
 
-from snoop.pycompat import try_statement
 from snoop.utils import ensure_tuple, short_filename, with_needed_parentheses, my_cheap_repr, \
-    NO_ASTTOKENS, optional_numeric_label
+    NO_ASTTOKENS, optional_numeric_label, try_statement, FormattedValue
 
 
 class StatementsDict(dict):
@@ -50,10 +49,10 @@ class Source(executing.Source):
         result = self.asttokens().get_text(node)
         
         if not result:
-            if isinstance(node, ast.FormattedValue):
+            if isinstance(node, FormattedValue):
                 fvals = [
                     n for n in node.parent.values
-                    if isinstance(n, ast.FormattedValue)
+                    if isinstance(n, FormattedValue)
                 ]
                 return '<f-string value{}>'.format(
                     optional_numeric_label(

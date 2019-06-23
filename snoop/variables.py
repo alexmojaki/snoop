@@ -1,14 +1,12 @@
-import abc
 import itertools
 from collections import Mapping, Sequence
 from copy import deepcopy
 
 from snoop.utils import with_needed_parentheses, my_cheap_repr
-from . import pycompat
 from . import utils
 
 
-class BaseVariable(pycompat.ABC):
+class BaseVariable(object):
     def __init__(self, source, exclude=()):
         self.source = source
         self.exclude = utils.ensure_tuple(exclude)
@@ -22,7 +20,6 @@ class BaseVariable(pycompat.ABC):
             return ()
         return self._items(main_value)
 
-    @abc.abstractmethod
     def _items(self, key):
         raise NotImplementedError
 

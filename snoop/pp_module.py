@@ -1,4 +1,3 @@
-import __future__
 import ast
 import inspect
 import pprint
@@ -7,12 +6,11 @@ import warnings
 from copy import deepcopy
 from uuid import uuid4
 
-from executing import only
+from executing import only, future_flags
 
 from snoop.formatting import Event, Source
-from snoop.pycompat import builtins
 from snoop.tracer import FrameInfo
-from snoop.utils import NO_ASTTOKENS, optional_numeric_label
+from snoop.utils import NO_ASTTOKENS, optional_numeric_label, builtins, FormattedValue
 
 
 class PP(object):
@@ -189,7 +187,7 @@ class NodeVisitor(ast.NodeTransformer):
 
         ast.copy_location(before_marker, node)
         
-        if isinstance(node, ast.FormattedValue):
+        if isinstance(node, FormattedValue):
             arg = node
         else:
             arg = super(NodeVisitor, self).generic_visit(node)
@@ -207,9 +205,3 @@ class NodeVisitor(ast.NodeTransformer):
         ast.fix_missing_locations(after_marker)
 
         return after_marker
-
-
-future_flags = sum(
-    getattr(__future__, fname).compiler_flag
-    for fname in __future__.all_feature_names
-)

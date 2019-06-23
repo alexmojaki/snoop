@@ -6,9 +6,9 @@ from io import open
 import six
 
 import snoop as package
-from snoop import pycompat, utils
+from snoop import utils
 from snoop.formatting import DefaultFormatter
-from snoop.pycompat import builtins as builtins_module
+from snoop.utils import builtins as builtins_module, is_pathlike
 from snoop.tracer import Spy, Tracer
 from snoop.pp_module import PP
 
@@ -62,7 +62,10 @@ class Config(object):
 
 
 def get_write_function(output, overwrite, use_colorama):
-    is_path = isinstance(output, (pycompat.PathLike, str))
+    is_path = (
+        isinstance(output, six.string_types)
+        or is_pathlike(output)
+    )
     if overwrite and not is_path:
         raise Exception('`overwrite=True` can only be used when writing '
                         'content to file.')

@@ -1,3 +1,5 @@
+import ast
+import inspect
 import os
 import sys
 
@@ -100,3 +102,40 @@ def optional_numeric_label(i, lst):
         return ''
     else:
         return ' ' + str(i + 1)
+
+
+def is_pathlike(x):
+    if hasattr(os, 'PathLike'):
+        return isinstance(x, os.PathLike)
+
+    return (
+            hasattr(x, '__fspath__') or
+            # Make a concession for older `pathlib` versions:
+            (hasattr(x, 'open') and
+             'path' in x.__class__.__name__.lower())
+    )
+
+
+try:
+    iscoroutinefunction = inspect.iscoroutinefunction
+except AttributeError:
+    def iscoroutinefunction(_):
+        return False
+
+try:
+    try_statement = ast.Try
+except AttributeError:
+    try_statement = ast.TryExcept
+
+
+try:
+    builtins = __import__("__builtin__")
+except ImportError:
+    builtins = __import__("builtins")
+
+
+try:
+    FormattedValue = ast.FormattedValue
+except:
+    class FormattedValue(object):
+        pass

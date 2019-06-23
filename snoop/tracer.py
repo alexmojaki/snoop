@@ -10,8 +10,8 @@ import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr, find_repr_function
 
-from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, is_comprehension_frame
-from . import utils, pycompat
+from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, is_comprehension_frame, iscoroutinefunction
+from . import utils
 from .formatting import Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
 
@@ -236,7 +236,7 @@ class Tracer(object):
                 except Exception as e:
                     method, incoming = gen.throw, e
 
-        if pycompat.iscoroutinefunction(function):
+        if iscoroutinefunction(function):
             raise NotImplementedError("coroutines are not supported, sorry!")
         elif inspect.isgeneratorfunction(function):
             return generator_wrapper
