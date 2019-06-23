@@ -21,8 +21,7 @@ class PP(object):
 
     def __call__(self, *args):
         if self.config.enabled:
-            frame = inspect.currentframe().f_back
-            self._pp(args, frame, deep=False)
+            PPEvent(self, args, deep=False)
 
         if len(args) == 1:
             return args[0]
@@ -34,51 +33,116 @@ class PP(object):
             raise TypeError("Argument must be a lambda without arguments")
 
         if self.config.enabled:
-            frame = inspect.currentframe().f_back
-            return self._pp([arg], frame, deep=True)
+            return PPEvent(self, [arg], deep=True).returns
 
         return arg()
 
-    def _pp(self, args, frame, deep):
+
+class PPEvent(object):
+    def __init__(self, pp_object, args, deep):
+        self.config = pp_object.config
+        self.args = args
         depth = getattr(self.config.thread_local, 'depth', 0)
-        event = Event(FrameInfo(frame), 'log', None, depth)
-        formatted = self.config.formatter.format_log(event)
+        frame = inspect.currentframe().f_back.f_back
+        self.event = Event(FrameInfo(frame), 'log', None, depth)
+        formatted = self.config.formatter.format_log(self.event)
         self.config.write(formatted)
-        returns = None
+
+        self.returns = None
         try:
             assert not NO_ASTTOKENS
-            call = Source.executing(frame).node
+            self.call = call = Source.executing(frame).node
             assert isinstance(call, ast.Call)
             assert len(args) == len(call.args)
         except Exception:
             if deep:
-                returns = args[0] = args[0]()
+                self.returns = args[0] = args[0]()
             for i, arg in enumerate(args):
-                self._write(event, *arg_source_placeholder(i, arg, args))
+                self.write_placeholder(i, arg)
         else:
             if deep:
                 call_arg = only(call.args)
                 assert isinstance(call_arg, ast.Lambda)
-                returns = deep_pp(self._write, event, call_arg.body, frame)
+                self.returns = self.deep_pp(call_arg.body, frame)
             else:
-                # noinspection PyTypeChecker
-                pp_arg_sources(self._write, args, call, event)
+                self.plain_pp(args, call.args)
 
-        return returns
-
-    def _write(self, event, source, value, depth):
-        formatted = self.config.formatter.format_log_value(event, source, value, depth)
-        self.config.write(formatted)
-
-
-def pp_arg_sources(write, args, call, event):
-    for i, (call_arg, arg) in enumerate(zip(call.args, args)):
-        try:
-            source = event.source.get_text_with_indentation(call_arg)
-        except Exception:
-            write(event, *arg_source_placeholder(i, arg, args))
+    def write(self, source, value, depth=0):
+        if depth == 0:
+            value_string = pprint.pformat(value)
         else:
-            write(event, *root_arg_source(arg, source))
+            try:
+                value_string = repr(value)
+            except Exception as e:
+                exception_string = ''.join(
+                    traceback.format_exception_only(type(e), e)
+                ).strip()
+                value_string = '<Exception in repr(): {}>'.format(exception_string)
+
+        formatted = self.config.formatter.format_log_value(
+            self.event, source, value_string, depth)
+        self.config.write(formatted)
+    
+    def write_node(self, node, value, depth=0):
+        source = self.event.source.get_text_with_indentation(node)
+        self.write(source, value, depth=depth)
+
+    def write_placeholder(self, i, arg):
+        if len(self.args) == 1:
+            source = '<argument>'
+        else:
+            source = '<argument {}>'.format(i + 1)
+        return self.write(source, arg)
+
+    def plain_pp(self, args, call_args):
+        for i, (call_arg, arg) in enumerate(zip(call_args, args)):
+            try:
+                self.write_node(call_arg, arg)
+            except Exception:
+                self.write_placeholder(i, arg)
+
+    def deep_pp(self, call_arg, frame):
+        def before_expr(tree_index):
+            node = self.event.source.nodes[tree_index]
+            # TODO note node in case of exception
+            return node
+
+        before_expr.name = 'before_' + uuid4().hex
+
+        def after_expr(node, value):
+            try:
+                ast.literal_eval(node)
+                is_obvious = True
+            except ValueError:
+                is_obvious = (
+                    isinstance(node, ast.Name)
+                    and getattr(builtins, node.id, object()) == value
+                )
+
+            if not is_obvious:
+                self.write_node(node, value, depth=node._depth - call_arg._depth)
+            return value
+
+        after_expr.name = 'after_' + uuid4().hex
+
+        new_node = deepcopy(call_arg)
+        new_node = NodeVisitor(before_expr.name, after_expr.name).visit(new_node)
+        expr = ast.Expression(new_node)
+        ast.copy_location(expr, new_node)
+        code = compile(
+            expr,
+            frame.f_code.co_filename,
+            'eval',
+            dont_inherit=True,
+            flags=future_flags & frame.f_code.co_flags,
+        )
+        frame.f_globals[before_expr.name] = before_expr
+        frame.f_globals[after_expr.name] = after_expr
+        try:
+            return eval(code, frame.f_globals, frame.f_locals)
+        finally:
+            frame.f_globals[before_expr.name] = lambda x: x
+            frame.f_globals[after_expr.name] = lambda node, value: value
 
 
 def is_deep_arg(x):
@@ -90,19 +154,6 @@ def is_deep_arg(x):
                 and x.__code__.co_name == '<lambda>'
                 and not any(inspect.getargspec(x))
         )
-
-
-def root_arg_source(arg, source=None, args=None, i=None):
-    if source is None:
-        if len(args) == 1:
-            source = '<argument>'
-        else:
-            source = '<argument {}>'.format(i + 1)
-    return source, pprint.pformat(arg), 0
-
-
-def arg_source_placeholder(i, arg, args):
-    return root_arg_source(arg, args=args, i=i)
 
 
 class NodeVisitor(ast.NodeTransformer):
@@ -160,56 +211,3 @@ future_flags = sum(
     getattr(__future__, fname).compiler_flag
     for fname in __future__.all_feature_names
 )
-
-
-def deep_pp(write, event, call_arg, frame):
-    def before_expr(tree_index):
-        node = event.source.nodes[tree_index]
-        # TODO note node in case of exception
-        return node
-
-    before_expr.name = 'before_' + uuid4().hex
-
-    def after_expr(node, value):
-        source = event.source.get_text_with_indentation(node)
-
-        try:
-            ast.literal_eval(node)
-        except ValueError:
-            is_obvious = getattr(builtins, source, object()) == value
-        else:
-            is_obvious = True
-
-        if not is_obvious:
-            if call_arg is node:
-                value_string = pprint.pformat(value)
-            else:
-                try:
-                    value_string = repr(value)
-                except Exception as e:
-                    exception_string = ''.join(traceback.format_exception_only(type(e), e)).strip()
-                    value_string = '<Exception in repr(): {}>'.format(exception_string)
-
-            write(event, source, value_string, node._depth - call_arg._depth)
-        return value
-
-    after_expr.name = 'after_' + uuid4().hex
-
-    new_node = deepcopy(call_arg)
-    new_node = NodeVisitor(before_expr.name, after_expr.name).visit(new_node)
-    expr = ast.Expression(new_node)
-    ast.copy_location(expr, new_node)
-    code = compile(
-        expr,
-        frame.f_code.co_filename,
-        'eval',
-        dont_inherit=True,
-        flags=future_flags & frame.f_code.co_flags,
-    )
-    frame.f_globals[before_expr.name] = before_expr
-    frame.f_globals[after_expr.name] = after_expr
-    try:
-        return eval(code, frame.f_globals, frame.f_locals)
-    finally:
-        frame.f_globals[before_expr.name] = lambda x: x
-        frame.f_globals[after_expr.name] = lambda node, value: value

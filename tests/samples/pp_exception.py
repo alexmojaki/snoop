@@ -33,8 +33,8 @@ expected_output = """
 12:34:56.78   11 |         sample_traceback()
 Traceback (most recent call last):
     pp.deep(lambda: x + y + bad() + 2)
-    return self._pp([arg], frame, deep=True)
-    returns = deep_pp(self._write, event, call_arg.body, frame)
+    return PPEvent(self, [arg], deep=True).returns
+    self.returns = self.deep_pp(call_arg.body, frame)
     return eval(code, frame.f_globals, frame.f_locals)
     pp.deep(lambda: x + y + bad() + 2)
     raise TypeError('bad')
