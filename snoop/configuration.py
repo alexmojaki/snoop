@@ -6,9 +6,8 @@ from io import open
 import six
 
 import snoop as package
-from snoop import utils
 from snoop.formatting import DefaultFormatter
-from snoop.utils import builtins as builtins_module, is_pathlike
+from snoop.utils import builtins as builtins_module, is_pathlike, shitcode
 from snoop.tracer import Spy, Tracer
 from snoop.pp_module import PP
 
@@ -88,7 +87,7 @@ def get_write_function(output, overwrite, use_colorama):
                 stream.write(s)
             except UnicodeEncodeError:
                 # God damn Python 2
-                output.write(utils.shitcode(s))
+                output.write(shitcode(s))
     return write
 
 

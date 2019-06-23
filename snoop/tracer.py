@@ -1,4 +1,4 @@
-import collections
+from collections import Set, OrderedDict, Mapping, Sequence
 import functools
 import inspect
 import re
@@ -10,8 +10,8 @@ import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr, find_repr_function
 
-from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, is_comprehension_frame, iscoroutinefunction
-from . import utils
+from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, iscoroutinefunction, \
+    truncate_list, ensure_tuple, is_comprehension_frame
 from .formatting import Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
 
@@ -33,7 +33,7 @@ class FrameInfo(object):
         self.frame = frame
         self.local_reprs = {}
         self.last_line_no = frame.f_lineno
-        self.comprehension_variables = collections.OrderedDict()
+        self.comprehension_variables = OrderedDict()
         self.source = Source.for_frame(frame)
         self.is_generator = frame.f_code.co_flags & inspect.CO_GENERATOR
         self.had_exception = False
@@ -55,7 +55,7 @@ class FrameInfo(object):
                 values = self.comprehension_variables.setdefault(name, [])
                 if not values or values[-1] != value_repr:
                     values.append(value_repr)
-                    values[:] = utils.truncate_list(values, 11)
+                    values[:] = truncate_list(values, 11)
             if event in ('return', 'exception'):
                 return [
                     (name, ', '.join(values))
@@ -81,7 +81,7 @@ class FrameInfo(object):
         for variable in watch:
             result_items += sorted(variable.items(frame))
 
-        result = collections.OrderedDict()
+        result = OrderedDict()
         for source, value in result_items:
             result[source] = my_cheap_repr(value)
             for extra in watch_extras:
@@ -106,7 +106,7 @@ def len_watch(source, value):
     if (
             (isinstance(value, six.string_types)
              and length < 50) or
-            (isinstance(value, (collections.Mapping, collections.Set, collections.Sequence))
+            (isinstance(value, (Mapping, Set, Sequence))
              and length == 0)
     ):
         return None
@@ -198,15 +198,15 @@ class Tracer(object):
     ):
         self.watch = [
             v if isinstance(v, BaseVariable) else CommonVariable(v)
-            for v in utils.ensure_tuple(watch)
-         ] + [
-             v if isinstance(v, BaseVariable) else Exploding(v)
-             for v in utils.ensure_tuple(watch_explode)
+            for v in ensure_tuple(watch)
+        ] + [
+            v if isinstance(v, BaseVariable) else Exploding(v)
+            for v in ensure_tuple(watch_explode)
         ]
         if replace_watch_extras is not None:
-            self.watch_extras = utils.ensure_tuple(replace_watch_extras)
+            self.watch_extras = ensure_tuple(replace_watch_extras)
         else:
-            self.watch_extras = (len_watch, shape_watch) + utils.ensure_tuple(watch_extras)
+            self.watch_extras = (len_watch, shape_watch) + ensure_tuple(watch_extras)
         self.frame_infos = ArgDefaultDict(FrameInfo)
         self.depth = depth
         assert self.depth >= 1
@@ -277,13 +277,13 @@ class Tracer(object):
             if (
                     self.depth == 1
                     or self._is_internal_frame(frame)
-            ) and not utils.is_comprehension_frame(frame):
+            ) and not is_comprehension_frame(frame):
                 return None
             else:
                 candidate = frame
                 i = 0
                 while True:
-                    if utils.is_comprehension_frame(candidate):
+                    if is_comprehension_frame(candidate):
                         candidate = candidate.f_back
                         continue
                     i += 1
