@@ -2,13 +2,11 @@ import __future__
 import ast
 import inspect
 import pprint
-import sys
 import traceback
 import warnings
 from copy import deepcopy
 from uuid import uuid4
 
-import six
 from executing import only
 
 from snoop.formatting import Event, Source
@@ -44,7 +42,9 @@ class PP(object):
     def _pp(self, args, frame, deep):
         depth = getattr(self.config.thread_local, 'depth', 0)
         event = Event(FrameInfo(frame), 'log', None, depth)
-        exc_info = returns = None
+        formatted = self.config.formatter.format_log(event)
+        self.config.write(formatted)
+        returns = None
         try:
             assert not NO_ASTTOKENS
             call = Source.executing(frame).node
@@ -53,34 +53,32 @@ class PP(object):
         except Exception:
             if deep:
                 returns = args[0] = args[0]()
-            arg_sources = [
-                arg_source_placeholder(i, arg, args)
-                for i, arg in enumerate(args)
-            ]
+            for i, arg in enumerate(args):
+                self._write(event, *arg_source_placeholder(i, arg, args))
         else:
             if deep:
                 call_arg = only(call.args)
                 assert isinstance(call_arg, ast.Lambda)
-                arg_sources, returns, exc_info = deep_pp(event, call_arg.body, frame)
+                returns = deep_pp(self._write, event, call_arg.body, frame)
             else:
                 # noinspection PyTypeChecker
-                arg_sources = list(pp_arg_sources(args, call, event))
+                pp_arg_sources(self._write, args, call, event)
 
-        formatted = self.config.formatter.format_log(event, arg_sources)
-        self.config.write(formatted)
-        if exc_info:
-            six.reraise(*exc_info)
         return returns
 
+    def _write(self, event, source, value, depth):
+        formatted = self.config.formatter.format_log_value(event, source, value, depth)
+        self.config.write(formatted)
 
-def pp_arg_sources(args, call, event):
+
+def pp_arg_sources(write, args, call, event):
     for i, (call_arg, arg) in enumerate(zip(call.args, args)):
         try:
             source = event.source.get_text_with_indentation(call_arg)
         except Exception:
-            yield arg_source_placeholder(i, arg, args)
+            write(event, *arg_source_placeholder(i, arg, args))
         else:
-            yield root_arg_source(arg, source)
+            write(event, *root_arg_source(arg, source))
 
 
 def is_deep_arg(x):
@@ -164,9 +162,7 @@ future_flags = sum(
 )
 
 
-def deep_pp(event, call_arg, frame):
-    arg_sources = []
-
+def deep_pp(write, event, call_arg, frame):
     def before_expr(tree_index):
         node = event.source.nodes[tree_index]
         # TODO note node in case of exception
@@ -194,7 +190,7 @@ def deep_pp(event, call_arg, frame):
                     exception_string = ''.join(traceback.format_exception_only(type(e), e)).strip()
                     value_string = '<Exception in repr(): {}>'.format(exception_string)
 
-            arg_sources.append([source, value_string, node._depth - call_arg._depth])
+            write(event, source, value_string, node._depth - call_arg._depth)
         return value
 
     after_expr.name = 'after_' + uuid4().hex
@@ -213,13 +209,7 @@ def deep_pp(event, call_arg, frame):
     frame.f_globals[before_expr.name] = before_expr
     frame.f_globals[after_expr.name] = after_expr
     try:
-        result = eval(code, frame.f_globals, frame.f_locals)
-        exc_info = None
-    except:
-        result = None
-        exc_info = sys.exc_info()
-
-    frame.f_globals[before_expr.name] = lambda x: x
-    frame.f_globals[after_expr.name] = lambda node, value: value
-
-    return arg_sources, result, exc_info
+        return eval(code, frame.f_globals, frame.f_locals)
+    finally:
+        frame.f_globals[before_expr.name] = lambda x: x
+        frame.f_globals[after_expr.name] = lambda node, value: value

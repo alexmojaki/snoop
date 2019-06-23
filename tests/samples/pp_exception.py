@@ -34,8 +34,8 @@ expected_output = """
 Traceback (most recent call last):
     pp.deep(lambda: x + y + bad() + 2)
     return self._pp([arg], frame, deep=True)
-    six.reraise(*exc_info)
-    result = eval(code, frame.f_globals, frame.f_locals)
+    returns = deep_pp(self._write, event, call_arg.body, frame)
+    return eval(code, frame.f_globals, frame.f_locals)
     pp.deep(lambda: x + y + bad() + 2)
     raise TypeError('bad')
 TypeError: bad

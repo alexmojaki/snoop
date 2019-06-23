@@ -363,17 +363,18 @@ class DefaultFormatter(object):
     def format_line_only(self, event):
         return self.format_lines(event, [self.format_event(event)])
 
-    def format_log(self, event, values):
-        lines = ['LOG:']
-        for source, value, depth in values:
-            source_lines = indented_lines(
-                u'....{} '.format(depth * 4 * '.'),
-                source
-            )
-            lines += source_lines[:-1] + indented_lines(
-                source_lines[-1] + ' = ',
-                value,
-            )
+    def format_log(self, event):
+        return self.format_lines(event, ['LOG:'])
+    
+    def format_log_value(self, event, source, value, depth):
+        source_lines = indented_lines(
+            u'....{} '.format(depth * 4 * '.'),
+            source
+        )
+        lines = source_lines[:-1] + indented_lines(
+            source_lines[-1] + ' = ',
+            value,
+        )
         return self.format_lines(event, lines)
 
     def format_lines(self, event, lines):
