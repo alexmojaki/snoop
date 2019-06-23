@@ -48,7 +48,11 @@ class FrameInfo(object):
     def update_variables(self, watch, watch_extras, event):
         self.last_line_no = self.frame.f_lineno
         old_local_reprs = self.local_reprs
-        self.local_reprs = self.get_local_reprs(watch, watch_extras)
+        self.local_reprs = OrderedDict(
+            (source, my_cheap_repr(value))
+            for source, value in
+            self.get_local_reprs(watch, watch_extras)
+        )
 
         if self.comprehension_type:
             for name, value_repr in self.local_reprs.items():
@@ -75,15 +79,16 @@ class FrameInfo(object):
         code = frame.f_code
         vars_order = code.co_varnames + code.co_cellvars + code.co_freevars + tuple(frame.f_locals.keys())
 
-        result_items = [(key, value) for key, value in frame.f_locals.items()]
-        result_items.sort(key=lambda key_value: vars_order.index(key_value[0]))
+        result_items = sorted(
+            frame.f_locals.items(),
+            key=lambda key_value: vars_order.index(key_value[0])
+        )
 
         for variable in watch:
             result_items += sorted(variable.items(frame))
 
-        result = OrderedDict()
         for source, value in result_items:
-            result[source] = my_cheap_repr(value)
+            yield source, value
             for extra in watch_extras:
                 try:
                     pair = extra(source, value)
@@ -91,10 +96,9 @@ class FrameInfo(object):
                     pass
                 else:
                     if pair is not None:
-                        extra_source, extra_value = pair
-                        result[extra_source] = my_cheap_repr(extra_value)
+                        assert len(pair) == 2, "Watch extra must return pair or None"
+                        yield pair
 
-        return result
 
 
 def len_watch(source, value):
