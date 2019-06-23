@@ -60,7 +60,9 @@ def sample_traceback():
 def assert_sample_output(module):
     with sys_tools.OutputCapturer(stdout=False,
                                   stderr=True) as output_capturer:
+        assert sys.gettrace() is None
         module.main()
+        assert sys.gettrace() is None
 
     time = '12:34:56.78'
     time_pattern = re.sub(r'\d', r'\\d', time)

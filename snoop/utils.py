@@ -139,3 +139,7 @@ try:
 except:
     class FormattedValue(object):
         pass
+
+
+def no_args_decorator(args, kwargs):
+    return len(args) == 1 and inspect.isfunction(args[0]) and not kwargs

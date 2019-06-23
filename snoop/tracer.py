@@ -11,7 +11,7 @@ import six
 from cheap_repr import cheap_repr, find_repr_function
 
 from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, iscoroutinefunction, \
-    truncate_list, ensure_tuple, is_comprehension_frame
+    truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator
 from .formatting import Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
 
@@ -144,7 +144,7 @@ class TracerMeta(type):
         return result
 
     def __call__(cls, *args, **kwargs):
-        if len(args) == 1 and callable(args[0]) and not kwargs:
+        if no_args_decorator(args, kwargs):
             return cls.default(args[0])
         else:
             return super(TracerMeta, cls).__call__(*args, **kwargs)
@@ -218,6 +218,9 @@ class Tracer(object):
         self.target_frames = set()
 
     def __call__(self, function):
+        if iscoroutinefunction(function):
+            raise NotImplementedError("coroutines are not supported, sorry!")
+
         self.target_codes.add(function.__code__)
 
         @functools.wraps(function)
@@ -240,9 +243,7 @@ class Tracer(object):
                 except Exception as e:
                     method, incoming = gen.throw, e
 
-        if iscoroutinefunction(function):
-            raise NotImplementedError("coroutines are not supported, sorry!")
-        elif inspect.isgeneratorfunction(function):
+        if inspect.isgeneratorfunction(function):
             return generator_wrapper
         else:
             return simple_wrapper
@@ -275,9 +276,12 @@ class Tracer(object):
 
     def _is_internal_frame(self, frame):
         return frame.f_code.co_filename.startswith(internal_directories)
+    
+    def _is_traced_frame(self, frame):
+        return frame.f_code in self.target_codes or frame in self.target_frames
 
     def trace(self, frame, event, arg):
-        if not (frame.f_code in self.target_codes or frame in self.target_frames):
+        if not self._is_traced_frame(frame):
             if (
                     self.depth == 1
                     or self._is_internal_frame(frame)
@@ -291,7 +295,7 @@ class Tracer(object):
                         candidate = candidate.f_back
                         continue
                     i += 1
-                    if candidate.f_code in self.target_codes or candidate in self.target_frames:
+                    if self._is_traced_frame(candidate):
                         break
                     candidate = candidate.f_back
                     if i >= self.depth or candidate is None or self._is_internal_frame(candidate):
@@ -341,7 +345,7 @@ class Spy(object):
             raise Exception("You must install birdseye separately to use spy: pip install birdseye")
 
         # Decorator without parentheses
-        if len(args) == 1 and inspect.isfunction(args[0]) and not kwargs:
+        if no_args_decorator(args, kwargs):
             return self._trace(args[0])
 
         # Decorator with parentheses and perhaps arguments
