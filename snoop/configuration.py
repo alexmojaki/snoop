@@ -17,12 +17,34 @@ except ImportError:
     colorama = None
 
 
-def install(builtins=True, snoop="snoop", pp="pp", spy="spy", **kwargs):
+def install(
+        builtins=True,
+        snoop="snoop",
+        pp="pp",
+        spy="spy",
+        out=None,
+        prefix='',
+        columns='time',
+        overwrite=False,
+        color=None,
+        enabled=True,
+        formatter_class=DefaultFormatter,
+        use_colorama=True,
+):
     if builtins:
         setattr(builtins_module, snoop, package.snoop)
         setattr(builtins_module, pp, package.pp)
         setattr(builtins_module, spy, package.spy)
-    config = Config(**kwargs)
+    config = Config(
+        out=out,
+        prefix=prefix,
+        columns=columns,
+        overwrite=overwrite,
+        color=color,
+        enabled=enabled,
+        formatter_class=formatter_class,
+        use_colorama=use_colorama,
+    )
     package.snoop.config = config
     package.pp.config = config
     package.spy.config = config
