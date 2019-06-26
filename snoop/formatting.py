@@ -165,7 +165,7 @@ class DefaultFormatter(object):
         return short_filename(event.code)
 
     def full_file_column(self, event):
-        return event.code.co_filename
+        return _get_filename(event)
 
     def function_column(self, event):
         return event.code.co_name
