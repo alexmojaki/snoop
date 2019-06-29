@@ -12,9 +12,14 @@ from snoop.tracer import Spy, Tracer
 from snoop.pp_module import PP
 
 try:
-    import colorama
-except ImportError:
-    colorama = None
+    # Enable ANSI escape codes in Windows 10
+    import ctypes
+
+    kernel32 = ctypes.windll.kernel32
+    kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+    can_color = True
+except Exception:
+    can_color = os.name != 'nt'
 
 
 def install(
@@ -29,7 +34,6 @@ def install(
         color=None,
         enabled=True,
         formatter_class=DefaultFormatter,
-        use_colorama=True,
 ):
     if builtins:
         setattr(builtins_module, snoop, package.snoop)
@@ -43,7 +47,6 @@ def install(
         color=color,
         enabled=enabled,
         formatter_class=formatter_class,
-        use_colorama=use_colorama,
     )
     package.snoop.config = config
     package.pp.config = config
@@ -60,14 +63,15 @@ class Config(object):
             color=None,
             enabled=True,
             formatter_class=DefaultFormatter,
-            use_colorama=True,
     ):
-        isatty = getattr(out or sys.stderr, 'isatty', lambda: False)()
-        if color is None:
-            color = bool(isatty)
-        use_colorama = use_colorama and color and colorama and isatty and os.name == 'nt'
+        if can_color:
+            if color is None:
+                isatty = getattr(out or sys.stderr, 'isatty', lambda: False)
+                color = bool(isatty())
+        else:
+            color = False
 
-        self.write = get_write_function(out, overwrite, use_colorama)
+        self.write = get_write_function(out, overwrite)
         self.formatter = formatter_class(prefix, columns, color)
         self.enabled = enabled
         self.pp = PP(self)
@@ -82,7 +86,7 @@ class Config(object):
         self.thread_local = threading.local()
 
 
-def get_write_function(output, overwrite, use_colorama):
+def get_write_function(output, overwrite):
     is_path = (
         isinstance(output, six.string_types)
         or is_pathlike(output)
@@ -102,14 +106,11 @@ def get_write_function(output, overwrite, use_colorama):
             if stream is None:
                 stream = sys.stderr
 
-            if stream in (sys.stderr, sys.stdout) and use_colorama:
-                stream = colorama.AnsiToWin32(stream, convert=True)
-
             try:
                 stream.write(s)
             except UnicodeEncodeError:
                 # God damn Python 2
-                output.write(shitcode(s))
+                stream.write(shitcode(s))
     return write
 
 
