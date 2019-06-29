@@ -64,7 +64,7 @@ class Config(object):
     ):
         isatty = getattr(out or sys.stderr, 'isatty', lambda: False)()
         if color is None:
-            color = isatty
+            color = bool(isatty)
         use_colorama = use_colorama and color and colorama and isatty and os.name == 'nt'
 
         self.write = get_write_function(out, overwrite, use_colorama)

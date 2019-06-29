@@ -4,13 +4,18 @@ import threading
 import traceback
 from collections import defaultdict
 from datetime import datetime
+from functools import lru_cache
 from textwrap import dedent
 
 import executing
 import six
+from pygments import highlight
+from pygments.formatters.terminal256 import Terminal256Formatter
+from pygments.lexers.python import Python3Lexer, PythonLexer
+from six import PY3
 
 from snoop.utils import ensure_tuple, short_filename, with_needed_parentheses, my_cheap_repr, \
-    NO_ASTTOKENS, optional_numeric_label, try_statement, FormattedValue
+    NO_ASTTOKENS, optional_numeric_label, try_statement, FormattedValue, ArgDefaultDict
 
 
 class StatementsDict(dict):
@@ -33,8 +38,12 @@ class Source(executing.Source):
         super(Source, self).__init__(*args, **kwargs)
         if self.tree:
             self.lines = self.text.splitlines()
+            self.highlighted = ArgDefaultDict(
+                lambda style: raw_highlight(self.text, style).splitlines()
+            )
         else:
             self.lines = defaultdict(lambda: u'SOURCE IS UNAVAILABLE')
+            self.highlighted = defaultdict(lambda: self.lines)
         self.statements = StatementsDict(self)
         self.nodes = []
         if self.tree:
@@ -69,6 +78,30 @@ class Source(executing.Source):
         else:
             result = result.strip()
         return result
+
+
+if PY3:
+    lexer = Python3Lexer()
+else:
+    lexer = PythonLexer()
+
+
+class ForceWhiteTerminal256Formatter(Terminal256Formatter):
+    def _closest_color(self, r, g, b):
+        result = super(ForceWhiteTerminal256Formatter, self)._closest_color(r, g, b)
+        if result == 15:
+            result += 6 ** 3
+        return result
+
+
+formatters = ArgDefaultDict(lambda style: ForceWhiteTerminal256Formatter(style=style))
+
+
+def raw_highlight(code, style):
+    return highlight(code, lexer, formatters[style])
+
+
+cached_highlight = lru_cache(maxsize=1024)(raw_highlight)
 
 
 class Event(object):
@@ -116,23 +149,10 @@ class Event(object):
         return opcode.opname[code_byte]
 
 
-def highlight_python(code):
-    return code
-    # TODO
-    # import pygments
-    # from pygments.formatters.terminal256 import Terminal256Formatter
-    # from pygments.lexers.python import PythonLexer
-    # return pygments.highlight(
-    #     code,
-    #     PythonLexer(),
-    #     Terminal256Formatter(),
-    # ).rstrip()
-
-
 class DefaultFormatter(object):
     datetime_format = None
 
-    def __init__(self, prefix='', columns='time', color=False):
+    def __init__(self, prefix, columns, color):
         prefix = six.text_type(prefix)
         if prefix and prefix == prefix.rstrip():
             prefix += ' '
@@ -143,10 +163,28 @@ class DefaultFormatter(object):
             for column in ensure_tuple(columns, split=True)
         ]
         self.column_widths = dict.fromkeys(self.columns, 0)
+        if color is True:
+            color = "monokai"
         if color:
             self.c = Colors
+
+            def highlighted(code):
+                return cached_highlight(code, color)
+
+            def highlighted_source_line(event):
+                return event.source.highlighted[color][event.line_no - 1]
         else:
             self.c = NoColors()
+
+            def highlighted(code):
+                return code
+
+            def highlighted_source_line(event):
+                return event.source_line
+
+        self.highlighted = highlighted
+        self.highlighted_source_line = highlighted_source_line
+
 
     def thread_column(self, _event):
         return threading.current_thread().name
@@ -239,7 +277,7 @@ class DefaultFormatter(object):
             elif opname not in ('RETURN_VALUE', 'YIELD_VALUE'):
                 return [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
 
-        value = highlight_python(my_cheap_repr(arg))
+        value = self.highlighted(my_cheap_repr(arg))
         if event.comprehension_type:
             prefix = plain_prefix = u'Result: '
         else:
@@ -306,7 +344,7 @@ class DefaultFormatter(object):
                 else:
                     description = 'Call to'
             return [
-                u'{c.cyan}>>> {description} {c.reset}{name}{c.cyan} in {c.reset}File "{filename}", line {lineno}'.format(
+                u'{c.cyan}>>> {description} {name} in File "{filename}", line {lineno}{c.reset}'.format(
                     name=event.code_qualname(),
                     filename=_get_filename(event),
                     lineno=event.line_no,
@@ -356,7 +394,7 @@ class DefaultFormatter(object):
 
     def format_event(self, entry):
         return u'{c.grey}{line_no:4}{c.reset} | {source_line}'.format(
-            source_line=highlight_python(entry.source_line),
+            source_line=self.highlighted_source_line(entry),
             c=self.c,
             **entry.__dict__
         )
@@ -373,7 +411,7 @@ class DefaultFormatter(object):
             description=description,
             dots=dots,
         )
-        return indented_lines(prefix, highlight_python(value))
+        return indented_lines(prefix, self.highlighted(value))
 
     def format_line_only(self, event):
         return self.format_lines(event, [self.format_event(event)])
@@ -382,13 +420,17 @@ class DefaultFormatter(object):
         return self.format_lines(event, ['LOG:'])
     
     def format_log_value(self, event, source, value, depth):
-        source_lines = indented_lines(
-            u'....{} '.format(depth * 4 * '.'),
-            source
-        )
-        lines = source_lines[:-1] + indented_lines(
-            source_lines[-1] + ' = ',
+        prefix = u'....{} '.format(depth * 4 * '.')
+        plain_source_lines = indented_lines(prefix, source)
+        highl_source_lines = indented_lines(prefix, self.highlighted(source))
+
+        plain_prefix = plain_source_lines[-1] + ' = '
+        highl_prefix = highl_source_lines[-1] + ' = '
+
+        lines = highl_source_lines[:-1] + indented_lines(
+            highl_prefix,
             value,
+            plain_prefix=plain_prefix
         )
         return self.format_lines(event, lines)
 
