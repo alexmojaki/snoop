@@ -11,7 +11,7 @@ for color in [False, True]:
 
 def main():
     exec(string, {})
-main()
+
 
 expected_output = """
 12:34:56.78 >>> Call to foo in File "/path/to_file.py", line 4

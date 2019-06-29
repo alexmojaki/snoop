@@ -107,11 +107,16 @@ def test_samples():
         if module_name in '__init__ __pycache__':
             continue
 
-        if module_name in 'django_sample' and six.PY2:
+        if module_name in 'django_sample color'.split() and six.PY2:
+            continue
+        
+        if module_name in 'color2'.split() and six.PY3:
             continue
     
         if NO_ASTTOKENS:
-            if module_name in 'pandas_sample spy pp pp_exception enabled exception color':
+            if module_name in 'pandas_sample spy pp pp_exception enabled exception color color2'.split():
+                continue
+            if module_name in 'no_asttokens_color' and six.PY2:
                 continue
         else:
             if module_name.startswith('no_asttokens'):
