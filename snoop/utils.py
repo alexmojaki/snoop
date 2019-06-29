@@ -143,3 +143,9 @@ except:
 
 def no_args_decorator(args, kwargs):
     return len(args) == 1 and inspect.isfunction(args[0]) and not kwargs
+
+
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache

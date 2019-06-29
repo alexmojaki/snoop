@@ -4,7 +4,6 @@ import threading
 import traceback
 from collections import defaultdict
 from datetime import datetime
-from functools import lru_cache
 from textwrap import dedent
 
 import executing
@@ -15,7 +14,7 @@ from pygments.lexers.python import Python3Lexer, PythonLexer
 from six import PY3
 
 from snoop.utils import ensure_tuple, short_filename, with_needed_parentheses, my_cheap_repr, \
-    NO_ASTTOKENS, optional_numeric_label, try_statement, FormattedValue, ArgDefaultDict
+    NO_ASTTOKENS, optional_numeric_label, try_statement, FormattedValue, ArgDefaultDict, lru_cache
 
 
 class StatementsDict(dict):

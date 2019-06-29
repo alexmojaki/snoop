@@ -40,6 +40,13 @@ else:
         'colorama',
     ]
 
+
+try:
+    from functools import lru_cache
+except ImportError:
+    install_requires += ['backports.functools_lru_cache']
+
+
 tests_require = [
     'pytest',
     'python_toolbox',
