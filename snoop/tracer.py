@@ -158,40 +158,6 @@ class TracerMeta(type):
 
 @six.add_metaclass(TracerMeta)
 class Tracer(object):
-    '''
-    Snoop on the function, writing everything it's doing to stderr.
-
-    This is useful for debugging.
-
-    When you decorate a function with `@snoop()`
-    or wrap a block of code in `with snoop():`, you'll get a log of
-    every line that ran in the function and a play-by-play of every local
-    variable that changed.
-
-    If stderr is not easily accessible for you, you can redirect the output to
-    a file::
-
-        @snoop('/my/log/file.log')
-
-    See values of some expressions that aren't local variables::
-
-        @snoop(watch=('foo.bar', 'self.x["whatever"]'))
-
-    Expand values to see all their attributes or items of lists/dictionaries:
-
-        @snoop(watch_explode=('foo', 'self'))
-
-    (see Advanced Usage in the README for more control)
-
-    Show snoop lines for functions that your function calls::
-
-        @snoop(depth=2)
-
-    Start all snoop lines with a prefix, to grep for them easily::
-
-        @snoop(prefix='ZZZ ')
-    '''
-
     def __init__(
             self,
             watch=(),

@@ -220,7 +220,9 @@ The only big disadvantage of `@spy` is that it significantly reduces performance
 
 `spy` passes its arguments to `snoop`, so e.g. `@spy(depth=2, watch='x.y')` works.
 
-[Read more about `birdseye` in the documentation here.](https://birdseye.readthedocs.io/en/latest/) 
+[Read more about `birdseye` in the documentation here.](https://birdseye.readthedocs.io/en/latest/)
+
+('`spy`' is so named because it's a combination of the decorator names '`snoop`' and '`eye`')  
 
 ## `install()`
 
@@ -261,8 +263,8 @@ You can also dynamically re-enable the functions at any point by calling `snoop.
     - Anything with a `write` method, e.g. `sys.stdout` or a file object.
     - Any callable with a single string argument, e.g. `logger.info`.
  - `color`: determines whether the output includes escape characters to display colored text in the console. If you see weird characters in your output, your console doesn't support colors, so pass `color=False`.
-    - By default this is `out.isatty()`, which is usually true for stdout and stderr but will be false if they are redirected or piped. Pass `True` if you want to force coloring.
-    - On Windows, [`colorama`](https://github.com/tartley/colorama) is used to display the colors if `out.isatty()`. If this causes problems and your console can actually support colors fine, pass `use_colorama=False` or uninstall colorama.
+    - Code is syntax highlighted using [Pygments](http://pygments.org/), and this argument is passed as the style. You can choose a different color scheme by passing a string naming a style (see [this gallery](https://help.farbox.com/pygments.html)) or a style class. The default style is monokai.   
+    - By default this parameter is set to `out.isatty()`, which is usually true for stdout and stderr but will be false if they are redirected or piped. Pass `True` or a style if you want to force coloring.
     - To see colors in the PyCharm Run window, edit the Run Configuration and tick "Emulate terminal in output console".
  - `prefix`: Pass a string to start all snoop lines with that string so you can grep for them easily.
  - `columns`: This specifies the columns at the start of each output line. You can pass a string with the names of built in columns separated by spaces or commas. These are the available columns:
@@ -350,6 +352,8 @@ Read more [here](https://github.com/alexmojaki/cheap_repr#registering-your-own-r
 ### Multiple separate configurations
 
 If you need more control than the global `install` function, e.g. if you want to write to several different files in one process, you can create a `Config` object, e.g: `config = snoop.Config(out=filename)`. Then `config.snoop`, `config.pp` and `config.spy` will use that configuration rather than the global one.
+
+The arguments are the same as the arguments of `install()` relating to output configuration and `enabled`.
 
 ## Contribute
 

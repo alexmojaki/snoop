@@ -1,18 +1,16 @@
 '''
-PySnooper - Never use print for debugging again
-
 Usage:
 
     import snoop
 
-    @snoop.snoop()
+    @snoop
     def your_function(x):
         ...
 
 A log will be written to stderr showing the lines executed and variables
 changed in the decorated function.
 
-For more information, see https://github.com/cool-RR/PySnooper
+For more information, see https://github.com/alexmojaki/snoop
 '''
 
 from .configuration import install, Config

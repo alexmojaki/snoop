@@ -35,6 +35,34 @@ def install(
         enabled=True,
         formatter_class=DefaultFormatter,
 ):
+    """
+    Configure output, enable or disable, and add names to builtins. Parameters:
+    
+    - builtins: set to False to not add any names to builtins,
+        so importing will still be required.
+    - snoop, pp, and spy: set to other strings 
+        to choose the names of these functions in builtins
+    - `out`: determines the output destination. By default this is stderr. You can also pass:
+        - A string or a `Path` object to write to a file at that location. By default this always will append to the file. Pass `overwrite=True` to clear the file initially.
+        - Anything with a `write` method, e.g. `sys.stdout` or a file object.
+        - Any callable with a single string argument, e.g. `logger.info`.
+    - `color`: determines whether the output includes escape characters to display colored text in the console. If you see weird characters in your output, your console doesn't support colors, so pass `color=False`.
+        - Code is syntax highlighted using [Pygments](http://pygments.org/), and this argument is passed as the style. You can choose a different color scheme by passing a string naming a style (see [this gallery](https://help.farbox.com/pygments.html)) or a style class. The default style is monokai.   
+        - By default this parameter is set to `out.isatty()`, which is usually true for stdout and stderr but will be false if they are redirected or piped. Pass `True` or a style if you want to force coloring.
+        - To see colors in the PyCharm Run window, edit the Run Configuration and tick "Emulate terminal in output console".
+    - `prefix`: Pass a string to start all snoop lines with that string so you can grep for them easily.
+    - `columns`: This specifies the columns at the start of each output line. You can pass a string with the names of built in columns separated by spaces or commas. These are the available columns:
+        - `time`: The current time. This is the only column by default.
+        - `thread`: The name of the current thread.  
+        - `thread_ident`: The [identifier](https://docs.python.org/3/library/threading.html#threading.Thread.ident) of the current thread, in case thread names are not unique.
+        - `file`: The filename (not the full path) of the current function.
+        - `full_file`: The full path to the file (also shown anyway when the function is called).
+        - `function`: The name of the current function.
+        - `function_qualname`: The qualified name of the current function.
+        
+        If you want a custom column, please open an issue to tell me what you're interested in! In the meantime, you can pass a list, where the elements are either strings or callables. The callables should take one argument, which will be an `Event` object. It has attributes `frame`, `event`, and `arg`, as specified in [`sys.settrace()`](https://docs.python.org/3/library/sys.html#sys.settrace), and other attributes which may change. 
+    """
+    
     if builtins:
         setattr(builtins_module, snoop, package.snoop)
         setattr(builtins_module, pp, package.pp)
@@ -54,6 +82,12 @@ def install(
 
 
 class Config(object):
+    """"
+    If you need more control than the global `install` function, e.g. if you want to write to several different files in one process, you can create a `Config` object, e.g: `config = snoop.Config(out=filename)`. Then `config.snoop`, `config.pp` and `config.spy` will use that configuration rather than the global one.
+    
+    The arguments are the same as the arguments of `install()` relating to output configuration and `enabled`.
+    """
+    
     def __init__(
             self,
             out=None,
