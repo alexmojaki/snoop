@@ -70,7 +70,7 @@ def assert_sample_output(module):
     output = output_capturer.string_io.getvalue()
 
     normalised = re.sub(time_pattern, time, output).strip()
-    normalised = re.sub(r'at 0x\w+>', 'at 0xABC>', normalised)
+    normalised = re.sub(r'0x\w+', '0xABC', normalised)
     normalised = normalised.replace('<genexpr>.<genexpr>', '<genexpr>')
     normalised = normalised.replace('<list_iterator', '<tupleiterator')
     normalised = normalised.replace('<listiterator', '<tupleiterator')
