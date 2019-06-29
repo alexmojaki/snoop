@@ -26,6 +26,7 @@ install_requires = [
     'cheap_repr>=0.4.0',
     'executing',
     'asttokens',
+    'pygments',
 ]
 
 try:
