@@ -12,6 +12,25 @@ Most people would use `print` lines, in strategic locations, some of them showin
 
 Installation is as simple as `pip install snoop`.
 
+  * [Basic snoop usage](#basic-snoop-usage)
+     * [Common arguments](#common-arguments)
+  * [pp - awesome print debugging](#pp---awesome-print-debugging)
+     * [pp.deep for tracing subexpressions](#ppdeep-for-tracing-subexpressions)
+  * [@spy](#spy)
+  * [install()](#install)
+     * [Disabling](#disabling)
+     * [Output configuration](#output-configuration)
+  * [API differences from PySnooper](#api-differences-from-pysnooper)
+  * [Advanced usage](#advanced-usage)
+     * [watch_extras](#watch_extras)
+     * [Controlling watch_explode](#controlling-watch_explode)
+     * [Customising the display of variables](#customising-the-display-of-variables)
+     * [Multiple separate configurations](#multiple-separate-configurations)
+  * [Contribute](#contribute)
+     * [Feedback and discussions](#feedback-and-discussions)
+     * [Developing](#developing)
+
+
 ## Basic snoop usage
 
 We're writing a function that converts a number to binary, by returning a list of bits. Let's snoop on it by adding the `@snoop` decorator:
@@ -98,7 +117,7 @@ which outputs something like:
 
 ![foo output](https://i.imgur.com/aBVXFSQ.png)
 
-### Basic arguments to snoop
+### Common arguments
 
 - `depth`: as seen above, snoops deeper calls made by the function/block you trace. The default is 1, meaning no inner calls, so pass something bigger.
 - `watch`: show values of arbitrary expressions by specifying them as a string, e.g:
