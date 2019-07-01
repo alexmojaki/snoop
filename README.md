@@ -37,7 +37,7 @@ Note how easy it is: Just `import snoop` and `@snoop`. If you don't like the mag
 
 The output to stderr looks like this:
 
-TODO
+![number_to_bits output](https://i.imgur.com/3ozqWam.png)
 
 Let's try a more complex example. We're writing a memoizing decorator: it stores function arguments and return values in a cache to avoid recomputation:
 
@@ -69,7 +69,7 @@ add(1, 2)
 
 Here we specify `depth=2` to mean we should also step one level down into inner function calls. We then call the function twice to see the caching in action. Here's the output:
 
-TODO
+![cache output](https://i.imgur.com/PMsBHu9.png)
 
 At a glance we can see that in the first call the cache lookup failed with a `KeyError` so the original `add` function was called, while in the second call the previously cached result was returned immediately. 
 
@@ -96,7 +96,7 @@ foo()
 
 which outputs something like:
 
-TODO
+![foo output](https://i.imgur.com/aBVXFSQ.png)
 
 ### Basic arguments to snoop
 
@@ -349,6 +349,14 @@ def repr_my_class(x, helper):
 
 Read more [here](https://github.com/alexmojaki/cheap_repr#registering-your-own-repr-function).
 
+You can also increase the verbosity of individual classes (see the documentation), e.g:
+
+```python
+from cheap_repr import find_repr_function
+
+find_repr_function(list).maxparts = 100
+```
+
 ### Multiple separate configurations
 
 If you need more control than the global `install` function, e.g. if you want to write to several different files in one process, you can create a `Config` object, e.g: `config = snoop.Config(out=filename)`. Then `config.snoop`, `config.pp` and `config.spy` will use that configuration rather than the global one.
@@ -359,7 +367,7 @@ The arguments are the same as the arguments of `install()` relating to output co
 
 ### Feedback and discussions
 
-I'd love to hear from users! Obviously [open an issue](https://github.com/alexmojaki/snoop/issues/new) if you have one, but also check out the issues with the 'discussion' label. There's still a lot more work that can be done and I really want people's opinions so that I can do it right.
+I'd love to hear from users! Obviously [open an issue](https://github.com/alexmojaki/snoop/issues/new) if you have one, but also check out [the issues with the 'discussion' label](https://github.com/alexmojaki/snoop/issues?q=is%3Aissue+is%3Aopen+label%3Adiscussion). There's still a lot more work that can be done and I really want people's opinions so that I can do it right.
 
 You can also [email me](mailto:alex.mojaki@gmail.com) what you like or hate about `snoop`. Just knowing it's being used is helpful.
 

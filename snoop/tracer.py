@@ -134,7 +134,7 @@ try:
 except ImportError:
     pass
 else:
-    internal_directories += (os.path.dirname(birdseye.BirdsEye.trace_function.__code__.co_filename),)
+    internal_directories += (os.path.dirname(birdseye.__file__),)
 
 
 class TracerMeta(type):
