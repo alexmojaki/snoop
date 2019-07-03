@@ -185,7 +185,7 @@ There are a few situations where `pp` can't find the source code of its argument
  
 Under the hood, `pp` uses the library [`executing`](https://github.com/alexmojaki/executing) to locate the AST node of the function call - check it out if you'd like to write some cool utilities of your own.
 
-`pp` is inspired by [icecream](https://github.com/gruns/icecream) and offers the same basic API for printing, but icecream's algorithm is less accurate than `executing`, and `pp` integrates seamlessly with `snoop`. It also offers `pp.deep`, which is unique.
+`pp` is inspired by [icecream](https://github.com/gruns/icecream) and offers the same basic API for printing, but [icecream's algorithm is less accurate than `executing`](https://github.com/gruns/icecream/pull/33), and `pp` integrates seamlessly with `snoop`. It also offers `pp.deep`, which is unique.
 
 '`pp`' stands for 'pretty-print' and *totally definitely absolutely has no other meaning*. It's also very easy and quick to type.
 
