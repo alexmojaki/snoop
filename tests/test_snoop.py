@@ -189,11 +189,6 @@ def test_overwrite():
         assert output == u'doo be doo'
 
 
-def test_error_in_overwrite_argument():
-    with pytest.raises(Exception, match='can only be used when writing'):
-        Config(overwrite=True)
-
-
 def test_needs_parentheses():
     assert not needs_parentheses('x')
     assert not needs_parentheses('x.y')

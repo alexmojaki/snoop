@@ -125,10 +125,6 @@ def get_write_function(output, overwrite):
         isinstance(output, six.string_types)
         or is_pathlike(output)
     )
-    if overwrite and not is_path:
-        raise Exception('`overwrite=True` can only be used when writing '
-                        'content to file.')
-
     if is_path:
         return FileWriter(output, overwrite).write
     elif callable(output):
