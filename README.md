@@ -141,7 +141,7 @@ This will output lines like:
 
 See [Controlling `watch_explode`](#controlling-watch_explode) for more advanced usage of this argument.
 
-See [`watch_extras](#watch_extras) to show additional information about any value (local variable, watched expression, or exploded item) automatically.
+See [`watch_extras`](#watch_extras) to show additional information about any value (local variable, watched expression, or exploded item) automatically.
 
 ## `pp` - awesome print debugging
 
@@ -208,6 +208,8 @@ Output:
 12:34:56.78 ........ max(y + 2, y + 3) = 5
 12:34:56.78 .... x + 1 + max(y + 2, y + 3) = 7
 ```
+
+(the values of literals and builtins are left out because they're trivial)
 
 If you like this, you'll probably love `@spy`.
 
@@ -402,25 +404,19 @@ Tox installs all dependencies automatically. You only need to install Tox itself
 $ pip install tox
 ```
 
-List all environments `tox` would run:
-
-```console
-$ tox -lv
-```
-
 If you want to run tests against all target Python versions use [pyenv](
 https://github.com/pyenv/pyenv) to install them. Otherwise, you can run
-only linters and the ones you have already installed on your machine:
+only the ones you have already installed on your machine:
 
 ```console
-# run only some environments
-$ tox -e flake8,pylint,bandit,py27,py36
+# run only some interpreters
+$ tox -e py27,py36
 ```
 
 Or just install project in developer mode with test dependencies:
 
 ``` bash
-$ pip install -e path/to/PySnooper[tests]
+$ pip install -e path/to/snoop[tests]
 ```
 
 And run tests:
