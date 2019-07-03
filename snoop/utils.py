@@ -8,7 +8,7 @@ from cheap_repr import cheap_repr
 
 NO_ASTTOKENS = (
         'pypy' in sys.version.lower()
-        or sys.version_info[:2] == (3, 4)
+        or sys.version_info[:2] in [(3, 4), (3, 8)]
 )
 
 file_reading_errors = (
