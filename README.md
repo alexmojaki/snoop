@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/alexmojaki/snoop.svg?branch=master)](https://travis-ci.org/alexmojaki/snoop) [![Supports Python versions 2.7 and 3.4+, including PyPy](https://img.shields.io/pypi/pyversions/snoop.svg)](https://pypi.python.org/pypi/snoop)
 
-snoop is a powerful set of Python debugging tools. It's primarily meant to be a more featureful version of [PySnooper](https://github.com/cool-RR/pysnooper). It also includes a more accurate version of [icecream](https://github.com/gruns/icecream) and some other nifty stuff.
+snoop is a powerful set of Python debugging tools. It's primarily meant to be a [more featureful and refined](https://github.com/alexmojaki/snoop/wiki/Comparison-to-PySnooper) version of [PySnooper](https://github.com/cool-RR/pysnooper). It also includes a more accurate version of [icecream](https://github.com/gruns/icecream) and some other nifty stuff.
 
 You're trying to figure out why your Python code isn't doing what you think it should be doing. You'd love to use a full-fledged debugger with breakpoints and watches, but you can't be bothered to set one up right now.
 
@@ -310,6 +310,8 @@ If you're familiar with `PySnooper` and want to use `snoop`, there are a few thi
 - Instead of `snoop(thread_info=True)`, write `install(columns='time thread thread_ident')`.
 - Instead of the environment variable `PYSNOOPER_DISABLED`, use `install(enabled=False)`. 
 - Instead of using `custom_repr`, see [`watch_extras`](#watch_extras) and [Customising the display of variables](#customising-the-display-of-variables).
+
+If you're not sure if it's worth using `snoop` instead of `PySnooper`, [read the comparison here](https://github.com/alexmojaki/snoop/wiki/Comparison-to-PySnooper).
 
 ## Advanced usage
 
