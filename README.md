@@ -1,5 +1,7 @@
 # snoop
 
+[![Build Status](https://travis-ci.org/alexmojaki/snoop.svg?branch=master)](https://travis-ci.org/alexmojaki/snoop) [![Supports Python versions 2.7 and 3.4+, including PyPy](https://img.shields.io/pypi/pyversions/snoop.svg)](https://pypi.python.org/pypi/snoop)
+
 snoop is a powerful set of Python debugging tools. It's primarily meant to be a more featureful version of [PySnooper](https://github.com/cool-RR/pysnooper). It also includes a more accurate version of [icecream](https://github.com/gruns/icecream) and some other nifty stuff.
 
 You're trying to figure out why your Python code isn't doing what you think it should be doing. You'd love to use a full-fledged debugger with breakpoints and watches, but you can't be bothered to set one up right now.
