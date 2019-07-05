@@ -18,8 +18,6 @@ from snoop.configuration import Config
 from snoop.pp_module import is_deep_arg
 from snoop.utils import truncate_string, truncate_list, needs_parentheses, NO_ASTTOKENS
 
-fix = 0
-
 current_thread()._ident = current_thread()._Thread__ident = 123456789
 
 formatting._get_filename = lambda _: "/path/to_file.py"
@@ -83,7 +81,7 @@ def assert_sample_output(module):
                 module.expected_output.strip()
         )
     except AssertionError:
-        if fix:
+        if os.environ.get('FIX_SNOOP_TESTS'):
             path = module.__file__.rstrip('c')
             contents = file_to_string(path)
             match = re.search(
