@@ -27,6 +27,7 @@ expected_output = """
 12:34:56.78 ................ y = 2
 12:34:56.78 ............ x + y = 3
 12:34:56.78 ................ bad = <function bad at 0xABC>
+12:34:56.78 ............ bad() = !!! TypeError!
 12:34:56.78 !!! TypeError: bad
 12:34:56.78 !!! When calling: pp.deep(...)
 12:34:56.78   10 |     except:

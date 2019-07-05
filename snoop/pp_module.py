@@ -4,6 +4,7 @@ import pprint
 import traceback
 import warnings
 from copy import deepcopy
+from threading import current_thread
 from uuid import uuid4
 
 from executing import only, future_flags
@@ -97,14 +98,21 @@ class PPEvent(object):
                 self.write_placeholder(i, arg)
 
     def deep_pp(self, call_arg, frame):
+        stack = []
+        thread = current_thread()
+        
         def before_expr(tree_index):
             node = self.event.source.nodes[tree_index]
-            # TODO note node in case of exception
+            if thread == current_thread():
+                stack.append(node)
             return node
 
         before_expr.name = 'before_' + uuid4().hex
 
         def after_expr(node, value):
+            if thread == current_thread():
+                assert node is stack.pop()
+
             try:
                 ast.literal_eval(node)
                 is_obvious = True
@@ -135,9 +143,23 @@ class PPEvent(object):
         frame.f_globals[after_expr.name] = after_expr
         try:
             return eval(code, frame.f_globals, frame.f_locals)
+        except Exception as e:
+            if stack:
+                last_node = stack[-1]
+                self.write_node(
+                    last_node,
+                    DirectRepr('!!! {}!'.format(e.__class__.__name__)),
+                    last_node._depth - call_arg._depth,
+                )
+            raise
         finally:
             frame.f_globals[before_expr.name] = lambda x: x
             frame.f_globals[after_expr.name] = lambda node, value: value
+
+
+class DirectRepr(str):
+    def __repr__(self):
+        return self
 
 
 def is_deep_arg(x):

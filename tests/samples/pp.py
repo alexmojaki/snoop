@@ -15,7 +15,13 @@ def main():
     pp(dict.fromkeys(range(30), 4))
     pp.deep(lambda: BadRepr() and 1)
     pp.deep(lambda: 1 / 2)
-    
+
+    try:
+        pp.deep(lambda: max(y + 2, (y + 3) / 0))
+    except ZeroDivisionError:
+        pass
+    else:
+        assert 0
 
 
 class BadRepr(object):
@@ -149,5 +155,17 @@ expected_output = """
 12:34:56.78   17 |     pp.deep(lambda: 1 / 2)
 12:34:56.78 LOG:
 12:34:56.78 .... 1 / 2 = 0.5
+12:34:56.78   19 |     try:
+12:34:56.78   20 |         pp.deep(lambda: max(y + 2, (y + 3) / 0))
+12:34:56.78 LOG:
+12:34:56.78 ............ y = 2
+12:34:56.78 ........ y + 2 = 4
+12:34:56.78 ................ y = 2
+12:34:56.78 ............ y + 3 = 5
+12:34:56.78 ........ (y + 3) / 0 = !!! ZeroDivisionError!
+12:34:56.78 !!! ZeroDivisionError: division by zero
+12:34:56.78 !!! When calling: pp.deep(...)
+12:34:56.78   21 |     except ZeroDivisionError:
+12:34:56.78   22 |         pass
 12:34:56.78 <<< Return value from main: None
 """
