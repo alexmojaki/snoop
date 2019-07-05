@@ -22,7 +22,6 @@ __version__ = re.search(r"__version__ = '([.\d]+)'", contents).group(1)
 
 install_requires = [
     'six',
-    'littleutils',
     'cheap_repr>=0.4.0',
     'executing',
     'asttokens',
@@ -51,6 +50,7 @@ except ImportError:
 tests_require = [
     'pytest',
     'python_toolbox',
+    'littleutils',
 ]
 
 if 'pypy' not in sys.version.lower() and sys.version_info[:2] not in [(3, 4), (3, 8)]:
