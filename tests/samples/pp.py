@@ -23,10 +23,18 @@ def main():
     else:
         assert 0
 
+    f = pp.deep(lambda: caller(lambda: 2 * 3))
+    f()
+
 
 class BadRepr(object):
     def __repr__(self):
         raise ValueError('bad')
+
+
+def caller(f):
+    f()
+    return f
 
 
 expected_output = """
@@ -167,5 +175,18 @@ expected_output = """
 12:34:56.78 !!! When calling: pp.deep(...)
 12:34:56.78   21 |     except ZeroDivisionError:
 12:34:56.78   22 |         pass
+12:34:56.78   26 |     f = pp.deep(lambda: caller(lambda: 2 * 3))
+12:34:56.78 LOG:
+12:34:56.78 ........ caller = <function caller at 0xABC>
+12:34:56.78 ........ lambda: 2 * 3 = <function <lambda> at 0xABC>
+12:34:56.78 ............ 2 * 3 = 6
+12:34:56.78 .... caller(lambda: 2 * 3) = <function <lambda> at 0xABC>
+12:34:56.78 .......... f = <function <lambda> at 0xABC>
+12:34:56.78   27 |     f()
+    12:34:56.78 >>> Call to main.<locals>.<lambda> in File "/path/to_file.py", line 26
+    12:34:56.78   26 |     f = pp.deep(lambda: caller(lambda: 2 * 3))
+    12:34:56.78   26 |     f = pp.deep(lambda: caller(lambda: 2 * 3))
+    12:34:56.78 <<< Return value from main.<locals>.<lambda>: 6
+12:34:56.78   27 |     f()
 12:34:56.78 <<< Return value from main: None
 """
