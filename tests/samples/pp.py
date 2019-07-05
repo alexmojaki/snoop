@@ -1,7 +1,7 @@
 from __future__ import division
 
 
-@snoop(depth=30)
+@snoop(depth=3)
 def main():
     x = 1
     y = 2
