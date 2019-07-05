@@ -61,7 +61,7 @@ class PPEvent(object):
         else:
             if deep:
                 call_arg = only(call.args)
-                assert isinstance(call_arg, ast.Lambda)
+                assert isinstance(call_arg, ast.Lambda), "You must pass a lambda DIRECTLY to pp.deep, not as a result of any other expression"
                 self.returns = self.deep_pp(call_arg.body, frame)
             else:
                 self.plain_pp(args, call.args)
