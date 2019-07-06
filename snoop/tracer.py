@@ -101,7 +101,15 @@ class FrameInfo(object):
 
 
 
-def len_watch(source, value):
+def len_shape_watch(source, value):
+    try:
+        shape = value.shape
+    except Exception:
+        pass
+    else:
+        if not inspect.ismethod(shape):
+            return '{}.shape'.format(source), shape
+
     if isinstance(value, QuerySet):
         # Getting the length of a Django queryset evaluates it
         return None
@@ -118,15 +126,8 @@ def len_watch(source, value):
     return 'len({})'.format(source), length
 
 
-def shape_watch(source, value):
-    shape = value.shape
-    if inspect.ismethod(shape):
-        return None
-    return '{}.shape'.format(source), shape
-
-
 thread_global = threading.local()
-internal_directories = (os.path.dirname(shape_watch.__code__.co_filename),)
+internal_directories = (os.path.dirname(len_shape_watch.__code__.co_filename),)
 
 try:
     # noinspection PyUnresolvedReferences
@@ -176,7 +177,7 @@ class Tracer(object):
         if replace_watch_extras is not None:
             self.watch_extras = ensure_tuple(replace_watch_extras)
         else:
-            self.watch_extras = (len_watch, shape_watch) + ensure_tuple(watch_extras)
+            self.watch_extras = (len_shape_watch,) + ensure_tuple(watch_extras)
         self.frame_infos = ArgDefaultDict(FrameInfo)
         self.depth = depth
         assert self.depth >= 1
