@@ -1,10 +1,10 @@
-from collections import Set, OrderedDict, Mapping, Sequence
 import functools
 import inspect
+import os
 import re
 import sys
 import threading
-import os
+from collections import OrderedDict
 
 import six
 # noinspection PyUnresolvedReferences
@@ -14,12 +14,6 @@ from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, iscoroutine
     truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator
 from .formatting import Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
-
-try:
-    from django.db.models import QuerySet
-except ImportError:
-    class QuerySet(object):
-        pass
 
 find_repr_function(six.text_type).maxparts = 100
 find_repr_function(six.binary_type).maxparts = 100
@@ -100,34 +94,8 @@ class FrameInfo(object):
                         yield pair
 
 
-
-def len_shape_watch(source, value):
-    try:
-        shape = value.shape
-    except Exception:
-        pass
-    else:
-        if not inspect.ismethod(shape):
-            return '{}.shape'.format(source), shape
-
-    if isinstance(value, QuerySet):
-        # Getting the length of a Django queryset evaluates it
-        return None
-
-    length = len(value)
-    if (
-            (isinstance(value, six.string_types)
-             and length < 50) or
-            (isinstance(value, (Mapping, Set, Sequence))
-             and length == 0)
-    ):
-        return None
-
-    return 'len({})'.format(source), length
-
-
 thread_global = threading.local()
-internal_directories = (os.path.dirname(len_shape_watch.__code__.co_filename),)
+internal_directories = (os.path.dirname((lambda: 0).__code__.co_filename),)
 
 try:
     # noinspection PyUnresolvedReferences
@@ -163,8 +131,6 @@ class Tracer(object):
             self,
             watch=(),
             watch_explode=(),
-            watch_extras=(),
-            replace_watch_extras=None,
             depth=1,
     ):
         self.watch = [
@@ -174,10 +140,6 @@ class Tracer(object):
             v if isinstance(v, BaseVariable) else Exploding(v)
             for v in ensure_tuple(watch_explode)
         ]
-        if replace_watch_extras is not None:
-            self.watch_extras = ensure_tuple(replace_watch_extras)
-        else:
-            self.watch_extras = (len_shape_watch,) + ensure_tuple(watch_extras)
         self.frame_infos = ArgDefaultDict(FrameInfo)
         self.depth = depth
         assert self.depth >= 1
@@ -286,7 +248,11 @@ class Tracer(object):
 
         trace_event = Event(frame_info, event, arg, thread_local.depth)
         if not (frame.f_code.co_name == '<genexpr>' and event not in ('return', 'exception')):
-            trace_event.variables = frame_info.update_variables(self.watch, self.watch_extras, event)
+            trace_event.variables = frame_info.update_variables(
+                self.watch,
+                self.config.watch_extras,
+                event,
+            )
 
         if event in ('return', 'exit'):
             del self.frame_infos[frame]

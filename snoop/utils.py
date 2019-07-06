@@ -2,9 +2,10 @@ import ast
 import inspect
 import os
 import sys
+from itertools import chain
 
 import six
-from cheap_repr import cheap_repr
+from cheap_repr import cheap_repr, try_register_repr
 
 NO_ASTTOKENS = (
         'pypy' in sys.version.lower()
@@ -154,3 +155,36 @@ except ImportError:
 class DirectRepr(str):
     def __repr__(self):
         return self
+
+
+try:
+    from django.db.models import QuerySet
+except ImportError:
+    class QuerySet(object):
+        pass
+
+
+def _sample_indices(length, max_length):
+    if length <= max_length + 2:
+        return range(length)
+    else:
+        return chain(range(max_length // 2),
+                     range(length - max_length // 2,
+                           length))
+
+
+@try_register_repr('pandas', 'Series')
+def _repr_series_one_line(x, helper):
+    n = len(x)
+    if n == 0:
+        return repr(x)
+    newlevel = helper.level - 1
+    pieces = []
+    maxparts = _repr_series_one_line.maxparts
+    for i in _sample_indices(n, maxparts):
+        k = x.index[i:i + 1].format(sparsify=False)[0]
+        v = x.iloc[i]
+        pieces.append('%s = %s' % (k, cheap_repr(v, newlevel)))
+    if n > maxparts + 2:
+        pieces.insert(maxparts // 2, '...')
+    return '; '.join(pieces)

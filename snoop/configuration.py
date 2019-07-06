@@ -1,15 +1,17 @@
+import inspect
 import os
 import sys
 import threading
+from collections import Set, Mapping, Sequence
 from io import open
 
 import six
 
 import snoop as package
 from snoop.formatting import DefaultFormatter
-from snoop.utils import builtins as builtins_module, is_pathlike, shitcode
-from snoop.tracer import Spy, Tracer
 from snoop.pp_module import PP
+from snoop.tracer import Spy, Tracer
+from snoop.utils import builtins as builtins_module, is_pathlike, shitcode, ensure_tuple, QuerySet
 
 try:
     # Enable ANSI escape codes in Windows 10
@@ -33,6 +35,8 @@ def install(
         overwrite=False,
         color=None,
         enabled=True,
+        watch_extras=(),
+        replace_watch_extras=None,
         formatter_class=DefaultFormatter,
 ):
     """
@@ -74,6 +78,8 @@ def install(
         overwrite=overwrite,
         color=color,
         enabled=enabled,
+        watch_extras=watch_extras,
+        replace_watch_extras=replace_watch_extras,
         formatter_class=formatter_class,
     )
     package.snoop.config = config
@@ -96,6 +102,8 @@ class Config(object):
             overwrite=False,
             color=None,
             enabled=True,
+            watch_extras=(),
+            replace_watch_extras=None,
             formatter_class=DefaultFormatter,
     ):
         if can_color:
@@ -118,6 +126,42 @@ class Config(object):
 
         self.last_frame = None
         self.thread_local = threading.local()
+
+        if replace_watch_extras is not None:
+            self.watch_extras = ensure_tuple(replace_watch_extras)
+        else:
+            self.watch_extras = (len_shape_watch, dtype_watch) + ensure_tuple(watch_extras)
+
+
+def len_shape_watch(source, value):
+    try:
+        shape = value.shape
+    except Exception:
+        pass
+    else:
+        if not inspect.ismethod(shape):
+            return '{}.shape'.format(source), shape
+
+    if isinstance(value, QuerySet):
+        # Getting the length of a Django queryset evaluates it
+        return None
+
+    length = len(value)
+    if (
+            (isinstance(value, six.string_types)
+             and length < 50) or
+            (isinstance(value, (Mapping, Set, Sequence))
+             and length == 0)
+    ):
+        return None
+
+    return 'len({})'.format(source), length
+
+
+def dtype_watch(source, value):
+    dtype = value.dtype
+    if not inspect.ismethod(dtype):
+        return '{}.dtype'.format(source), dtype
 
 
 def get_write_function(output, overwrite):

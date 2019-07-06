@@ -298,6 +298,7 @@ You can also dynamically re-enable the functions at any point by calling `snoop.
     - `full_file`: The full path to the file (also shown anyway when the function is called).
     - `function`: The name of the current function.
     - `function_qualname`: The qualified name of the current function.
+ - `watch_extras` and `replace_watch_extras`: read about these under [Advanced usage](#watch_extras)
     
     If you want a custom column, please open an issue to tell me what you're interested in! In the meantime, you can pass a list, where the elements are either strings or callables. The callables should take one argument, which will be an `Event` object. It has attributes `frame`, `event`, and `arg`, as specified in [`sys.settrace()`](https://docs.python.org/3/library/sys.html#sys.settrace), and other attributes which may change.
 
@@ -317,26 +318,31 @@ If you're not sure if it's worth using `snoop` instead of `PySnooper`, [read the
 
 ### `watch_extras`
 
-`snoop` has another parameter called `watch_extras`. You can pass it a list of functions to automatically show extra information about any value: local variables, watched expressions, and exploded items. Two such functions are already enabled by default: one which shows the `len()` of values, and one which shows the `.shape` property (used by numpy, pandas, tensorflow, etc). Here's a simplified implementation of the function showing the `len()`:
+`install` has another parameter called `watch_extras`. You can pass it a list of functions to automatically show extra information about any value: local variables, watched expressions, and exploded items. For example, suppose you wanted to see the type of every variable. You could define a function like this:
 
 ```python
-def len_watch(source, value):
-    return 'len({})'.format(source), len(value)
+def type_watch(source, value):
+    return 'type({})'.format(source), type(value)
 ```
 
-You would then write `@snoop(watch_extras=[len_watch])`. The result is output like this:
+You would then write `install(watch_extras=[type_watch])`. The result is output like this:
 
 ```
-.... x = [4, 5, 6]
-.... len(x) = 3
+12:34:56.78    9 |     x = 1
+12:34:56.78 .......... type(x) = <class 'int'>
+12:34:56.78   10 |     y = [x]
+12:34:56.78 .......... y = [1]
+12:34:56.78 .......... type(y) = <class 'list'>
 ```
 
-The functions you write should accept two arguments `source` and `value` - typically these will be the name of a variable and its actual value. They should return a pair representing the 'source' of the returned information (used only for display, it doesn't have to be valid Python) and the actual information. If you don't want to display anything for this particular value, return `None`. Any exceptions raised are caught and silenced, so for example you don't need to check if the object has a length.
+The functions you write should accept two arguments `source` and `value` - typically these will be the name of a variable and its actual value. They should return a pair representing the 'source' of the returned information (used only for display, it doesn't have to be valid Python) and the actual information. If you don't want to display anything for this particular value, return `None`. Any exceptions raised are caught and silenced.
 
-`watch_extras` is added to the two default functions for `len()` and `.shape` so you don't have to specify them again. If you don't want to include them, use `replace_watch_extras` instead to specify the exact list. The original functions can be found here:
+Two such functions are already enabled by default: one which shows either the `len()` or the `.shape` property (used by numpy, pandas, tensorflow, etc) of values, and one which shows the `.dtype` property.
+
+`watch_extras` is added to these two default functions so you don't have to specify them again. If you don't want to include them, use `replace_watch_extras` instead to specify the exact list. The original functions can be found here:
 
 ```python
-from snoop.tracer import len_watch, shape_watch
+from snoop.configuration import len_shape_watch, dtype_watch
 ```
 
 ### Controlling `watch_explode`
