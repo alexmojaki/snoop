@@ -16,3 +16,5 @@ build/
 .coverage
 htmlcov
 .cache
+
+*.ipynb

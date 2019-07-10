@@ -263,6 +263,11 @@ class Tracer(object):
 
         return self.trace
 
+    @staticmethod
+    def load_ipython_extension(ipython_shell):
+        from snoop.ipython import SnoopMagics
+        ipython_shell.register_magics(SnoopMagics)
+
 
 class Spy(object):
     def __init__(self, config):
