@@ -246,7 +246,8 @@ class DefaultFormatter(object):
         lines += self.format_variables(event, last_statement)
 
         if event.event == 'return':
-            lines += self.format_return(event)
+            if not event.frame_info.is_ipython_cell:
+                lines += self.format_return(event)
         elif event.event == 'exception':
             lines += self.format_exception(event)
         elif event.event == 'enter':
@@ -257,7 +258,10 @@ class DefaultFormatter(object):
                 func=event.code_qualname(),
             )]
         else:
-            if not (event.comprehension_type and event.event == 'line'):
+            if not (
+                    event.comprehension_type and event.event == 'line' or
+                    event.frame_info.is_ipython_cell and event.event == 'call'
+            ):
                 lines += statement_start_lines + [self.format_event(event)]
 
         return self.format_lines(event, lines)
@@ -341,6 +345,8 @@ class DefaultFormatter(object):
         return lines
 
     def format_start(self, event):
+        if event.frame_info.is_ipython_cell:
+            return []
         if event.comprehension_type:
             return ['{type}:'.format(type=event.comprehension_type)]
         else:

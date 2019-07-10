@@ -29,15 +29,20 @@ class FrameInfo(object):
         self.last_line_no = frame.f_lineno
         self.comprehension_variables = OrderedDict()
         self.source = Source.for_frame(frame)
-        self.is_generator = frame.f_code.co_flags & inspect.CO_GENERATOR
+        code = frame.f_code
+        self.is_generator = code.co_flags & inspect.CO_GENERATOR
         self.had_exception = False
         if is_comprehension_frame(frame):
             self.comprehension_type = (
-                    re.match(r'<(\w+)comp>', frame.f_code.co_name).group(1).title()
+                    re.match(r'<(\w+)comp>', code.co_name).group(1).title()
                     + u' comprehension'
             )
         else:
             self.comprehension_type = ''
+        self.is_ipython_cell = (
+                code.co_name == '<module>' and
+                code.co_filename.startswith('<ipython-input-')
+        )
 
     def update_variables(self, watch, watch_extras, event, whitelist):
         self.last_line_no = self.frame.f_lineno
