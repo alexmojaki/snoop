@@ -11,7 +11,7 @@ import six
 from cheap_repr import cheap_repr, find_repr_function
 
 from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, iscoroutinefunction, \
-    truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator
+    truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator, pp_name_prefix
 from .formatting import Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
 
@@ -79,6 +79,7 @@ class FrameInfo(object):
         var_names = [
             key for key in frame.f_locals
             if whitelist is None or key in whitelist
+            if not key.startswith(pp_name_prefix)
         ]
         vars_order = code.co_varnames + code.co_cellvars + code.co_freevars + tuple(var_names)
         var_names.sort(key=vars_order.index)

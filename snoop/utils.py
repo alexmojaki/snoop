@@ -12,6 +12,8 @@ NO_ASTTOKENS = (
         or sys.version_info[:2] in [(3, 4), (3, 8)]
 )
 
+pp_name_prefix = '__deep_pp_hidden__'
+
 file_reading_errors = (
     IOError,
     OSError,

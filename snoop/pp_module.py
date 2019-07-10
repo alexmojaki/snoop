@@ -11,7 +11,7 @@ from executing import only, future_flags
 
 from snoop.formatting import Event, Source
 from snoop.tracer import FrameInfo
-from snoop.utils import NO_ASTTOKENS, optional_numeric_label, builtins, FormattedValue
+from snoop.utils import NO_ASTTOKENS, optional_numeric_label, builtins, FormattedValue, pp_name_prefix
 
 
 class PP(object):
@@ -107,7 +107,7 @@ class PPEvent(object):
                 stack.append(node)
             return node
 
-        before_expr.name = 'before_' + uuid4().hex
+        before_expr.name = pp_name_prefix + 'before_' + uuid4().hex
 
         def after_expr(node, value):
             if thread == current_thread():
@@ -126,7 +126,7 @@ class PPEvent(object):
                 self.write_node(node, value, depth=node._depth - call_arg._depth)
             return value
 
-        after_expr.name = 'after_' + uuid4().hex
+        after_expr.name = pp_name_prefix + 'after_' + uuid4().hex
 
         new_node = deepcopy(call_arg)
         new_node = NodeVisitor(before_expr.name, after_expr.name).visit(new_node)
