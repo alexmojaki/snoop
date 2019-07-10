@@ -1,7 +1,6 @@
 import ast
 
 from snoop import snoop
-from IPython import get_ipython
 from IPython.core.magic import Magics, cell_magic, magics_class
 
 
@@ -9,9 +8,8 @@ from IPython.core.magic import Magics, cell_magic, magics_class
 class SnoopMagics(Magics):
     @cell_magic
     def snoop(self, _line, cell):
-        shell = get_ipython()
-        filename = shell.compile.cache(cell)
-        code = shell.compile(cell, filename, 'exec')
+        filename = self.shell.compile.cache(cell)
+        code = self.shell.compile(cell, filename, 'exec')
         tracer = snoop()
 
         tracer.variable_whitelist = set()
@@ -21,4 +19,4 @@ class SnoopMagics(Magics):
 
         tracer.target_codes.add(code)
         with tracer:
-            shell.ex(code)
+            self.shell.ex(code)
