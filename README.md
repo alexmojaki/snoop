@@ -213,6 +213,15 @@ Output:
 
 (the values of literals and builtins are left out because they're trivial)
 
+If an exception is raised, it'll show which subexpression is responsible, which looks something like this:
+
+```
+12:34:56.78 ................ y = 2
+12:34:56.78 ............ y + 3 = 5
+12:34:56.78 ........ (y + 3) / 0 = !!! ZeroDivisionError!
+12:34:56.78 !!! ZeroDivisionError: division by zero
+```
+
 If you like this, you'll probably love `@spy`.
 
 ## `@spy`
