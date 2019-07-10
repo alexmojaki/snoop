@@ -28,18 +28,6 @@ install_requires = [
     'pygments',
 ]
 
-try:
-    import ctypes
-    from ctypes import LibraryLoader
-
-    windll = LibraryLoader(ctypes.WinDLL)
-except Exception:
-    pass
-else:
-    install_requires += [
-        'colorama',
-    ]
-
 
 try:
     from functools import lru_cache
