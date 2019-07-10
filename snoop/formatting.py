@@ -11,6 +11,7 @@ import six
 from pygments import highlight
 from pygments.formatters.terminal256 import Terminal256Formatter
 from pygments.lexers.python import Python3Lexer, PythonLexer
+from pygments.styles.monokai import MonokaiStyle
 from six import PY3
 
 from snoop.utils import ensure_tuple, short_filename, with_needed_parentheses, my_cheap_repr, \
@@ -93,6 +94,18 @@ class ForceWhiteTerminal256Formatter(Terminal256Formatter):
         return result
 
 
+class NeutralMonokaiStyle(MonokaiStyle):
+    """
+    Monokai style that is somewhat readable on both dark and light backgrounds
+    by replacing 'white' styles with no style so that the terminal can automatically
+    use the appropriate foreground color.
+    """
+    styles = {
+        k: '' if v == '#f8f8f2' else v
+        for k, v in MonokaiStyle.styles.items()
+    }
+
+
 formatters = ArgDefaultDict(lambda style: ForceWhiteTerminal256Formatter(style=style))
 
 
@@ -163,7 +176,7 @@ class DefaultFormatter(object):
         ]
         self.column_widths = dict.fromkeys(self.columns, 0)
         if color is True:
-            color = "monokai"
+            color = NeutralMonokaiStyle
         if color:
             self.c = Colors
 
