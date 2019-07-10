@@ -39,13 +39,13 @@ class FrameInfo(object):
         else:
             self.comprehension_type = ''
 
-    def update_variables(self, watch, watch_extras, event):
+    def update_variables(self, watch, watch_extras, event, whitelist):
         self.last_line_no = self.frame.f_lineno
         old_local_reprs = self.local_reprs
         self.local_reprs = OrderedDict(
             (source, my_cheap_repr(value))
             for source, value in
-            self.get_local_reprs(watch, watch_extras)
+            self.get_local_reprs(watch, watch_extras, whitelist)
         )
 
         if self.comprehension_type:
@@ -68,15 +68,19 @@ class FrameInfo(object):
                 variables.append((name, value_repr))
         return variables
 
-    def get_local_reprs(self, watch, watch_extras):
+    def get_local_reprs(self, watch, watch_extras, whitelist):
         frame = self.frame
         code = frame.f_code
-        vars_order = code.co_varnames + code.co_cellvars + code.co_freevars + tuple(frame.f_locals.keys())
-
-        result_items = sorted(
-            frame.f_locals.items(),
-            key=lambda key_value: vars_order.index(key_value[0])
-        )
+        var_names = [
+            key for key in frame.f_locals
+            if whitelist is None or key in whitelist
+        ]
+        vars_order = code.co_varnames + code.co_cellvars + code.co_freevars + tuple(var_names)
+        var_names.sort(key=vars_order.index)
+        result_items = [
+            (key, frame.f_locals[key])
+             for key in var_names
+        ]
 
         for variable in watch:
             result_items += sorted(variable.items(frame))
@@ -145,6 +149,7 @@ class Tracer(object):
         assert self.depth >= 1
         self.target_codes = set()
         self.target_frames = set()
+        self.variable_whitelist = None
 
     def __call__(self, function):
         if iscoroutinefunction(function):
@@ -252,6 +257,7 @@ class Tracer(object):
                 self.watch,
                 self.config.watch_extras,
                 event,
+                self.variable_whitelist,
             )
 
         if event in ('return', 'exit'):
