@@ -80,10 +80,7 @@ class Source(executing.Source):
         return result
 
 
-if PY3:
-    lexer = Python3Lexer()
-else:
-    lexer = PythonLexer()
+lexer = (Python3Lexer if PY3 else PythonLexer)(stripnl=False)
 
 
 class ForceWhiteTerminal256Formatter(Terminal256Formatter):
