@@ -373,23 +373,17 @@ class DefaultFormatter(object):
     def format_executing_node_exception(self, event):
         try:
             assert not NO_ASTTOKENS
-            call = Source.executing(event.frame).node
-            if not isinstance(call, ast.Call):
-                return []
-
-            if any(
-                    getattr(call, attr, None)
-                    for attr in 'args keywords starargs kwargs'.split()
-            ):
-                args_source = '...'
-            else:
-                args_source = ''
-
-            source = '{func}({args})'.format(
-                func=with_needed_parentheses(event.source.get_text_with_indentation(call.func)),
-                args=args_source,
-            )
-            plain_prefix = '!!! When calling: '
+            node = Source.executing(event.frame).node
+            assert node
+            
+            description = {
+                ast.Call: 'calling',
+                ast.Subscript: 'subscripting',
+                ast.Attribute: 'getting attribute',
+                ast.Compare: 'comparing',
+            }.get(type(node), 'evaluating')
+            source = event.source.get_text_with_indentation(node)
+            plain_prefix = '!!! When {}: '.format(description)
             prefix = '{c.red}{}{c.reset}'.format(plain_prefix, c=self.c)
             return indented_lines(
                 prefix,
@@ -447,7 +441,7 @@ class DefaultFormatter(object):
 
         lines = highl_source_lines[:-1] + indented_lines(
             highl_prefix,
-            value,
+            self.highlighted(value),
             plain_prefix=plain_prefix
         )
         return self.format_lines(event, lines)

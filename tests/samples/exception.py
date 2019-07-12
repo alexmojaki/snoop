@@ -39,6 +39,23 @@ def main():
     except:
         pass
 
+    x = [[[2]]]
+    
+    try:
+        str(x[1][0][0])
+    except:
+        pass
+
+    try:
+        str(x[0][1][0])
+    except:
+        pass
+
+    try:
+        str(x[0][0][1])
+    except:
+        pass
+
 
 def bob(*_):
     pass
@@ -91,7 +108,10 @@ expected_output = r"""
 12:34:56.78   27 |             1,
 12:34:56.78   28 |             2
 12:34:56.78 !!! TypeError: 'NoneType' object is not callable
-12:34:56.78 !!! When calling: bob(...)
+12:34:56.78 !!! When calling: bob(
+12:34:56.78                       1,
+12:34:56.78                       2
+12:34:56.78                   )
 12:34:56.78   30 |     except:
 12:34:56.78   31 |         pass
 12:34:56.78   33 |     try:
@@ -101,8 +121,31 @@ expected_output = r"""
 12:34:56.78   37 |             2
 12:34:56.78 !!! TypeError: 'NoneType' object is not callable
 12:34:56.78 !!! When calling: (None
-12:34:56.78                   or bob)(...)
+12:34:56.78                    or bob)(
+12:34:56.78                       1,
+12:34:56.78                       2
+12:34:56.78                   )
 12:34:56.78   39 |     except:
 12:34:56.78   40 |         pass
+12:34:56.78   42 |     x = [[[2]]]
+12:34:56.78 .......... len(x) = 1
+12:34:56.78   44 |     try:
+12:34:56.78   45 |         str(x[1][0][0])
+12:34:56.78 !!! IndexError: list index out of range
+12:34:56.78 !!! When subscripting: x[1]
+12:34:56.78   46 |     except:
+12:34:56.78   47 |         pass
+12:34:56.78   49 |     try:
+12:34:56.78   50 |         str(x[0][1][0])
+12:34:56.78 !!! IndexError: list index out of range
+12:34:56.78 !!! When subscripting: x[0][1]
+12:34:56.78   51 |     except:
+12:34:56.78   52 |         pass
+12:34:56.78   54 |     try:
+12:34:56.78   55 |         str(x[0][0][1])
+12:34:56.78 !!! IndexError: list index out of range
+12:34:56.78 !!! When subscripting: x[0][0][1]
+12:34:56.78   56 |     except:
+12:34:56.78   57 |         pass
 12:34:56.78 <<< Return value from main: None
 """

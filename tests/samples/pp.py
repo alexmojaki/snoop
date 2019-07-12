@@ -172,7 +172,7 @@ expected_output = """
 12:34:56.78 ............ y + 3 = 5
 12:34:56.78 ........ (y + 3) / 0 = !!! ZeroDivisionError!
 12:34:56.78 !!! ZeroDivisionError: division by zero
-12:34:56.78 !!! When calling: pp.deep(...)
+12:34:56.78 !!! When calling: pp.deep(lambda: max(y + 2, (y + 3) / 0))
 12:34:56.78   21 |     except ZeroDivisionError:
 12:34:56.78   22 |         pass
 12:34:56.78   26 |     f = pp.deep(lambda: caller(lambda: 2 * 3))

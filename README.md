@@ -91,7 +91,7 @@ add(1, 2)
 
 Here we specify `depth=2` to mean we should also step one level down into inner function calls. We then call the function twice to see the caching in action. Here's the output:
 
-![cache output](https://i.imgur.com/PMsBHu9.png)
+![cache output](https://i.imgur.com/krmcYJ3.png)
 
 At a glance we can see that in the first call the cache lookup failed with a `KeyError` so the original `add` function was called, while in the second call the previously cached result was returned immediately. 
 
