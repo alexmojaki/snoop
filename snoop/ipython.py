@@ -15,7 +15,16 @@ class SnoopMagics(Magics):
         tracer.variable_whitelist = set()
         for node in ast.walk(ast.parse(cell)):
             if isinstance(node, ast.Name):
-                tracer.variable_whitelist.add(node.id)
+                name = node.id
+                
+                if isinstance(
+                        self.shell.user_global_ns.get(name),
+                        type(ast),  
+                ):
+                    # hide modules
+                    continue
+                    
+                tracer.variable_whitelist.add(name)
 
         tracer.target_codes.add(code)
         with tracer:
