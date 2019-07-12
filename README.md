@@ -23,6 +23,7 @@ Installation is as simple as `pip install snoop`.
      * [Disabling](#disabling)
      * [Output configuration](#output-configuration)
   * [API differences from PySnooper](#api-differences-from-pysnooper)
+  * [IPython/Jupyter integration](#ipythonjupyter-integration)
   * [Advanced usage](#advanced-usage)
      * [watch_extras](#watch_extras)
      * [Controlling watch_explode](#controlling-watch_explode)
@@ -322,6 +323,16 @@ If you're familiar with `PySnooper` and want to use `snoop`, there are a few thi
 - Instead of using `custom_repr`, see [`watch_extras`](#watch_extras) and [Customising the display of variables](#customising-the-display-of-variables).
 
 If you're not sure if it's worth using `snoop` instead of `PySnooper`, [read the comparison here](https://github.com/alexmojaki/snoop/wiki/Comparison-to-PySnooper).
+
+## IPython/Jupyter integration
+
+snoop comes with an IPython extension that you can use in shells or notebooks.
+
+First you need to [load the extension](https://ipython.readthedocs.io/en/stable/config/extensions/#using-extensions), using either `%load_ext snoop` in a notebook cell or by adding `'snoop'` to the list `c.InteractiveShellApp.extensions` in your IPython configuration file, e.g. `~/.ipython/profile_default/ipython_config.py`.
+
+Then use the cell magic `%%snoop` at the top of a notebook cell to trace that cell:
+
+![%%snoop example](https://i.imgur.com/d6L7NnH.png)
 
 ## Advanced usage
 
