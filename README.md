@@ -73,10 +73,8 @@ def cache(func):
         try:
             return d[args]
         except KeyError:
-            pass
-
-        result = d[args] = func(*args)
-        return result
+            result = d[args] = func(*args)
+            return result
 
     return wrapper
 
@@ -91,7 +89,7 @@ add(1, 2)
 
 Here we specify `depth=2` to mean we should also step one level down into inner function calls. We then call the function twice to see the caching in action. Here's the output:
 
-![cache output](https://i.imgur.com/ceXKb3f.png)
+![cache output](https://i.imgur.com/Enu7k0h.png)
 
 At a glance we can see that in the first call the cache lookup failed with a `KeyError` so the original `add` function was called, while in the second call the previously cached result was returned immediately. 
 
