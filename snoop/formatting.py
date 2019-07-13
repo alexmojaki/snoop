@@ -14,7 +14,7 @@ from pygments.lexers.python import Python3Lexer, PythonLexer
 from pygments.styles.monokai import MonokaiStyle
 from six import PY3
 
-from snoop.utils import ensure_tuple, short_filename, with_needed_parentheses, my_cheap_repr, \
+from snoop.utils import ensure_tuple, short_filename, my_cheap_repr, \
     NO_ASTTOKENS, optional_numeric_label, try_statement, FormattedValue, ArgDefaultDict, lru_cache
 
 
@@ -240,7 +240,8 @@ class DefaultFormatter(object):
         last_statement = statements[event.last_line_no]
         statement_start_lines = self.get_statement_start_lines(event, this_statement, last_statement)
 
-        lines += self.format_variables(event, last_statement)
+        if event.event != 'exception':
+            lines += self.format_variables(event, last_statement)
 
         if event.event == 'return':
             if not event.frame_info.is_ipython_cell:
