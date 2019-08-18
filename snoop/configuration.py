@@ -2,7 +2,6 @@ import inspect
 import os
 import sys
 import threading
-from collections import Set, Mapping, Sequence
 from io import open
 
 import six
@@ -11,7 +10,7 @@ import snoop as package
 from snoop.formatting import DefaultFormatter
 from snoop.pp_module import PP
 from snoop.tracer import Spy, Tracer
-from snoop.utils import builtins as builtins_module, is_pathlike, shitcode, ensure_tuple, QuerySet
+from snoop.utils import builtins as builtins_module, is_pathlike, shitcode, ensure_tuple, QuerySet,  Set, Mapping, Sequence
 
 try:
     # Enable ANSI escape codes in Windows 10

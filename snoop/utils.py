@@ -154,6 +154,14 @@ except ImportError:
     from backports.functools_lru_cache import lru_cache
 
 
+if six.PY2:
+    # noinspection PyUnresolvedReferences
+    from collections import Sequence, Mapping, Set
+else:
+    # noinspection PyUnresolvedReferences,PyCompatibility
+    from collections.abc import Sequence, Mapping, Set
+
+
 class DirectRepr(str):
     def __repr__(self):
         return self
