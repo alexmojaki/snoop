@@ -37,7 +37,6 @@ except ImportError:
 
 tests_require = [
     'pytest',
-    'python_toolbox',
     'littleutils',
 ]
 

@@ -63,7 +63,7 @@ class Source(executing.Source):
                     n for n in node.parent.values
                     if isinstance(n, FormattedValue)
                 ]
-                return '<f-string value{}>'.format(
+                return u'<f-string value{}>'.format(
                     optional_numeric_label(
                         fvals.index(node),
                         fvals,
@@ -164,11 +164,11 @@ class DefaultFormatter(object):
     def __init__(self, prefix, columns, color):
         prefix = six.text_type(prefix)
         if prefix and prefix == prefix.rstrip():
-            prefix += ' '
+            prefix += u' '
         self.prefix = prefix
         self.columns = [
             column if callable(column) else
-            getattr(self, '{}_column'.format(column))
+            getattr(self, u'{}_column'.format(column))
             for column in ensure_tuple(columns, split=True)
         ]
         self.column_widths = dict.fromkeys(self.columns, 0)
@@ -266,7 +266,7 @@ class DefaultFormatter(object):
 
     def format_exception(self, event):
         lines = []
-        exception_string = ''.join(traceback.format_exception_only(*event.arg[:2]))
+        exception_string = u''.join(traceback.format_exception_only(*event.arg[:2]))
         lines += [
             u'{c.red}!!! {line}{c.reset}'.format(
                 c=self.c,
@@ -332,7 +332,7 @@ class DefaultFormatter(object):
             last_source_line = ''
         lines = []
         for var in event.variables:
-            if ('{} = {}'.format(*var) != last_source_line.strip()
+            if (u'{} = {}'.format(*var) != last_source_line.strip()
                     and not (
                             isinstance(last_statement, ast.FunctionDef)
                             and not last_statement.decorator_list
@@ -346,7 +346,7 @@ class DefaultFormatter(object):
         if event.frame_info.is_ipython_cell:
             return []
         if event.comprehension_type:
-            return ['{type}:'.format(type=event.comprehension_type)]
+            return [u'{type}:'.format(type=event.comprehension_type)]
         else:
             if event.event == 'enter':
                 description = 'Enter with block in'
@@ -381,8 +381,8 @@ class DefaultFormatter(object):
                 ast.Compare: 'comparing',
             }.get(type(node), 'evaluating')
             source = event.source.get_text_with_indentation(node)
-            plain_prefix = '!!! When {}: '.format(description)
-            prefix = '{c.red}{}{c.reset}'.format(plain_prefix, c=self.c)
+            plain_prefix = u'!!! When {}: '.format(description)
+            prefix = u'{c.red}{}{c.reset}'.format(plain_prefix, c=self.c)
             return indented_lines(
                 prefix,
                 source,
@@ -412,11 +412,11 @@ class DefaultFormatter(object):
     def format_variable(self, entry, dots, is_comprehension):
         name, value = entry
         if name.startswith('.') and name[1:].isdigit():
-            description = 'Iterating over'
+            description = u'Iterating over'
         elif is_comprehension:
-            description = 'Values of {name}:'.format(name=name)
+            description = u'Values of {name}:'.format(name=name)
         else:
-            description = '{name} ='.format(name=name)
+            description = u'{name} ='.format(name=name)
         prefix = u'......{dots} {description} '.format(
             description=description,
             dots=dots,
@@ -446,7 +446,7 @@ class DefaultFormatter(object):
 
     def format_lines(self, event, lines):
         prefix = self.full_prefix(event)
-        return ''.join([
+        return u''.join([
             (
                     prefix
                     + line
@@ -481,6 +481,6 @@ class Colors(object):
 def indented_lines(prefix, string, plain_prefix=None):
     lines = six.text_type(string).splitlines() or ['']
     return [prefix + lines[0]] + [
-        ' ' * len(plain_prefix or prefix) + line
+        u' ' * len(plain_prefix or prefix) + line
         for line in lines[1:]
     ]

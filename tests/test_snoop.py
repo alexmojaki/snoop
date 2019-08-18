@@ -4,6 +4,7 @@ import re
 import sys
 import traceback
 from importlib import import_module
+from tempfile import mkstemp
 from threading import current_thread
 
 import pytest
@@ -11,7 +12,6 @@ import six
 from cheap_repr import cheap_repr, register_repr
 from cheap_repr.utils import safe_qualname
 from littleutils import file_to_string, string_to_file
-from python_toolbox import sys_tools, temp_file_tools
 
 from snoop import formatting, install, spy
 from snoop.configuration import Config
@@ -44,10 +44,10 @@ def repr_set(x, helper):
 
 
 def sample_traceback():
-    raw = ''.join(
+    raw = u''.join(
         traceback.format_exception(*sys.exc_info())
     ).splitlines(True)
-    tb = ''.join(
+    tb = u''.join(
         line for line in raw
         if not line.strip().startswith("File")
         if not line.strip() == "raise value"  # part of six.reraise
@@ -56,18 +56,22 @@ def sample_traceback():
 
 
 def assert_sample_output(module):
-    with sys_tools.OutputCapturer(stdout=False,
-                                  stderr=True) as output_capturer:
+    old = sys.stderr
+    
+    out = io.StringIO()
+    sys.stderr = out
+
+    try:
         assert sys.gettrace() is None
         module.main()
         assert sys.gettrace() is None
+    finally:
+        sys.stderr = old
 
     time = '12:34:56.78'
     time_pattern = re.sub(r'\d', r'\\d', time)
 
-    output = output_capturer.string_io.getvalue()
-
-    normalised = re.sub(time_pattern, time, output).strip()
+    normalised = re.sub(time_pattern, time, out.getvalue()).strip()
     normalised = re.sub(r'0x\w+', '0xABC', normalised)
     normalised = normalised.replace('<genexpr>.<genexpr>', '<genexpr>')
     normalised = normalised.replace('<list_iterator', '<tupleiterator')
@@ -149,42 +153,38 @@ def test_callable():
 
 
 def test_file_output():
-    with temp_file_tools.create_temp_folder(prefix='snoop') as folder:
-        path = folder / 'foo.log'
-
-        config = Config(out=path)
-        contents = u'stuff'
-        config.write(contents)
-        with path.open() as output_file:
-            output = output_file.read()
-        assert output == contents
+    _, path = mkstemp()
+    config = Config(out=path)
+    contents = u'stuff'
+    config.write(contents)
+    with open(path) as output_file:
+        output = output_file.read()
+    assert output == contents
 
 
 def test_no_overwrite_by_default():
-    with temp_file_tools.create_temp_folder(prefix='snoop') as folder:
-        path = folder / 'foo.log'
-        with path.open('w') as output_file:
-            output_file.write(u'lala')
-        config = Config(str(path))
-        config.write(u' doo be doo')
-        with path.open() as output_file:
-            output = output_file.read()
-        assert output == u'lala doo be doo'
+    _, path = mkstemp()
+    with open(path, 'w') as output_file:
+        output_file.write(u'lala')
+    config = Config(str(path))
+    config.write(u' doo be doo')
+    with open(path) as output_file:
+        output = output_file.read()
+    assert output == u'lala doo be doo'
 
 
 def test_overwrite():
-    with temp_file_tools.create_temp_folder(prefix='snoop') as folder:
-        path = folder / 'foo.log'
-        with path.open('w') as output_file:
-            output_file.write(u'lala')
+    _, path = mkstemp()
+    with open(path, 'w') as output_file:
+        output_file.write(u'lala')
 
-        config = Config(out=str(path), overwrite=True)
-        config.write(u'doo be')
-        config.write(u' doo')
+    config = Config(out=str(path), overwrite=True)
+    config.write(u'doo be')
+    config.write(u' doo')
 
-        with path.open() as output_file:
-            output = output_file.read()
-        assert output == u'doo be doo'
+    with open(path) as output_file:
+        output = output_file.read()
+    assert output == u'doo be doo'
 
 
 def test_needs_parentheses():
