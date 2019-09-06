@@ -176,6 +176,7 @@ class DefaultFormatter(object):
             color = NeutralMonokaiStyle
         if color:
             self.c = Colors
+            self.c.grey = formatters[color].style_string["Token.Comment"][0]
 
             def highlighted(code):
                 return cached_highlight(code, color)
