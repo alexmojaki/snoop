@@ -13,7 +13,7 @@ from cheap_repr import cheap_repr, register_repr
 from cheap_repr.utils import safe_qualname
 from littleutils import file_to_string, string_to_file
 
-from snoop import formatting, install, spy
+from snoop import formatting, install, spy, snoop
 from snoop.configuration import Config
 from snoop.pp_module import is_deep_arg
 from snoop.utils import truncate_string, truncate_list, needs_parentheses, NO_ASTTOKENS
@@ -62,9 +62,7 @@ def assert_sample_output(module):
     sys.stderr = out
 
     try:
-        assert sys.gettrace() is None
         module.main()
-        assert sys.gettrace() is None
     finally:
         sys.stderr = old
 
@@ -255,3 +253,27 @@ def test_no_asttokens_spy():
     if NO_ASTTOKENS:
         with pytest.raises(Exception, match="birdseye doesn't support this version of Python"):
             spy(test_is_deep_arg)
+
+
+def test_cannot_find_class():
+    @snoop
+    class _:
+        pass
+
+    class B:
+        pass
+
+    with pytest.raises(ValueError):
+        snoop(B)
+
+
+def test_no_class_options():
+    with pytest.raises(ValueError):
+        @snoop(depth=2)
+        class _:
+            pass
+
+    with pytest.raises(ValueError):
+        @snoop(watch='a.b')
+        class _:
+            pass

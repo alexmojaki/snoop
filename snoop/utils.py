@@ -145,7 +145,14 @@ except:
 
 
 def no_args_decorator(args, kwargs):
-    return len(args) == 1 and inspect.isfunction(args[0]) and not kwargs
+    return (
+            len(args) == 1
+            and (
+                    inspect.isfunction(args[0]) or
+                    inspect.isclass(args[0])
+            )
+            and not kwargs
+    )
 
 
 try:

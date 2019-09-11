@@ -1,14 +1,17 @@
+import ast
 import functools
 import inspect
 import os
 import re
 import sys
 import threading
+import warnings
 from collections import OrderedDict
 
 import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr, find_repr_function
+from executing import only
 
 from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, iscoroutinefunction, \
     truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator, pp_name_prefix
@@ -156,8 +159,82 @@ class Tracer(object):
         self.target_codes = set()
         self.target_frames = set()
         self.variable_whitelist = None
+        self.always_on = False
 
-    def __call__(self, function):
+    def __call__(self, function_or_class):
+        if inspect.isclass(function_or_class):
+            return self._wrap_class(function_or_class)
+        else:
+            return self._wrap_function(function_or_class)
+
+    def _wrap_class(self, cls):
+        if self.depth > 1 or self.watch:
+            raise ValueError("snoop options are not supported when decorating classes")
+
+        frame = inspect.currentframe()
+        class_def = None
+        while True:
+            frame = frame.f_back
+            if not frame:
+                raise ValueError("Couldn't find class definition")
+
+            if self._is_internal_frame(frame):
+                continue
+
+            source = Source.for_frame(frame)
+            classes = [
+                node
+                for node in ast.walk(source.tree)
+                if isinstance(node, ast.ClassDef)
+                if node.lineno <= frame.f_lineno <= node.body[0].lineno
+            ]
+            if classes:
+                class_def = only(classes)
+                break
+
+        class_code = only(
+            const
+            for const in frame.f_code.co_consts
+            if inspect.iscode(const)
+            if class_def.lineno <= const.co_firstlineno <= class_def.body[0].lineno
+        )
+
+        self.target_codes.update(
+            const
+            for const in class_code.co_consts
+            if inspect.iscode(const)
+            if const.co_name in cls.__dict__
+            if class_def.lineno < const.co_firstlineno <= class_def.body[-1].lineno
+        )
+
+        self.always_on = True
+        self._set_trace()
+
+        return cls
+
+    def _set_trace(self):
+        existing = sys.gettrace()
+        sys.settrace(self.trace)
+        if not existing:
+            return
+
+        if not (
+                inspect.ismethod(existing)
+                and isinstance(existing.__self__, Tracer)
+        ):
+            stacklevel = 1
+            frame = inspect.currentframe()
+            while self._is_internal_frame(frame):
+                frame = frame.f_back
+                stacklevel += 1
+            warnings.warn(
+                "There is an existing debugger/tracer set with sys.settrace(). "
+                "snoop is overwriting it " +
+                ("permanently" if self.always_on else "temporarily"),
+                stacklevel=stacklevel,
+            )
+
+    def _wrap_function(self, function):
         if iscoroutinefunction(function):
             raise NotImplementedError("coroutines are not supported, sorry!")
 
@@ -201,14 +278,16 @@ class Tracer(object):
 
         stack = thread_global.__dict__.setdefault('original_trace_functions', [])
         stack.append(sys.gettrace())
-        sys.settrace(self.trace)
+        self._set_trace()
 
     def __exit__(self, exc_type, exc_value, exc_traceback, context=0):
         if not self.config.enabled:
             return
 
         stack = thread_global.original_trace_functions
-        sys.settrace(stack.pop())
+        previous = stack.pop()
+        if sys.gettrace() == self.trace:
+            sys.settrace(previous)
         calling_frame = sys._getframe(context + 1)
         self.trace(calling_frame, 'exit', None)
         self.target_frames.discard(calling_frame)
