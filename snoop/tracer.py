@@ -11,7 +11,7 @@ import six
 from cheap_repr import cheap_repr, find_repr_function
 
 from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, iscoroutinefunction, \
-    truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator, pp_name_prefix
+    truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator, pp_name_prefix, NO_BIRDSEYE
 from .formatting import Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
 
@@ -286,7 +286,7 @@ class Spy(object):
         self.config = config
 
     def __call__(self, *args, **kwargs):
-        if NO_ASTTOKENS:
+        if NO_BIRDSEYE:
             raise Exception("birdseye doesn't support this version of Python")
 
         try:

@@ -16,7 +16,7 @@ from littleutils import file_to_string, string_to_file
 from snoop import formatting, install, spy
 from snoop.configuration import Config
 from snoop.pp_module import is_deep_arg
-from snoop.utils import truncate_string, truncate_list, needs_parentheses, NO_ASTTOKENS
+from snoop.utils import truncate_string, truncate_list, needs_parentheses, NO_ASTTOKENS, NO_BIRDSEYE, PYPY
 
 current_thread()._ident = current_thread()._Thread__ident = 123456789
 
@@ -116,13 +116,18 @@ def test_samples():
             continue
     
         if NO_ASTTOKENS:
-            if module_name in 'pandas_sample spy pp pp_exception enabled exception color color2'.split():
-                continue
-            if module_name in 'no_asttokens_color' and six.PY2:
+            if module_name in 'pp pp_exception exception color color2'.split():
                 continue
         else:
             if module_name.startswith('no_asttokens'):
                 continue
+        if PYPY or sys.version_info[:2] == (3, 4):
+            if module_name in 'pandas_sample'.split():
+                continue
+        if NO_BIRDSEYE:
+            if module_name in 'spy enabled'.split():
+                continue
+
 
         if module_name in 'f_string' and sys.version_info[:2] < (3, 6):
             continue
