@@ -10,12 +10,18 @@ import executing
 import six
 from pygments import highlight
 from pygments.formatters.terminal256 import Terminal256Formatter
-from pygments.lexers.python import Python3Lexer, Python2Lexer
+from pygments.lexers.python import Python3Lexer
 from pygments.styles.monokai import MonokaiStyle
 from six import PY3
 
 from snoop.utils import ensure_tuple, short_filename, my_cheap_repr, \
     NO_ASTTOKENS, optional_numeric_label, try_statement, FormattedValue, ArgDefaultDict, lru_cache
+
+
+try:
+    from pygments.lexers.python import Python2Lexer
+except ImportError:
+    from pygments.lexers.python import PythonLexer as Python2Lexer
 
 
 class StatementsDict(dict):
