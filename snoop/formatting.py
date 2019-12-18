@@ -10,7 +10,7 @@ import executing
 import six
 from pygments import highlight
 from pygments.formatters.terminal256 import Terminal256Formatter
-from pygments.lexers.python import Python3Lexer, PythonLexer
+from pygments.lexers.python import Python3Lexer, Python2Lexer
 from pygments.styles.monokai import MonokaiStyle
 from six import PY3
 
@@ -80,7 +80,7 @@ class Source(executing.Source):
         return result
 
 
-lexer = (Python3Lexer if PY3 else PythonLexer)(stripnl=False)
+lexer = (Python3Lexer if PY3 else Python2Lexer)(stripnl=False)
 
 
 class ForceWhiteTerminal256Formatter(Terminal256Formatter):
