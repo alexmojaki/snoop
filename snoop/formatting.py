@@ -42,8 +42,7 @@ class StatementsDict(dict):
 class Source(executing.Source):
     def __init__(self, *args, **kwargs):
         super(Source, self).__init__(*args, **kwargs)
-        if self.tree:
-            self.lines = self.text.splitlines()
+        if self.tree and self.text:
             self.highlighted = ArgDefaultDict(
                 lambda style: raw_highlight(self.text, style).splitlines()
             )
