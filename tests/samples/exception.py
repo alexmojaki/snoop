@@ -2,9 +2,9 @@ import snoop
 
 
 def foo():
-    raise TypeError('\n    very\n    bad')
-
-
+    raise TypeError('''
+    very
+    bad''')
 
 
 def bar(*_):
@@ -81,7 +81,8 @@ expected_output = r"""
     12:34:56.78   12 |         str(foo())
         12:34:56.78 >>> Call to foo in File "/path/to_file.py", line 4
         12:34:56.78    4 | def foo():
-        12:34:56.78    5 |     raise TypeError('\n    very\n    bad')
+        12:34:56.78    5 |     raise TypeError('''
+        12:34:56.78    7 |     bad''')
         12:34:56.78 !!! TypeError: 
         12:34:56.78 !!!     very
         12:34:56.78 !!!     bad
