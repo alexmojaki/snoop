@@ -40,7 +40,7 @@ tests_require = [
     'littleutils',
 ]
 
-if 'pypy' not in sys.version.lower() and sys.version_info[:2] not in [(3, 4), (3, 8)]:
+if 'pypy' not in sys.version.lower() and sys.version_info[:2] not in [(3, 4)]:
     tests_require += [
         'numpy>=1.16.3',
         'pandas>=0.24.2',

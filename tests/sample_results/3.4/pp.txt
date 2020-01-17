@@ -1,30 +1,8 @@
-@snoop(depth=30)
-def main():
-    x = 1
-    y = 2
-    pp(pp(x + 1) + max(*pp(y + 2, y + 3)))
-    assert pp.deep(lambda: x + 1 + max(y + 2, y + 3)) == 7
-
-    lst = list(range(30))
-    pp.deep(lambda: list(
-        list(a + b for a in [1, 2])
-        for b in [3, 4]
-    ) + lst)
-    pp(dict.fromkeys(range(30), 4))
-    pp.deep(lambda: BadRepr() and 1)
-
-
-class BadRepr(object):
-    def __repr__(self):
-        raise ValueError('bad')
-
-
-expected_output = """
-12:34:56.78 >>> Call to main in File "/path/to_file.py", line 2
-12:34:56.78    2 | def main():
-12:34:56.78    3 |     x = 1
-12:34:56.78    4 |     y = 2
-12:34:56.78    5 |     pp(pp(x + 1) + max(*pp(y + 2, y + 3)))
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 5
+12:34:56.78    5 | def main():
+12:34:56.78    6 |     x = 1
+12:34:56.78    7 |     y = 2
+12:34:56.78    8 |     pp(pp(x + 1) + max(*pp(y + 2, y + 3)))
 12:34:56.78 LOG:
 12:34:56.78 .... <argument> = 2
 12:34:56.78 LOG:
@@ -32,13 +10,13 @@ expected_output = """
 12:34:56.78 .... <argument 2> = 5
 12:34:56.78 LOG:
 12:34:56.78 .... <argument> = 7
-12:34:56.78    6 |     assert pp.deep(lambda: x + 1 + max(y + 2, y + 3)) == 7
+12:34:56.78    9 |     assert pp.deep(lambda: x + 1 + max(y + 2, y + 3)) == 7
 12:34:56.78 LOG:
 12:34:56.78 .... <argument> = 7
-12:34:56.78    8 |     lst = list(range(30))
+12:34:56.78   10 |     lst = list(range(30))
 12:34:56.78 .......... lst = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, ..., 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
 12:34:56.78 .......... len(lst) = 30
-12:34:56.78    9 |     pp.deep(lambda: list(
+12:34:56.78   11 |     pp.deep(lambda: list(
 12:34:56.78 LOG:
 12:34:56.78 .... <argument> = [[4, 5],
 12:34:56.78                    [5, 6],
@@ -72,7 +50,7 @@ expected_output = """
 12:34:56.78                    27,
 12:34:56.78                    28,
 12:34:56.78                    29]
-12:34:56.78   13 |     pp(dict.fromkeys(range(30), 4))
+12:34:56.78   15 |     pp(dict.fromkeys(range(30), 4))
 12:34:56.78 LOG:
 12:34:56.78 .... <argument> = {0: 4,
 12:34:56.78                    1: 4,
@@ -104,8 +82,26 @@ expected_output = """
 12:34:56.78                    27: 4,
 12:34:56.78                    28: 4,
 12:34:56.78                    29: 4}
-12:34:56.78   14 |     pp.deep(lambda: BadRepr() and 1)
+12:34:56.78   16 |     pp.deep(lambda: BadRepr() and 1)
 12:34:56.78 LOG:
 12:34:56.78 .... <argument> = 1
+12:34:56.78   17 |     pp.deep(lambda: 1 / 2)
+12:34:56.78 LOG:
+12:34:56.78 .... <argument> = 0.5
+12:34:56.78   19 |     try:
+12:34:56.78   20 |         pp.deep(lambda: max(y + 2, (y + 3) / 0))
+12:34:56.78 LOG:
+12:34:56.78 !!! ZeroDivisionError: division by zero
+12:34:56.78   21 |     except ZeroDivisionError:
+12:34:56.78   22 |         pass
+12:34:56.78   26 |     f = pp.deep(lambda: caller(lambda: 2 * 3))
+12:34:56.78 LOG:
+12:34:56.78 .... <argument> = <function main.<locals>.<lambda>.<locals>.<lambda> at 0xABC>
+12:34:56.78 .......... f = <function main.<locals>.<lambda>.<locals>.<lambda> at 0xABC>
+12:34:56.78   27 |     f()
+    12:34:56.78 >>> Call to main.<locals>.<lambda> in File "/path/to_file.py", line 26
+    12:34:56.78   26 |     f = pp.deep(lambda: caller(lambda: 2 * 3))
+    12:34:56.78   26 |     f = pp.deep(lambda: caller(lambda: 2 * 3))
+    12:34:56.78 <<< Return value from main.<locals>.<lambda>: 6
+12:34:56.78   27 |     f()
 12:34:56.78 <<< Return value from main: None
-"""
