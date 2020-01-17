@@ -1,3 +1,4 @@
+from __future__ import print_function
 import io
 import os
 import re
@@ -11,7 +12,7 @@ import pytest
 import six
 from cheap_repr import cheap_repr, register_repr
 from cheap_repr.utils import safe_qualname
-from littleutils import file_to_string, string_to_file
+from littleutils import file_to_string, string_to_file, group_by_key_func
 
 from snoop import formatting, install, spy
 from snoop.configuration import Config
@@ -88,12 +89,16 @@ def assert_sample_output(module_name):
         PYPY * 'pypy' + sys.version[:3],
         module_name + '.txt',
     )
-    
+
+    compare_to_file(normalised, result_filename)
+
+
+def compare_to_file(text, filename):
     if os.environ.get('FIX_SNOOP_TESTS'):
-        string_to_file(normalised, result_filename)
+        string_to_file(text, filename)
     else:
-        expected_output = file_to_string(result_filename)
-        assert normalised == expected_output.strip()
+        expected_output = file_to_string(filename)
+        assert text == expected_output
 
 
 def test_samples():
@@ -120,6 +125,49 @@ def test_samples():
             continue
 
         assert_sample_output(module_name)
+
+    compare_versions()
+
+
+def compare_versions():
+    out = [""]
+
+    def prn(*args):
+        out[0] += " ".join(map(str, args)) + "\n"
+
+    samples_dir = os.path.join(tests_dir, "samples")
+    results_dir = os.path.join(tests_dir, "sample_results")
+    versions = sorted(os.listdir(results_dir))
+    for filename in sorted(os.listdir(samples_dir)):
+        if not filename.endswith(".py"):
+            continue
+        module_name = filename[:-3]
+        if module_name == "__init__":
+            continue
+
+        doesnt_exist = "Doesn't exist:"
+
+        def get_results(version):
+            path = os.path.join(results_dir, version, module_name + ".txt")
+            if os.path.exists(path):
+                return file_to_string(path)
+            else:
+                return doesnt_exist
+
+        grouped = group_by_key_func(versions, get_results)
+
+        if len(grouped) > 1:
+            prn(module_name)
+            doesnt_exist_versions = grouped.pop(doesnt_exist, None)
+            if doesnt_exist_versions:
+                prn(doesnt_exist, ", ".join(doesnt_exist_versions))
+            if len(grouped) > 1:
+                prn("Differing versions:")
+                for version_group in sorted(grouped.values()):
+                    prn(", ".join(version_group))
+            prn()
+
+    compare_to_file(out[0], os.path.join(tests_dir, "version_differences.txt"))
 
 
 def test_string_io():
