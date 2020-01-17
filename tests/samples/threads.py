@@ -20,19 +20,3 @@ def main():
     run('short')
     run('longername')
     run('short')
-
-
-expected_output = """
-short >>> Call to foo in File "/path/to_file.py", line 9
-short    9 | def foo():
-short   10 |     return 1
-short <<< Return value from foo: 1
-longername >>> Call to foo in File "/path/to_file.py", line 9
-longername    9 | def foo():
-longername   10 |     return 1
-longername <<< Return value from foo: 1
-short      >>> Call to foo in File "/path/to_file.py", line 9
-short         9 | def foo():
-short        10 |     return 1
-short      <<< Return value from foo: 1
-"""

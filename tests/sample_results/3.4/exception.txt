@@ -1,0 +1,64 @@
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 19
+12:34:56.78   19 | def main():
+12:34:56.78   20 |     try:
+12:34:56.78   21 |         bar()
+    12:34:56.78 >>> Call to bar in File "/path/to_file.py", line 10
+    12:34:56.78 ...... _ = ()
+    12:34:56.78   10 | def bar(*_):
+    12:34:56.78   11 |     try:
+    12:34:56.78   12 |         str(foo())
+        12:34:56.78 >>> Call to foo in File "/path/to_file.py", line 4
+        12:34:56.78    4 | def foo():
+        12:34:56.78    5 |     raise TypeError('''
+        12:34:56.78    7 |     bad''')
+        12:34:56.78 !!! TypeError: 
+        12:34:56.78 !!!     very
+        12:34:56.78 !!!     bad
+        12:34:56.78 !!! Call ended by exception
+    12:34:56.78   12 |         str(foo())
+    12:34:56.78 !!! TypeError: 
+    12:34:56.78 !!!     very
+    12:34:56.78 !!!     bad
+    12:34:56.78   13 |     except Exception:
+    12:34:56.78   14 |         str(1)
+    12:34:56.78   15 |         raise
+    12:34:56.78 !!! Call ended by exception
+12:34:56.78   21 |         bar()
+12:34:56.78 !!! TypeError: 
+12:34:56.78 !!!     very
+12:34:56.78 !!!     bad
+12:34:56.78   22 |     except:
+12:34:56.78   23 |         pass
+12:34:56.78   25 |     try:
+12:34:56.78   26 |         bob(
+12:34:56.78   27 |             1,
+12:34:56.78   28 |             2
+12:34:56.78 !!! TypeError: 'NoneType' object is not callable
+12:34:56.78   30 |     except:
+12:34:56.78   31 |         pass
+12:34:56.78   33 |     try:
+12:34:56.78   34 |         (None
+12:34:56.78   35 |          or bob)(
+12:34:56.78   36 |             1,
+12:34:56.78   37 |             2
+12:34:56.78 !!! TypeError: 'NoneType' object is not callable
+12:34:56.78   39 |     except:
+12:34:56.78   40 |         pass
+12:34:56.78   42 |     x = [[[2]]]
+12:34:56.78 .......... len(x) = 1
+12:34:56.78   44 |     try:
+12:34:56.78   45 |         str(x[1][0][0])
+12:34:56.78 !!! IndexError: list index out of range
+12:34:56.78   46 |     except:
+12:34:56.78   47 |         pass
+12:34:56.78   49 |     try:
+12:34:56.78   50 |         str(x[0][1][0])
+12:34:56.78 !!! IndexError: list index out of range
+12:34:56.78   51 |     except:
+12:34:56.78   52 |         pass
+12:34:56.78   54 |     try:
+12:34:56.78   55 |         str(x[0][0][1])
+12:34:56.78 !!! IndexError: list index out of range
+12:34:56.78   56 |     except:
+12:34:56.78   57 |         pass
+12:34:56.78 <<< Return value from main: None

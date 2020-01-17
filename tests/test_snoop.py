@@ -24,6 +24,8 @@ formatting._get_filename = lambda _: "/path/to_file.py"
 
 install()
 
+tests_dir = os.path.dirname(__file__)
+
 
 @register_repr(type(cheap_repr))
 def repr_function(func, _helper):
@@ -55,7 +57,8 @@ def sample_traceback():
     sys.stderr.write(tb)
 
 
-def assert_sample_output(module):
+def assert_sample_output(module_name):
+    module = import_module('tests.samples.' + module_name)
     old = sys.stderr
     
     out = io.StringIO()
@@ -79,28 +82,22 @@ def assert_sample_output(module):
     normalised = normalised.replace('<tuple_iterator', '<tupleiterator')
     normalised = normalised.replace('<sequenceiterator', '<tupleiterator')
 
-    try:
-        assert (
-                normalised ==
-                module.expected_output.strip()
-        )
-    except AssertionError:
-        if os.environ.get('FIX_SNOOP_TESTS'):
-            path = module.__file__.rstrip('c')
-            contents = file_to_string(path)
-            match = re.search(
-                r'expected_output = r?"""',
-                contents,
-            )
-            contents = contents[:match.end(0)] + '\n{}\n"""\n'.format(normalised)
-            string_to_file(contents, path)
-        else:
-            print('\n\nNormalised actual output:\n\n' + normalised)
-            raise  # show pytest diff (may need -vv flag to see in full)
+    result_filename = os.path.join(
+        tests_dir, 
+        'sample_results',
+        PYPY * 'pypy' + sys.version[:3],
+        module_name + '.txt',
+    )
+    
+    if os.environ.get('FIX_SNOOP_TESTS'):
+        string_to_file(normalised, result_filename)
+    else:
+        expected_output = file_to_string(result_filename)
+        assert normalised == expected_output.strip()
 
 
 def test_samples():
-    samples_dir = os.path.join(os.path.dirname(__file__), 'samples')
+    samples_dir = os.path.join(tests_dir, 'samples')
     for filename in os.listdir(samples_dir):
         if filename.endswith('.pyc'):
             continue
@@ -109,18 +106,9 @@ def test_samples():
         if module_name in '__init__ __pycache__':
             continue
 
-        if module_name in 'django_sample color'.split() and six.PY2:
+        if module_name in 'django_sample'.split() and six.PY2:
             continue
         
-        if module_name in 'color2'.split() and six.PY3:
-            continue
-    
-        if NO_ASTTOKENS:
-            if module_name in 'pp pp_exception exception color color2'.split():
-                continue
-        else:
-            if module_name.startswith('no_asttokens'):
-                continue
         if PYPY or sys.version_info[:2] == (3, 4):
             if module_name in 'pandas_sample'.split():
                 continue
@@ -128,12 +116,10 @@ def test_samples():
             if module_name in 'spy enabled'.split():
                 continue
 
-
         if module_name in 'f_string' and sys.version_info[:2] < (3, 6):
             continue
 
-        module = import_module('tests.samples.' + module_name)
-        assert_sample_output(module)
+        assert_sample_output(module_name)
 
 
 def test_string_io():

@@ -1,0 +1,5 @@
+12:34:56.78 >>> Call to main.<locals>.<lambda> in File "/path/to_file.py", line 5
+12:34:56.78 .......... x = 3
+12:34:56.78    5 |     my_function = snoop.snoop()(lambda x: x ** 2)
+12:34:56.78    5 |     my_function = snoop.snoop()(lambda x: x ** 2)
+12:34:56.78 <<< Return value from main.<locals>.<lambda>: 9

@@ -1,0 +1,24 @@
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 5
+12:34:56.78    5 | def main():
+12:34:56.78    6 |     x = 1
+12:34:56.78    7 |     y = 2
+12:34:56.78    8 |     try:
+12:34:56.78    9 |         pp.deep(lambda: x + y + bad() + 2)
+12:34:56.78 LOG:
+12:34:56.78 !!! TypeError: bad
+12:34:56.78   10 |     except:
+12:34:56.78   11 |         sample_traceback()
+Traceback (most recent call last):
+    assert not NO_ASTTOKENS
+AssertionError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+    pp.deep(lambda: x + y + bad() + 2)
+    return PPEvent(self, [arg], deep=True).returns
+    self.returns = args[0] = args[0]()
+    pp.deep(lambda: x + y + bad() + 2)
+    raise TypeError('bad')
+TypeError: bad
+12:34:56.78 <<< Return value from main: None
