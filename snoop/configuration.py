@@ -184,6 +184,9 @@ def get_write_function(output, overwrite):
             except UnicodeEncodeError:
                 # God damn Python 2
                 stream.write(shitcode(s))
+
+            getattr(stream, "flush", lambda: None)()
+
     return write
 
 
