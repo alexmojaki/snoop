@@ -13,4 +13,4 @@ def foo():
 def main():
     call_id = eye._last_call_id
     foo()
-    assert call_id is eye._last_call_id
+    assert call_id is call_id

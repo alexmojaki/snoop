@@ -2,18 +2,15 @@ import snoop
 
 
 def f4(x4):
-    result4 = x4 * 2
-    return result4
+    return x4 * 2
 
 
 def f3(x3):
-    result3 = f4(x3)
-    return result3
+    return f4(x3)
 
 
 def f2(x2):
-    result2 = f3(x2)
-    return result2
+    return f3(x2)
 
 
 def main():

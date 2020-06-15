@@ -16,5 +16,5 @@ class Foo(object):
 ))
 def main():
     foo = Foo()
-    for i in range(2):
+    for _ in range(2):
         foo.square()

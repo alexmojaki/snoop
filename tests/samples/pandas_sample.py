@@ -8,5 +8,4 @@ def main():
     arr = np.arange(10000)
     arr = arr.reshape((100, 100))
     df = pd.DataFrame(arr)
-    series = df[0]
-    return series
+    return df[0]

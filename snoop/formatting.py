@@ -31,10 +31,7 @@ class StatementsDict(dict):
 
     def __missing__(self, key):
         statements = self.source.statements_at_line(key)
-        if len(statements) == 1:
-            result = list(statements)[0]
-        else:
-            result = None
+        result = list(statements)[0] if len(statements) == 1 else None
         self[key] = result
         return result
 

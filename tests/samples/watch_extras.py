@@ -7,8 +7,7 @@ def watch_type(source, value):
 
 def foo():
     x = 1
-    y = [x]
-    return y
+    return [x]
 
 
 def main():

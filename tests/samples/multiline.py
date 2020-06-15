@@ -45,22 +45,10 @@ def main():
             )
 
     with context(
-            bar(),  # 1
-            bar(),  # 2
-    ):
-        if bar(
                 bar(),  # 1
                 bar(),  # 2
         ):
-            pass
-        elif [
-            bar(
-                bar(),  # 1
-                bar(),  # 2
-            )
-        ]:
-            pass
-        
+        pass
     return x
 
 

@@ -113,13 +113,13 @@ def test_samples():
 
         if module_name in 'django_sample'.split() and six.PY2:
             continue
-        
-        if PYPY or sys.version_info[:2] == (3, 4):
-            if module_name in 'pandas_sample'.split():
-                continue
-        if NO_BIRDSEYE:
-            if module_name in 'spy enabled'.split():
-                continue
+
+        if (
+            PYPY or sys.version_info[:2] == (3, 4)
+        ) and module_name in 'pandas_sample'.split():
+            continue
+        if NO_BIRDSEYE and module_name in 'spy enabled'.split():
+            continue
 
         if module_name in 'f_string' and sys.version_info[:2] < (3, 6):
             continue

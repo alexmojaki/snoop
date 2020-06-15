@@ -19,7 +19,7 @@ def bar():
 def main():
     for func in [foo, bar]:
         func()
-        call_id = eye._last_call_id
         with eye.db.session_scope() as session:
+            call_id = eye._last_call_id
             call = session.query(eye.db.Call).filter_by(id=call_id).one()
             assert call.result == '10'

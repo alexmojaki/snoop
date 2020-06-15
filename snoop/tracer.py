@@ -258,7 +258,7 @@ class Tracer(object):
         self.config.last_frame = frame
 
         trace_event = Event(frame_info, event, arg, thread_local.depth)
-        if not (frame.f_code.co_name == '<genexpr>' and event not in ('return', 'exception')):
+        if frame.f_code.co_name != '<genexpr>' or event in ('return', 'exception'):
             trace_event.variables = frame_info.update_variables(
                 self.watch,
                 self.config.watch_extras,
@@ -313,11 +313,7 @@ class Spy(object):
 
         @functools.wraps(func)
         def wrapper(*func_args, **func_kwargs):
-            if self.config.enabled:
-                final_func = traced
-            else:
-                final_func = func
-
+            final_func = traced if self.config.enabled else func
             return final_func(*func_args, **func_kwargs)
 
         return wrapper

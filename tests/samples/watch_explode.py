@@ -13,5 +13,4 @@ class Foo(object):
 def main():
     _d = OrderedDict([('a', 1), ('b', 2), ('c', 'ignore')])
     _point = Foo(x=3, y=4)
-    lst = [7, 8, 9]
-    lst.append(10)
+    lst = [7, 8, 9, 10]

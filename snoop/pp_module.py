@@ -184,9 +184,11 @@ class NodeVisitor(ast.NodeTransformer):
 
     def generic_visit(self, node):
         # type: (ast.AST) -> ast.AST
-        if (isinstance(node, ast.expr) and
-                not (hasattr(node, "ctx") and not isinstance(node.ctx, ast.Load)) and
-                not isinstance(node, getattr(ast, 'Starred', ()))):
+        if (
+            isinstance(node, ast.expr)
+            and (not hasattr(node, "ctx") or isinstance(node.ctx, ast.Load))
+            and not isinstance(node, getattr(ast, 'Starred', ()))
+        ):
             return self.visit_expr(node)
         return super(NodeVisitor, self).generic_visit(node)
 
