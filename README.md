@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/alexmojaki/snoop.svg?branch=master)](https://travis-ci.org/alexmojaki/snoop) [![Supports Python versions 2.7 and 3.4+, including PyPy](https://img.shields.io/pypi/pyversions/snoop.svg)](https://pypi.python.org/pypi/snoop)
 
-snoop is a powerful set of Python debugging tools. It's primarily meant to be a [more featureful and refined](https://github.com/alexmojaki/snoop/wiki/Comparison-to-PySnooper) version of [PySnooper](https://github.com/cool-RR/pysnooper). It also includes a more accurate version of [icecream](https://github.com/gruns/icecream) and some other nifty stuff.
+snoop is a powerful set of Python debugging tools. It's primarily meant to be a [more featureful and refined](https://github.com/alexmojaki/snoop/wiki/Comparison-to-PySnooper) version of [PySnooper](https://github.com/cool-RR/pysnooper). It also includes its own version of [icecream](https://github.com/gruns/icecream) and some other nifty stuff.
 
 You're trying to figure out why your Python code isn't doing what you think it should be doing. You'd love to use a full-fledged debugger with breakpoints and watches, but you can't be bothered to set one up right now.
 
@@ -184,7 +184,7 @@ There are a few situations where `pp` can't find the source code of its argument
  
 Under the hood, `pp` uses the library [`executing`](https://github.com/alexmojaki/executing) to locate the AST node of the function call - check it out if you'd like to write some cool utilities of your own.
 
-`pp` is inspired by [icecream](https://github.com/gruns/icecream) and offers the same basic API for printing, but [icecream's algorithm is less accurate than `executing`](https://github.com/gruns/icecream/pull/33), and `pp` integrates seamlessly with `snoop`. It also offers `pp.deep`, which is unique.
+`pp` is inspired by [icecream](https://github.com/gruns/icecream) and offers the same basic API for printing, but `pp` integrates seamlessly with `snoop` and offers `pp.deep`, which is unique.
 
 '`pp`' stands for 'pretty-print' and *totally definitely absolutely has no other meaning*. It's also very easy and quick to type.
 
