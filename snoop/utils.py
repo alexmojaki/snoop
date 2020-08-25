@@ -173,27 +173,33 @@ except ImportError:
         pass
 
 
-def _sample_indices(length, max_length):
-    if length <= max_length + 2:
-        return range(length)
-    else:
-        return chain(range(max_length // 2),
-                     range(length - max_length // 2,
-                           length))
+def _register_cheap_reprs():
+    def _sample_indices(length, max_length):
+        if length <= max_length + 2:
+            return range(length)
+        else:
+            return chain(range(max_length // 2),
+                         range(length - max_length // 2,
+                               length))
+
+    @try_register_repr('pandas', 'Series')
+    def _repr_series_one_line(x, helper):
+        n = len(x)
+        if n == 0:
+            return repr(x)
+        newlevel = helper.level - 1
+        pieces = []
+        maxparts = _repr_series_one_line.maxparts
+        for i in _sample_indices(n, maxparts):
+            try:
+                k = x.index[i:i + 1].format(sparsify=False)[0]
+            except TypeError:
+                k = x.index[i:i + 1].format()[0]
+            v = x.iloc[i]
+            pieces.append('%s = %s' % (k, cheap_repr(v, newlevel)))
+        if n > maxparts + 2:
+            pieces.insert(maxparts // 2, '...')
+        return '; '.join(pieces)
 
 
-@try_register_repr('pandas', 'Series')
-def _repr_series_one_line(x, helper):
-    n = len(x)
-    if n == 0:
-        return repr(x)
-    newlevel = helper.level - 1
-    pieces = []
-    maxparts = _repr_series_one_line.maxparts
-    for i in _sample_indices(n, maxparts):
-        k = x.index[i:i + 1].format(sparsify=False)[0]
-        v = x.iloc[i]
-        pieces.append('%s = %s' % (k, cheap_repr(v, newlevel)))
-    if n > maxparts + 2:
-        pieces.insert(maxparts // 2, '...')
-    return '; '.join(pieces)
+_register_cheap_reprs()

@@ -8,10 +8,11 @@ from collections import OrderedDict
 
 import six
 # noinspection PyUnresolvedReferences
-from cheap_repr import cheap_repr, find_repr_function
+from cheap_repr import cheap_repr, find_repr_function, try_register_repr
 
-from snoop.utils import my_cheap_repr, NO_ASTTOKENS, ArgDefaultDict, iscoroutinefunction, \
-    truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator, pp_name_prefix, NO_BIRDSEYE
+from snoop.utils import my_cheap_repr, ArgDefaultDict, iscoroutinefunction, \
+    truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator, pp_name_prefix, NO_BIRDSEYE, \
+    _register_cheap_reprs
 from .formatting import Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
 
@@ -310,6 +311,8 @@ class Spy(object):
 
         traced = eye(func)
         traced = self.config.snoop(*args, **kwargs)(traced)
+
+        _register_cheap_reprs()  # Override birdseye in case it's outdated
 
         @functools.wraps(func)
         def wrapper(*func_args, **func_kwargs):

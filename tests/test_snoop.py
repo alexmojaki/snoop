@@ -26,6 +26,7 @@ formatting._get_filename = lambda _: "/path/to_file.py"
 install()
 
 tests_dir = os.path.dirname(__file__)
+cheap_repr.raise_exceptions = True
 
 
 @register_repr(type(cheap_repr))
