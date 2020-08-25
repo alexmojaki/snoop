@@ -47,8 +47,7 @@ class CommonVariable(BaseVariable):
 
     def _safe_keys(self, main_value):
         try:
-            for key in self._keys(main_value):
-                yield key
+            yield from self._keys(main_value)
         except Exception:
             pass
 
