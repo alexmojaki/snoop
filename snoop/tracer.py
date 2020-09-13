@@ -193,6 +193,8 @@ class Tracer(object):
         if not self.config.enabled:
             return
 
+        self.config.thread_local.__dict__.setdefault('depth', -1)
+
         calling_frame = sys._getframe(context + 1)
         if not self._is_internal_frame(calling_frame):
             calling_frame.f_trace = self.trace
@@ -243,7 +245,6 @@ class Tracer(object):
                         return None
 
         thread_local = self.config.thread_local
-        thread_local.__dict__.setdefault('depth', -1)
         frame_info = self.frame_infos[frame]
         if event in ('call', 'enter'):
             thread_local.depth += 1
