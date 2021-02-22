@@ -3,12 +3,12 @@ Differing versions:
 2.7
 3.4
 3.5, 3.6, 3.7, pypy3.5
-3.8
+3.8, 3.9
 pypy2.7
 
 depth
 Differing versions:
-2.7, 3.5, 3.6, 3.7, 3.8, pypy2.7, pypy3.5
+2.7, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5
 3.4
 
 django_sample
@@ -21,12 +21,13 @@ end_finally
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, pypy2.7, pypy3.5
 3.8
+3.9
 
 exception
 Differing versions:
 2.7, 3.5, 3.6, 3.7
 3.4
-3.8
+3.8, 3.9
 pypy2.7, pypy3.5
 
 f_string
@@ -35,7 +36,7 @@ Doesn't exist: 2.7, 3.4, 3.5, pypy2.7, pypy3.5
 multiline
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, pypy2.7, pypy3.5
-3.8
+3.8, 3.9
 
 pandas_sample
 Doesn't exist: 3.4, pypy2.7, pypy3.5
@@ -44,12 +45,12 @@ pp
 Differing versions:
 2.7, 3.5, 3.6, 3.7, pypy2.7
 3.4
-3.8
+3.8, 3.9
 pypy3.5
 
 pp_exception
 Differing versions:
-2.7, 3.5, 3.6, 3.7, 3.8, pypy2.7, pypy3.5
+2.7, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5
 3.4
 
 spy
