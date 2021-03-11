@@ -1,5 +1,6 @@
 import inspect
 import os
+import pprint
 import sys
 import threading
 from io import open
@@ -37,6 +38,7 @@ def install(
         watch_extras=(),
         replace_watch_extras=None,
         formatter_class=DefaultFormatter,
+        pformat=None,
 ):
     """
     Configure output, enable or disable, and add names to builtins. Parameters:
@@ -80,6 +82,7 @@ def install(
         watch_extras=watch_extras,
         replace_watch_extras=replace_watch_extras,
         formatter_class=formatter_class,
+        pformat=pformat,
     )
     package.snoop.config = config
     package.pp.config = config
@@ -104,6 +107,7 @@ class Config(object):
             watch_extras=(),
             replace_watch_extras=None,
             formatter_class=DefaultFormatter,
+            pformat=None,
     ):
         if can_color:
             if color is None:
@@ -115,6 +119,20 @@ class Config(object):
         self.write = get_write_function(out, overwrite)
         self.formatter = formatter_class(prefix, columns, color)
         self.enabled = enabled
+
+        if pformat is not None:
+            self.pformat = pformat
+        else:
+            try:
+                import prettyprinter
+                self.pformat = prettyprinter.pformat
+            except ImportError:
+                try:
+                    import pprintpp
+                    self.pformat = pprintpp.pformat
+                except ImportError:
+                    self.pformat = pprint.pformat
+
         self.pp = PP(self)
 
         class ConfiguredTracer(Tracer):

@@ -1,6 +1,5 @@
 import ast
 import inspect
-import pprint
 import traceback
 import warnings
 from copy import deepcopy
@@ -68,7 +67,7 @@ class PPEvent(object):
 
     def write(self, source, value, depth=0):
         if depth == 0:
-            value_string = pprint.pformat(value)
+            value_string = self.config.pformat(value)
         else:
             try:
                 value_string = repr(value)
