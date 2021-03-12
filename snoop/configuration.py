@@ -120,18 +120,16 @@ class Config(object):
         self.formatter = formatter_class(prefix, columns, color)
         self.enabled = enabled
 
-        if pformat is not None:
-            self.pformat = pformat
-        else:
+        if pformat is None:
             try:
-                import prettyprinter
-                self.pformat = prettyprinter.pformat
-            except ImportError:
+                from prettyprinter import pformat
+            except Exception:
                 try:
-                    import pprintpp
-                    self.pformat = pprintpp.pformat
-                except ImportError:
-                    self.pformat = pprint.pformat
+                    from pprintpp import pformat
+                except Exception:
+                    from pprint import pformat
+
+        self.pformat = pformat
 
         self.pp = PP(self)
 
