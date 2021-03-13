@@ -55,3 +55,8 @@ Differing versions:
 spy
 Doesn't exist: 3.4, pypy2.7, pypy3.5
 
+with_no_args
+Differing versions:
+2.7, 3.5, 3.6, 3.7, 3.8, pypy2.7, pypy3.5
+3.4
+

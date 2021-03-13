@@ -7,7 +7,8 @@ from itertools import chain
 import six
 from cheap_repr import cheap_repr, try_register_repr
 
-NO_ASTTOKENS = sys.version_info[:2] == (3, 4)
+PY34 = sys.version_info[:2] == (3, 4)
+NO_ASTTOKENS = PY34
 PYPY = 'pypy' in sys.version.lower()
 NO_BIRDSEYE = NO_ASTTOKENS or PYPY
 
