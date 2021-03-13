@@ -12,7 +12,7 @@ from cheap_repr import cheap_repr, find_repr_function, try_register_repr
 
 from snoop.utils import my_cheap_repr, ArgDefaultDict, iscoroutinefunction, \
     truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator, pp_name_prefix, NO_BIRDSEYE, \
-    _register_cheap_reprs
+    _register_cheap_reprs, PY34
 from .formatting import Event, Source
 from .variables import CommonVariable, Exploding, BaseVariable
 
@@ -210,9 +210,11 @@ class Tracer(object):
         if not self.config.enabled:
             return
 
-        stack = thread_global.original_trace_functions
-        sys.settrace(stack.pop())
+        previous_trace = thread_global.original_trace_functions.pop()
+        sys.settrace(previous_trace)
         calling_frame = sys._getframe(context + 1)
+        if not (PY34 and previous_trace is None):
+            calling_frame.f_trace = previous_trace
         self.trace(calling_frame, 'exit', None)
         self.target_frames.discard(calling_frame)
         self.frame_infos.pop(calling_frame, None)
