@@ -42,7 +42,7 @@ tests_require = [
 
 if 'pypy' not in sys.version.lower() and sys.version_info[:2] not in [(3, 4)]:
     tests_require += [
-        'numpy>=1.16.3',
+        'numpy>=1.16.5',
         'pandas>=0.24.2',
         'birdseye',
     ]
@@ -78,6 +78,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'License :: OSI Approved :: MIT License',
