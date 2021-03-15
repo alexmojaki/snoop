@@ -38,6 +38,8 @@ except ImportError:
 tests_require = [
     'pytest',
     'littleutils',
+    'prettyprinter',
+    'pprintpp',
 ]
 
 if 'pypy' not in sys.version.lower() and sys.version_info[:2] not in [(3, 4)]:

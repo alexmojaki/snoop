@@ -148,9 +148,9 @@ See [`watch_extras`](#watch_extras) to show additional information about any val
 
 While `snoop` is meant to save you from writing `print` calls, sometimes that's still exactly the kind of thing you need. `pp` aims to be the best possible version of this. It can be used alone or in combination with `snoop`.
 
-`pp(x)` will output `x = <pretty printed value of x>`, i.e. it will show the source code of its argument(s) so you know what's being printed, and format the value with `pprint.pformat` so that you can easily see the layout of complicated data structures.
+`pp(x)` will output `x = <pretty printed value of x>`, i.e. it will show the source code of its argument(s) so you know what's being printed, and format the value with `pprint.pformat` so that you can easily see the layout of complicated data structures. If [`prettyprinter`](https://github.com/tommikaikkonen/prettyprinter) or [`pprintpp`](https://github.com/wolever/pprintpp) is installed their `pformat` will be used instead of `pprint.pformat`.
 
-`pp` will return its argument directly so you can easily insert it in code without rearranging. If given multiple arguments, it will return them as a tuple, so you can replace `foo(x, y)` with `foo(*pp(x, y))` to leave the behaviour of the code intact. 
+`pp` will return its argument directly so you can easily insert it in code without rearranging. If given multiple arguments, it will return them as a tuple, so you can replace `foo(x, y)` with `foo(*pp(x, y))` to leave the behaviour of the code intact.
 
 Here's an example:
 

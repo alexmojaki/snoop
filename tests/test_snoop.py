@@ -14,6 +14,10 @@ from cheap_repr import cheap_repr, register_repr
 from cheap_repr.utils import safe_qualname
 from littleutils import file_to_string, string_to_file, group_by_key_func
 
+# Hide 3rd party pretty-printing modules
+sys.modules['prettyprinter'] = {}
+sys.modules['pprintpp'] = {}
+
 from snoop import formatting, install, spy
 from snoop.configuration import Config
 from snoop.pp_module import is_deep_arg
