@@ -48,6 +48,12 @@ Differing versions:
 3.8, 3.9
 pypy3.5
 
+pp_custom_pformat
+Differing versions:
+2.7, pypy2.7
+3.4
+3.5, 3.6, 3.7, 3.8, 3.9, pypy3.5
+
 pp_exception
 Differing versions:
 2.7, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5

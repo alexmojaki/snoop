@@ -1,5 +1,6 @@
 import inspect
 import os
+import pprint
 import sys
 import threading
 from io import open
@@ -37,6 +38,7 @@ def install(
         watch_extras=(),
         replace_watch_extras=None,
         formatter_class=DefaultFormatter,
+        pformat=None,
 ):
     """
     Configure output, enable or disable, and add names to builtins. Parameters:
@@ -62,8 +64,9 @@ def install(
         - `full_file`: The full path to the file (also shown anyway when the function is called).
         - `function`: The name of the current function.
         - `function_qualname`: The qualified name of the current function.
-        
-        If you want a custom column, please open an issue to tell me what you're interested in! In the meantime, you can pass a list, where the elements are either strings or callables. The callables should take one argument, which will be an `Event` object. It has attributes `frame`, `event`, and `arg`, as specified in [`sys.settrace()`](https://docs.python.org/3/library/sys.html#sys.settrace), and other attributes which may change. 
+
+        If you want a custom column, please open an issue to tell me what you're interested in! In the meantime, you can pass a list, where the elements are either strings or callables. The callables should take one argument, which will be an `Event` object. It has attributes `frame`, `event`, and `arg`, as specified in [`sys.settrace()`](https://docs.python.org/3/library/sys.html#sys.settrace), and other attributes which may change.
+    - `pformat`: set the pretty formatting function `pp` uses. Default is to use the first of `prettyprinter.pformat`, `pprintpp.pformat` and `pprint.pformat` that can be imported.
     """
     
     if builtins:
@@ -80,6 +83,7 @@ def install(
         watch_extras=watch_extras,
         replace_watch_extras=replace_watch_extras,
         formatter_class=formatter_class,
+        pformat=pformat,
     )
     package.snoop.config = config
     package.pp.config = config
@@ -104,6 +108,7 @@ class Config(object):
             watch_extras=(),
             replace_watch_extras=None,
             formatter_class=DefaultFormatter,
+            pformat=None,
     ):
         if can_color:
             if color is None:
@@ -115,6 +120,18 @@ class Config(object):
         self.write = get_write_function(out, overwrite)
         self.formatter = formatter_class(prefix, columns, color)
         self.enabled = enabled
+
+        if pformat is None:
+            try:
+                from prettyprinter import pformat
+            except Exception:
+                try:
+                    from pprintpp import pformat
+                except Exception:
+                    from pprint import pformat
+
+        self.pformat = pformat
+
         self.pp = PP(self)
 
         class ConfiguredTracer(Tracer):

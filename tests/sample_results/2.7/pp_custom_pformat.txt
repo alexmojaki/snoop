@@ -1,0 +1,51 @@
+Test with custom pformat
+12:34:56.78 LOG:
+12:34:56.78 .... x = custom(1)
+12:34:56.78 LOG:
+12:34:56.78 .... pp(x) + y = custom(3)
+12:34:56.78 LOG:
+12:34:56.78 ............ x = 1
+12:34:56.78 ............ y = 2
+12:34:56.78 ........ x + y = 3
+12:34:56.78 ........ y = 2
+12:34:56.78 .... (x + y) + y = custom(5)
+12:34:56.78 >>> Enter with block in test_misc in File "/path/to_file.py", line 11
+12:34:56.78 .......... x = 1
+12:34:56.78 .......... y = 2
+12:34:56.78   12 |         y = 3  # custom pformat is not used here
+12:34:56.78 .............. y = 3
+12:34:56.78 <<< Exit with block in test_misc
+12:34:56.78 LOG:
+12:34:56.78 .... d = custom(['a long key to be pretty printed prettily', ['prettyprinter prints datetime with keyword arguments:', datetime.datetime(1970, 1, 1, 0, 0, 42)]])
+
+Test without prettyprinter and without pprintpp
+12:34:56.78 LOG:
+12:34:56.78 .... d = ['a long key to be pretty printed prettily',
+12:34:56.78           ['prettyprinter prints datetime with keyword arguments:',
+12:34:56.78            datetime.datetime(1970, 1, 1, 0, 0, 42)]]
+
+Test with prettyprinter and without pprintpp
+12:34:56.78 LOG:
+12:34:56.78 .... d = ['a long key to be pretty printed prettily',
+12:34:56.78           ['prettyprinter prints datetime with keyword arguments:',
+12:34:56.78            datetime.datetime(1970, 1, 1, 0, 0, 42)]]
+
+Test without prettyprinter and with pprintpp
+12:34:56.78 LOG:
+12:34:56.78 .... d = [
+12:34:56.78              'a long key to be pretty printed prettily',
+12:34:56.78              [
+12:34:56.78                  'prettyprinter prints datetime with keyword arguments:',
+12:34:56.78                  datetime.datetime(1970, 1, 1, 0, 0, 42),
+12:34:56.78              ],
+12:34:56.78          ]
+
+Test with prettyprinter and with pprintpp
+12:34:56.78 LOG:
+12:34:56.78 .... d = [
+12:34:56.78              'a long key to be pretty printed prettily',
+12:34:56.78              [
+12:34:56.78                  'prettyprinter prints datetime with keyword arguments:',
+12:34:56.78                  datetime.datetime(1970, 1, 1, 0, 0, 42),
+12:34:56.78              ],
+12:34:56.78          ]
