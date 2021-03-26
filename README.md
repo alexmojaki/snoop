@@ -91,7 +91,7 @@ Here we specify `depth=2` to mean we should also step one level down into inner 
 
 ![cache output](https://i.imgur.com/Enu7k0h.png)
 
-At a glance we can see that in the first call the cache lookup failed with a `KeyError` so the original `add` function was called, while in the second call the previously cached result was returned immediately. 
+At a glance we can see that in the first call the cache lookup failed with a `KeyError` so the original `add` function was called, while in the second call the previously cached result was returned immediately.
 
 If you don't want to trace an entire function, you can wrap the relevant part in a `with` block:
 
@@ -122,7 +122,7 @@ which outputs something like:
 
 - `depth`: as seen above, snoops deeper calls made by the function/block you trace. The default is 1, meaning no inner calls, so pass something bigger.
 - `watch`: show values of arbitrary expressions by specifying them as a string, e.g:
- 
+
 ```python
 @snoop(watch=('foo.bar', 'self.x["whatever"]'))
 ```
@@ -181,7 +181,7 @@ There are a few situations where `pp` can't find the source code of its argument
  - In Python 3.4 and PyPy.
  - In the presence of magic which transforms source code under the hood, such as `pytest` or `birdseye` (and thus the [`@spy`](#spy) decorator).
  - When the source file has been modified before the first call to `pp` or `snoop`.
- 
+
 Under the hood, `pp` uses the library [`executing`](https://github.com/alexmojaki/executing) to locate the AST node of the function call - check it out if you'd like to write some cool utilities of your own.
 
 `pp` is inspired by [icecream](https://github.com/gruns/icecream) and offers the same basic API for printing, but `pp` integrates seamlessly with `snoop` and offers `pp.deep`, which is unique.
@@ -253,7 +253,7 @@ The only big disadvantage of `@spy` is that it significantly reduces performance
 
 [Read more about `birdseye` in the documentation here.](https://birdseye.readthedocs.io/en/latest/)
 
-('`spy`' is so named because it's a combination of the decorator names '`snoop`' and '`eye`')  
+('`spy`' is so named because it's a combination of the decorator names '`snoop`' and '`eye`')
 
 ## `install()`
 
@@ -277,7 +277,7 @@ will let you decorate functions with `@ss`.
 
 If you dislike this feature and would prefer to just import normally, but you want to use `install()` for other configuration, pass `builtins=False`.
 
-As an alternative, in Python 3.7+ you can use the new `breakpoint` function in place of `snoop` if you set the environment variable `PYTHONBREAKPOINT=snoop.snoop`. 
+As an alternative, in Python 3.7+ you can use the new `breakpoint` function in place of `snoop` if you set the environment variable `PYTHONBREAKPOINT=snoop.snoop`.
 
 ### Disabling
 
@@ -294,30 +294,31 @@ You can also dynamically re-enable the functions at any point by calling `snoop.
     - Anything with a `write` method, e.g. `sys.stdout` or a file object.
     - Any callable with a single string argument, e.g. `logger.info`.
  - `color`: determines whether the output includes escape characters to display colored text in the console. If you see weird characters in your output, your console doesn't support colors, so pass `color=False`.
-    - Code is syntax highlighted using [Pygments](http://pygments.org/), and this argument is passed as the style. You can choose a different color scheme by passing a string naming a style (see [this gallery](https://help.farbox.com/pygments.html)) or a style class. The default style is monokai.   
+    - Code is syntax highlighted using [Pygments](http://pygments.org/), and this argument is passed as the style. You can choose a different color scheme by passing a string naming a style (see [this gallery](https://help.farbox.com/pygments.html)) or a style class. The default style is monokai.
     - By default this parameter is set to `out.isatty()`, which is usually true for stdout and stderr but will be false if they are redirected or piped. Pass `True` or a style if you want to force coloring.
     - To see colors in the PyCharm Run window, edit the Run Configuration and tick "Emulate terminal in output console".
  - `prefix`: Pass a string to start all snoop lines with that string so you can grep for them easily.
  - `columns`: This specifies the columns at the start of each output line. You can pass a string with the names of built in columns separated by spaces or commas. These are the available columns:
     - `time`: The current time. This is the only column by default.
-    - `thread`: The name of the current thread.  
+    - `thread`: The name of the current thread.
     - `thread_ident`: The [identifier](https://docs.python.org/3/library/threading.html#threading.Thread.ident) of the current thread, in case thread names are not unique.
     - `file`: The filename (not the full path) of the current function.
     - `full_file`: The full path to the file (also shown anyway when the function is called).
     - `function`: The name of the current function.
     - `function_qualname`: The qualified name of the current function.
  - `watch_extras` and `replace_watch_extras`: read about these under [Advanced usage](#watch_extras)
-    
+
     If you want a custom column, please open an issue to tell me what you're interested in! In the meantime, you can pass a list, where the elements are either strings or callables. The callables should take one argument, which will be an `Event` object. It has attributes `frame`, `event`, and `arg`, as specified in [`sys.settrace()`](https://docs.python.org/3/library/sys.html#sys.settrace), and other attributes which may change.
+ - `pformat`: set the pretty formatting function `pp` uses. Default is to use the first of `prettyprinter.pformat`, `pprintpp.pformat` and `pprint.pformat` that can be imported.
 
 ## API differences from `PySnooper`
 
-If you're familiar with `PySnooper` and want to use `snoop`, there are a few things you should be aware of that you have to do differently: 
+If you're familiar with `PySnooper` and want to use `snoop`, there are a few things you should be aware of that you have to do differently:
 
 - Pass `prefix` and `overwrite` to `install()`, not `snoop()`.
 - The first argument to `pysnooper.snoop`, called `output`, should be passed to `install` with the keyword `out`.
 - Instead of `snoop(thread_info=True)`, write `install(columns='time thread thread_ident')`.
-- Instead of the environment variable `PYSNOOPER_DISABLED`, use `install(enabled=False)`. 
+- Instead of the environment variable `PYSNOOPER_DISABLED`, use `install(enabled=False)`.
 - Instead of using `custom_repr`, see [`watch_extras`](#watch_extras) and [Customising the display of variables](#customising-the-display-of-variables).
 
 If you're not sure if it's worth using `snoop` instead of `PySnooper`, [read the comparison here](https://github.com/alexmojaki/snoop/wiki/Comparison-to-PySnooper).
@@ -391,7 +392,7 @@ from cheap_repr import register_repr, cheap_repr
 @register_repr(MyClass)
 def repr_my_class(x, helper):
     return '{}(items={})'.format(
-        x.__class__.__name__, 
+        x.__class__.__name__,
         cheap_repr(x.items, helper.level - 1),
     )
 ```
