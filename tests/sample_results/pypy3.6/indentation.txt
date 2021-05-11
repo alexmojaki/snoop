@@ -1,0 +1,19 @@
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 5
+12:34:56.78    5 | def main():
+12:34:56.78    6 |     f2()
+    12:34:56.78 >>> Call to f2 in File "/path/to_file.py", line 9
+    12:34:56.78    9 | def f2():
+    12:34:56.78   10 |     f3()
+        12:34:56.78 >>> Call to f4 in File "/path/to_file.py", line 18
+        12:34:56.78   18 | def f4():
+        12:34:56.78   19 |     f5()
+            12:34:56.78 >>> Call to f5 in File "/path/to_file.py", line 22
+            12:34:56.78   22 | def f5():
+            12:34:56.78   23 |     pass
+            12:34:56.78 <<< Return value from f5: None
+        12:34:56.78   19 |     f5()
+        12:34:56.78 <<< Return value from f4: None
+    12:34:56.78   10 |     f3()
+    12:34:56.78 <<< Return value from f2: None
+12:34:56.78    6 |     f2()
+12:34:56.78 <<< Return value from main: None

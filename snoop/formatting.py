@@ -200,7 +200,6 @@ class DefaultFormatter(object):
         self.highlighted = highlighted
         self.highlighted_source_line = highlighted_source_line
 
-
     def thread_column(self, _event):
         return threading.current_thread().name
 
@@ -377,7 +376,9 @@ class DefaultFormatter(object):
     def format_executing_node_exception(self, event):
         try:
             assert not NO_ASTTOKENS
-            node = Source.executing(event.frame).node
+            ex = Source.executing(event.frame)
+            decorator = getattr(ex, "decorator", None)
+            node = decorator or ex.node
             assert node
             
             description = {
@@ -387,6 +388,9 @@ class DefaultFormatter(object):
                 ast.Compare: 'comparing',
             }.get(type(node), 'evaluating')
             source = event.source.get_text_with_indentation(node)
+            if decorator:
+                description = 'calling decorator'
+                source = '@' + source
             plain_prefix = u'!!! When {}: '.format(description)
             prefix = u'{c.red}{}{c.reset}'.format(plain_prefix, c=self.c)
             return indented_lines(
