@@ -27,4 +27,5 @@
     12:34:56.78 <<< Return value from f2: 42
 12:34:56.78   17 |         result1 = f2(42)
 12:34:56.78 .............. result1 = 42
+12:34:56.78   16 |     with snoop(depth=4):
 12:34:56.78 <<< Exit with block in main

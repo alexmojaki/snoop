@@ -91,7 +91,7 @@ def assert_sample_output(module_name):
     result_filename = os.path.join(
         tests_dir, 
         'sample_results',
-        PYPY * 'pypy' + sys.version[:3],
+        PYPY * 'pypy' + '.'.join(sys.version.split('.')[:2]),
         module_name + '.txt',
     )
 
@@ -119,7 +119,7 @@ def test_samples():
         if module_name in 'django_sample'.split() and six.PY2:
             continue
         
-        if PYPY or sys.version_info[:2] == (3, 4):
+        if PYPY or sys.version_info[:2] in ((3, 4), (3, 10)):
             if module_name in 'pandas_sample'.split():
                 continue
         if NO_BIRDSEYE:

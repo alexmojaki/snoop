@@ -14,6 +14,7 @@ Test with custom pformat
 12:34:56.78 .......... y = 2
 12:34:56.78   12 |         y = 3  # custom pformat is not used here
 12:34:56.78 .............. y = 3
+12:34:56.78   11 |     with snoop:
 12:34:56.78 <<< Exit with block in test_misc
 12:34:56.78 LOG:
 12:34:56.78 .... d = custom(['a long key to be pretty printed prettily', ['prettyprinter prints datetime with keyword arguments:', datetime.datetime(1970, 1, 1, 0, 0, 42)]])
