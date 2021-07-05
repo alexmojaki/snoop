@@ -21,7 +21,7 @@ import sys
 __VersionInfo = collections.namedtuple('VersionInfo',
                                        ('major', 'minor', 'micro'))
 
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 __version_info__ = __VersionInfo(*(map(int, __version__.split('.'))))
 
 config = Config()
