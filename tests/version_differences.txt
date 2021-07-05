@@ -1,12 +1,18 @@
+cellvars
+Differing versions:
+2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+3.10
+
 color
 Differing versions:
 2.7
+3.10, 3.8, 3.9
 3.4
 3.5, 3.6, 3.7, pypy3.5, pypy3.6
-3.8, 3.9
 pypy2.7
 
 decorator_exception
+Doesn't exist: 3.10
 Differing versions:
 2.7, pypy2.7
 3.4, 3.5, 3.6, 3.7, pypy3.5, pypy3.6
@@ -14,7 +20,7 @@ Differing versions:
 
 depth
 Differing versions:
-2.7, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+2.7, 3.10, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
 3.4
 
 django_sample
@@ -26,22 +32,29 @@ Doesn't exist: 3.4, pypy2.7, pypy3.5, pypy3.6
 end_finally
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, pypy2.7, pypy3.5, pypy3.6
+3.10
 3.8
 3.9
 
 exception
 Differing versions:
 2.7, 3.5, 3.6, 3.7
+3.10, 3.8, 3.9
 3.4
-3.8, 3.9
 pypy2.7, pypy3.5, pypy3.6
 
 f_string
 Doesn't exist: 2.7, 3.4, 3.5, pypy2.7, pypy3.5
 
+generator_expression
+Differing versions:
+2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+3.10
+
 multiline
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, pypy2.7, pypy3.5, pypy3.6
+3.10
 3.8, 3.9
 
 pandas_sample
@@ -50,26 +63,38 @@ Doesn't exist: 3.4, pypy2.7, pypy3.5, pypy3.6
 pp
 Differing versions:
 2.7, 3.5, 3.6, 3.7, pypy2.7
+3.10, 3.8, 3.9
 3.4
-3.8, 3.9
 pypy3.5, pypy3.6
 
 pp_custom_pformat
 Differing versions:
 2.7, pypy2.7
+3.10
 3.4
 3.5, 3.6, 3.7, 3.8, 3.9, pypy3.5, pypy3.6
 
 pp_exception
 Differing versions:
-2.7, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+2.7, 3.10, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
 3.4
 
 spy
 Doesn't exist: 3.4, pypy2.7, pypy3.5, pypy3.6
 
+with_block
+Differing versions:
+2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+3.10
+
+with_block_depth
+Differing versions:
+2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+3.10
+
 with_no_args
 Differing versions:
 2.7, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+3.10
 3.4
 
