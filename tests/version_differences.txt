@@ -15,7 +15,8 @@ decorator_exception
 Doesn't exist: 3.10
 Differing versions:
 2.7, pypy2.7
-3.4, 3.5, 3.6, 3.7, pypy3.5, pypy3.6
+3.4
+3.5, 3.6, 3.7, pypy3.5, pypy3.6
 3.8, 3.9
 
 depth

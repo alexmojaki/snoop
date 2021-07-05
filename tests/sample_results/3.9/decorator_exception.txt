@@ -4,6 +4,7 @@
 12:34:56.78    7 |         @int
 12:34:56.78    8 |         def foo():
 12:34:56.78 !!! TypeError: int() argument must be a string, a bytes-like object or a number, not 'function'
+12:34:56.78 !!! When calling decorator: @int
 12:34:56.78   10 |     except:
 12:34:56.78   11 |         pass
 12:34:56.78 <<< Return value from main: None
