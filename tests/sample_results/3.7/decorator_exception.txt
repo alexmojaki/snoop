@@ -1,0 +1,9 @@
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 5
+12:34:56.78    5 | def main():
+12:34:56.78    6 |     try:
+12:34:56.78    7 |         @int
+12:34:56.78 !!! TypeError: int() argument must be a string, a bytes-like object or a number, not 'function'
+12:34:56.78 !!! When calling decorator: @int
+12:34:56.78   10 |     except:
+12:34:56.78   11 |         pass
+12:34:56.78 <<< Return value from main: None
