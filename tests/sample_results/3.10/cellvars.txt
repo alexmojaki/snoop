@@ -1,0 +1,31 @@
+12:34:56.78 >>> Enter with block in main in File "/path/to_file.py", line 16
+12:34:56.78   17 |         result1 = f2(42)
+    12:34:56.78 >>> Call to f2 in File "/path/to_file.py", line 1
+    12:34:56.78 ...... a = 42
+    12:34:56.78    1 | def f2(a):
+    12:34:56.78    2 |     def f3(a):
+    12:34:56.78   12 |     return f3(a)
+        12:34:56.78 >>> Call to f2.<locals>.f3 in File "/path/to_file.py", line 2
+        12:34:56.78 .......... a = 42
+        12:34:56.78    2 |     def f3(a):
+        12:34:56.78    3 |         x = 0
+        12:34:56.78    4 |         x += 1
+        12:34:56.78 .............. x = 1
+        12:34:56.78    6 |         def f4(_a):
+        12:34:56.78   10 |         return f4(a)
+            12:34:56.78 >>> Call to f2.<locals>.f3.<locals>.f4 in File "/path/to_file.py", line 6
+            12:34:56.78 .............. _a = 42
+            12:34:56.78 .............. x = 1
+            12:34:56.78    6 |         def f4(_a):
+            12:34:56.78    7 |             _y = x
+            12:34:56.78 .................. _y = 1
+            12:34:56.78    8 |             return 42
+            12:34:56.78 <<< Return value from f2.<locals>.f3.<locals>.f4: 42
+        12:34:56.78   10 |         return f4(a)
+        12:34:56.78 <<< Return value from f2.<locals>.f3: 42
+    12:34:56.78   12 |     return f3(a)
+    12:34:56.78 <<< Return value from f2: 42
+12:34:56.78   17 |         result1 = f2(42)
+12:34:56.78 .............. result1 = 42
+12:34:56.78   16 |     with snoop(depth=4):
+12:34:56.78 <<< Exit with block in main
