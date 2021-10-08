@@ -133,10 +133,12 @@ def generate_test_samples():
 
 
 @pytest.mark.parametrize("module_name", generate_test_samples())
+@pytest.mark.order(1)
 def test_sample(module_name):
     assert_sample_output(module_name)
 
 
+@pytest.mark.order(2)  # Execute after all test_samples have run.
 def test_compare_versions():
     out = [""]
 

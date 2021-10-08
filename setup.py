@@ -37,6 +37,7 @@ except ImportError:
 
 tests_require = [
     'pytest',
+    'pytest-order',
     'littleutils',
     'prettyprinter',
     'pprintpp',
