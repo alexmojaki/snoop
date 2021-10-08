@@ -106,7 +106,7 @@ def compare_to_file(text, filename):
         assert text == expected_output
 
 
-def test_samples():
+def setup_test_samples():
     samples_dir = os.path.join(tests_dir, 'samples')
     for filename in os.listdir(samples_dir):
         if filename.endswith('.pyc'):
@@ -118,7 +118,7 @@ def test_samples():
 
         if module_name in 'django_sample'.split() and six.PY2:
             continue
-        
+
         if PYPY or sys.version_info[:2] in ((3, 4), (3, 10)):
             if module_name in 'pandas_sample'.split():
                 continue
@@ -129,12 +129,17 @@ def test_samples():
         if module_name in 'f_string' and sys.version_info[:2] < (3, 6):
             continue
 
-        assert_sample_output(module_name)
+        # Unserialize the tests by defining a top level test function
+        # for each one.
+        exec(f"""\
+def test_samples_{module_name}():
+    assert_sample_output({module_name!r})
+             """, globals(), globals())
 
-    compare_versions()
+setup_test_samples()
 
 
-def compare_versions():
+def test_compare_versions():
     out = [""]
 
     def prn(*args):
