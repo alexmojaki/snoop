@@ -106,7 +106,7 @@ def compare_to_file(text, filename):
         assert text == expected_output
 
 
-def setup_test_samples():
+def generate_test_samples():
     samples_dir = os.path.join(tests_dir, 'samples')
     for filename in os.listdir(samples_dir):
         if filename.endswith('.pyc'):
@@ -129,14 +129,12 @@ def setup_test_samples():
         if module_name in 'f_string' and sys.version_info[:2] < (3, 6):
             continue
 
-        # Unserialize the tests by defining a top level test function
-        # for each one.
-        exec(f"""\
-def test_samples_{module_name}():
-    assert_sample_output({module_name!r})
-             """, globals(), globals())
+        yield module_name
 
-setup_test_samples()
+
+@pytest.mark.parametrize("module_name", generate_test_samples())
+def test_sample(module_name):
+    assert_sample_output(module_name)
 
 
 def test_compare_versions():
