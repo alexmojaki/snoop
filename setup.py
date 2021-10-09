@@ -37,6 +37,7 @@ except ImportError:
 
 tests_require = [
     'pytest',
+    'pytest-order' if sys.version_info[:2] >= (3, 7) else 'pytest-order<=0.11.0',
     'littleutils',
     'prettyprinter',
     'pprintpp',
