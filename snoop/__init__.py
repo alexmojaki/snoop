@@ -21,8 +21,18 @@ import sys
 __VersionInfo = collections.namedtuple('VersionInfo',
                                        ('major', 'minor', 'micro'))
 
-__version__ = '0.4.0'
-__version_info__ = __VersionInfo(*(map(int, __version__.split('.'))))
+try:
+    from .version import __version__
+
+except ImportError:  # pragma: no cover
+    # version.py is auto-generated with the git tag when building
+    __version__ = "???"
+
+try:
+    __version_info__ = __VersionInfo(*(map(int, __version__.split('.'))))
+except ValueError:
+    __version_info__ = None
+
 
 config = Config()
 snoop = config.snoop
