@@ -19,3 +19,7 @@ htmlcov
 
 *.ipynb
 .vscode
+
+.eggs
+
+/snoop/version.py

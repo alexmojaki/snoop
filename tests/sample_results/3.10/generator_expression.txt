@@ -15,6 +15,7 @@
     12:34:56.78 <<< Yield value from <genexpr>: 4
     12:34:56.78 >>> Re-enter generator <genexpr> in File "/path/to_file.py", line 6
     12:34:56.78    6 |     return list(x * 2 for x in [1, 2])
+    12:34:56.78    6 |     return list(x * 2 for x in [1, 2])
     12:34:56.78 .......... Iterating over <tupleiterator object at 0xABC>
     12:34:56.78 .......... x = 2
     12:34:56.78 <<< Return value from <genexpr>: None
