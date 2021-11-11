@@ -1,6 +1,6 @@
 # snoop
 
-[![Build Status](https://travis-ci.org/alexmojaki/snoop.svg?branch=master)](https://travis-ci.org/alexmojaki/snoop) [![Supports Python versions 2.7 and 3.5+, including PyPy](https://img.shields.io/pypi/pyversions/snoop.svg)](https://pypi.python.org/pypi/snoop)
+[![Build Status](https://github.com/alexmojaki/snoop/actions/workflows/pytest.yml/badge.svg)](https://github.com/alexmojaki/snoop/actions/workflows/pytest.yml) [![Supports Python versions 2.7 and 3.5+, including PyPy](https://img.shields.io/pypi/pyversions/snoop.svg)](https://pypi.python.org/pypi/snoop)
 
 snoop is a powerful set of Python debugging tools. It's primarily meant to be a [more featureful and refined](https://github.com/alexmojaki/snoop/wiki/Comparison-to-PySnooper) version of [PySnooper](https://github.com/cool-RR/pysnooper). It also includes its own version of [icecream](https://github.com/gruns/icecream) and some other nifty stuff.
 
