@@ -17,4 +17,5 @@ jobs:
         pip install --upgrade pip
         pip install --upgrade setuptools setuptools_scm pep517
         pip install .[tests]
+        pip install --upgrade birdseye
         pytest -vv
