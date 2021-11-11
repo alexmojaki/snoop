@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10, 'pypy-2.7', 'pypy-3.5', 'pypy-3.6']
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, 3.10-dev, 'pypy-2.7', 'pypy-3.5', 'pypy-3.6']
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
