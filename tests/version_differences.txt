@@ -12,9 +12,9 @@ Differing versions:
 pypy2.7
 
 decorator_exception
-Doesn't exist: 3.10
 Differing versions:
 2.7, pypy2.7
+3.10
 3.4
 3.5, 3.6, 3.7, pypy3.5, pypy3.6
 3.8, 3.9
@@ -46,11 +46,6 @@ pypy2.7, pypy3.5, pypy3.6
 
 f_string
 Doesn't exist: 2.7, 3.4, 3.5, pypy2.7, pypy3.5
-
-generator_expression
-Differing versions:
-2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.10
 
 multiline
 Differing versions:
