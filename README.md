@@ -14,6 +14,8 @@ Most people would use `print` lines, in strategic locations, some of them showin
 
 Installation is as simple as `pip install snoop`.
 
+You can try it out **instantly** on [futurecoder](https://futurecoder.io/course/#ide): enter your code in the editor on the left and click the `snoop` button to run. No imports or decorators required.
+
   * [Basic snoop usage](#basic-snoop-usage)
      * [Common arguments](#common-arguments)
   * [pp - awesome print debugging](#pp---awesome-print-debugging)
