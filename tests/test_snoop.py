@@ -23,8 +23,6 @@ from snoop.configuration import Config
 from snoop.pp_module import is_deep_arg
 from snoop.utils import truncate_string, truncate_list, needs_parentheses, NO_ASTTOKENS, NO_BIRDSEYE, PYPY
 
-current_thread()._ident = current_thread()._Thread__ident = 123456789
-
 formatting._get_filename = lambda _: "/path/to_file.py"
 
 install()
@@ -87,6 +85,7 @@ def assert_sample_output(module_name):
     normalised = normalised.replace('<listiterator', '<tupleiterator')
     normalised = normalised.replace('<tuple_iterator', '<tupleiterator')
     normalised = normalised.replace('<sequenceiterator', '<tupleiterator')
+    normalised = normalised.replace(str(current_thread().ident), '123456789')
 
     result_filename = os.path.join(
         tests_dir, 
