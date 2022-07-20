@@ -42,7 +42,7 @@ def install(
 ):
     """
     Configure output, enable or disable, and add names to builtins. Parameters:
-    
+
     - builtins: set to False to not add any names to builtins,
         so importing will still be required.
     - snoop, pp, and spy: set to other strings 
@@ -68,7 +68,7 @@ def install(
         If you want a custom column, please open an issue to tell me what you're interested in! In the meantime, you can pass a list, where the elements are either strings or callables. The callables should take one argument, which will be an `Event` object. It has attributes `frame`, `event`, and `arg`, as specified in [`sys.settrace()`](https://docs.python.org/3/library/sys.html#sys.settrace), and other attributes which may change.
     - `pformat`: set the pretty formatting function `pp` uses. Default is to use the first of `prettyprinter.pformat`, `pprintpp.pformat` and `pprint.pformat` that can be imported.
     """
-    
+
     if builtins:
         setattr(builtins_module, snoop, package.snoop)
         setattr(builtins_module, pp, package.pp)
@@ -93,10 +93,10 @@ def install(
 class Config(object):
     """"
     If you need more control than the global `install` function, e.g. if you want to write to several different files in one process, you can create a `Config` object, e.g: `config = snoop.Config(out=filename)`. Then `config.snoop`, `config.pp` and `config.spy` will use that configuration rather than the global one.
-    
+
     The arguments are the same as the arguments of `install()` relating to output configuration and `enabled`.
     """
-    
+
     def __init__(
             self,
             out=None,
@@ -111,13 +111,17 @@ class Config(object):
             pformat=None,
     ):
         if can_color:
-            if color is None:
-                isatty = getattr(out or sys.stderr, 'isatty', lambda: False)
-                color = bool(isatty())
+            if (color is None) or isinstance(out, (tuple, list)):
+                need_color = all([getattr(o or sys.stderr, 'isatty', lambda: False)()
+                                  for o in (out if isinstance(out, (tuple, list)) else [out])])
+                if not need_color:
+                    color = False
+                elif color is None:
+                    color = True
         else:
             color = False
 
-        self.write = get_write_function(out, overwrite)
+        self.write = get_write_functor(out, overwrite)
         self.formatter = formatter_class(prefix, columns, color)
         self.enabled = enabled
 
@@ -186,7 +190,7 @@ def get_write_function(output, overwrite):
         or is_pathlike(output)
     )
     if is_path:
-        return FileWriter(output, overwrite).write
+        write = FileWriter(output, overwrite).write
     elif callable(output):
         write = output
     else:
@@ -207,6 +211,13 @@ def get_write_function(output, overwrite):
     return write
 
 
+def get_write_functor(outputs, overwrite):
+    if isinstance(outputs, (tuple, list)):
+        return _Functor([get_write_function(output, overwrite) for output in outputs])
+    else:
+        return get_write_function(outputs, overwrite)
+
+
 class FileWriter(object):
     def __init__(self, path, overwrite):
         self.path = six.text_type(path)
@@ -216,3 +227,12 @@ class FileWriter(object):
         with open(self.path, 'w' if self.overwrite else 'a', encoding='utf-8') as f:
             f.write(s)
         self.overwrite = False
+
+
+class _Functor(object):
+    def __init__(self, objs=()):
+        self.objs = objs  # type: tuple|list
+
+    def __call__(self, arg):
+        for obj in self.objs:
+            obj(arg)

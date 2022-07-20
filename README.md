@@ -295,6 +295,7 @@ You can also dynamically re-enable the functions at any point by calling `snoop.
     - A string or a `Path` object to write to a file at that location. By default this always will append to the file. Pass `overwrite=True` to clear the file initially.
     - Anything with a `write` method, e.g. `sys.stdout` or a file object.
     - Any callable with a single string argument, e.g. `logger.info`.
+    - A `tuple` or `list` of above type of objects, e.g. `(sys.stdout, '/tmp/trace_result.txt')`. If any of them is not a tty(-like) device, then `color` is disabled even though it's set.
  - `color`: determines whether the output includes escape characters to display colored text in the console. If you see weird characters in your output, your console doesn't support colors, so pass `color=False`.
     - Code is syntax highlighted using [Pygments](http://pygments.org/), and this argument is passed as the style. You can choose a different color scheme by passing a string naming a style (see [this gallery](https://help.farbox.com/pygments.html)) or a style class. The default style is monokai.
     - By default this parameter is set to `out.isatty()`, which is usually true for stdout and stderr but will be false if they are redirected or piped. Pass `True` or a style if you want to force coloring.
