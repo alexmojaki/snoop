@@ -1,12 +1,12 @@
 cellvars
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.10
+3.10, 3.11
 
 color
 Differing versions:
 2.7
-3.10, 3.8, 3.9
+3.10, 3.11, 3.8, 3.9
 3.4
 3.5, 3.6, 3.7, pypy3.5, pypy3.6
 pypy2.7
@@ -15,13 +15,14 @@ decorator_exception
 Differing versions:
 2.7, pypy2.7
 3.10
+3.11
 3.4
 3.5, 3.6, 3.7, pypy3.5, pypy3.6
 3.8, 3.9
 
 depth
 Differing versions:
-2.7, 3.10, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+2.7, 3.10, 3.11, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
 3.4
 
 django_sample
@@ -33,24 +34,35 @@ Doesn't exist: 3.4, pypy2.7, pypy3.5, pypy3.6
 end_finally
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, pypy2.7, pypy3.5, pypy3.6
-3.10
+3.10, 3.11
 3.8
 3.9
 
 exception
 Differing versions:
 2.7, 3.5, 3.6, 3.7
-3.10, 3.8, 3.9
+3.10, 3.11, 3.8, 3.9
 3.4
 pypy2.7, pypy3.5, pypy3.6
 
 f_string
 Doesn't exist: 2.7, 3.4, 3.5, pypy2.7, pypy3.5
 
+generator
+Differing versions:
+2.7, 3.10, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+3.11
+
+generator_expression
+Differing versions:
+2.7, 3.10, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+3.11
+
 multiline
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, pypy2.7, pypy3.5, pypy3.6
 3.10
+3.11
 3.8, 3.9
 
 pandas_sample
@@ -59,38 +71,43 @@ Doesn't exist: 3.4, pypy2.7, pypy3.5, pypy3.6
 pp
 Differing versions:
 2.7, 3.5, 3.6, 3.7, pypy2.7
-3.10, 3.8, 3.9
+3.10, 3.11, 3.8, 3.9
 3.4
 pypy3.5, pypy3.6
 
 pp_custom_pformat
 Differing versions:
 2.7, pypy2.7
-3.10
+3.10, 3.11
 3.4
 3.5, 3.6, 3.7, 3.8, 3.9, pypy3.5, pypy3.6
 
 pp_exception
 Differing versions:
 2.7, 3.10, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
+3.11
 3.4
 
 spy
 Doesn't exist: 3.4, pypy2.7, pypy3.5, pypy3.6
+Differing versions:
+2.7, 3.10, 3.5, 3.6, 3.7, 3.8, 3.9
+3.11
 
 with_block
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
 3.10
+3.11
 
 with_block_depth
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.10
+3.10, 3.11
 
 with_no_args
 Differing versions:
 2.7, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.10
+3.10, 3.11
 3.4
 

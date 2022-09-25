@@ -161,15 +161,18 @@ class DirectRepr(str):
         return self
 
 
+try:
+    getargspec = inspect.getfullargspec
+except AttributeError:
+    getargspec = inspect.getargspec
+
+
 def is_deep_arg(x):
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning)
-        # noinspection PyDeprecation
-        return (
-                inspect.isfunction(x)
-                and x.__code__.co_name == '<lambda>'
-                and not any(inspect.getargspec(x))
-        )
+    return (
+        inspect.isfunction(x)
+        and x.__code__.co_name == '<lambda>'
+        and not any(getargspec(x))
+    )
 
 
 class NodeVisitor(ast.NodeTransformer):
