@@ -1,7 +1,8 @@
 import ast
 
-from snoop import snoop
 from IPython.core.magic import Magics, cell_magic, magics_class
+
+from snoop import snoop
 
 
 @magics_class
@@ -16,14 +17,14 @@ class SnoopMagics(Magics):
         for node in ast.walk(ast.parse(cell)):
             if isinstance(node, ast.Name):
                 name = node.id
-                
+
                 if isinstance(
                         self.shell.user_global_ns.get(name),
-                        type(ast),  
+                        type(ast),
                 ):
                     # hide modules
                     continue
-                    
+
                 tracer.variable_whitelist.add(name)
 
         tracer.target_codes.add(code)

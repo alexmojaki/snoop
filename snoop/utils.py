@@ -139,7 +139,7 @@ except ImportError:
 
 try:
     FormattedValue = ast.FormattedValue
-except:
+except Exception:
     class FormattedValue(object):
         pass
 
@@ -156,10 +156,10 @@ except ImportError:
 
 if six.PY2:
     # noinspection PyUnresolvedReferences
-    from collections import Sequence, Mapping, Set
+    from collections import Mapping, Sequence, Set
 else:
     # noinspection PyUnresolvedReferences,PyCompatibility
-    from collections.abc import Sequence, Mapping, Set
+    from collections.abc import Mapping, Sequence, Set
 
 
 class DirectRepr(str):

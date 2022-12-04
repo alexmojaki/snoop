@@ -1,5 +1,4 @@
 import ast
-import opcode
 import threading
 import traceback
 from collections import defaultdict
@@ -7,6 +6,7 @@ from datetime import datetime
 from textwrap import dedent
 
 import executing
+import opcode
 import six
 from pygments import highlight
 from pygments.formatters.terminal256 import Terminal256Formatter
@@ -14,9 +14,9 @@ from pygments.lexers.python import Python3Lexer
 from pygments.styles.monokai import MonokaiStyle
 from six import PY3
 
-from snoop.utils import ensure_tuple, short_filename, my_cheap_repr, \
-    NO_ASTTOKENS, optional_numeric_label, try_statement, FormattedValue, ArgDefaultDict, lru_cache
-
+from snoop.utils import (NO_ASTTOKENS, ArgDefaultDict, FormattedValue,
+                         ensure_tuple, lru_cache, my_cheap_repr,
+                         optional_numeric_label, short_filename, try_statement)
 
 try:
     from pygments.lexers.python import Python2Lexer
@@ -61,7 +61,7 @@ class Source(executing.Source):
 
     def get_text_with_indentation(self, node):
         result = self.asttokens().get_text(node)
-        
+
         if not result:
             if isinstance(node, FormattedValue):
                 fvals = [
@@ -76,7 +76,7 @@ class Source(executing.Source):
                 )
             else:
                 return "<unknown>"
-        
+
         if '\n' in result:
             result = ' ' * node.first_token.start[1] + result
             result = dedent(result)
@@ -380,7 +380,7 @@ class DefaultFormatter(object):
             decorator = getattr(ex, "decorator", None)
             node = decorator or ex.node
             assert node
-            
+
             description = {
                 ast.Call: 'calling',
                 ast.Subscript: 'subscripting',
@@ -438,7 +438,7 @@ class DefaultFormatter(object):
 
     def format_log(self, event):
         return self.format_lines(event, ['LOG:'])
-    
+
     def format_log_value(self, event, source, value, depth):
         prefix = u'....{} '.format(depth * 4 * '.')
         plain_source_lines = indented_lines(prefix, source)

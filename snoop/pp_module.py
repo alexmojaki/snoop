@@ -6,11 +6,12 @@ from copy import deepcopy
 from threading import current_thread
 from uuid import uuid4
 
-from executing import only, future_flags
+from executing import future_flags, only
 
 from snoop.formatting import Event, Source
 from snoop.tracer import FrameInfo
-from snoop.utils import NO_ASTTOKENS, optional_numeric_label, builtins, FormattedValue, pp_name_prefix
+from snoop.utils import (NO_ASTTOKENS, FormattedValue, builtins,
+                         optional_numeric_label, pp_name_prefix)
 
 
 class PP(object):
@@ -80,7 +81,7 @@ class PPEvent(object):
         formatted = self.config.formatter.format_log_value(
             self.event, source, value_string, depth)
         self.config.write(formatted)
-    
+
     def write_node(self, node, value, depth=0):
         source = self.event.source.get_text_with_indentation(node)
         self.write(source, value, depth=depth)
@@ -99,7 +100,7 @@ class PPEvent(object):
     def deep_pp(self, call_arg, frame):
         stack = []
         thread = current_thread()
-        
+
         def before_expr(tree_index):
             node = self.event.source.nodes[tree_index]
             if thread == current_thread():
@@ -210,7 +211,7 @@ class NodeVisitor(ast.NodeTransformer):
         )
 
         ast.copy_location(before_marker, node)
-        
+
         if isinstance(node, FormattedValue):
             arg = node
         else:

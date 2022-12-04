@@ -3,7 +3,7 @@ from copy import deepcopy
 
 import six
 
-from snoop.utils import with_needed_parentheses, my_cheap_repr, ensure_tuple
+from snoop.utils import ensure_tuple, my_cheap_repr, with_needed_parentheses
 
 if six.PY2:
     from collections import Mapping, Sequence

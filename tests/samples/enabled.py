@@ -1,6 +1,6 @@
-from snoop.configuration import Config
-
 from birdseye import eye
+
+from snoop.configuration import Config
 
 config = Config(enabled=False)
 
