@@ -1,45 +1,20 @@
-name: CI
-
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
-
+name: Tests
+on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - python-version: 2.7
-            toxenv: py27
-          - python-version: 3.5
-            toxenv: py35
-          - python-version: 3.6
-            toxenv: py36
-          - python-version: 3.7
-            toxenv: py37
-          - python-version: 3.8
-            toxenv: py38
-          - python-version: 3.9
-            toxenv: py39
-          - python-version: pypy-2.7
-            toxenv: pypy
-          - python-version: pypy-3.7
-            toxenv: pypy3
-
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, '3.10', 3.11-dev, 'pypy-2.7', 'pypy-3.6']
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install tox
-        run: pip install tox
-      - name: Tox
-        run: tox
-        env:
-          TOXENV: ${{ matrix.toxenv }}
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: run tests
+      run: |
+        pip install --upgrade pip
+        pip install --upgrade setuptools setuptools_scm pep517
+        pip install .[tests]
+        pytest -vv
