@@ -13,10 +13,11 @@ changed in the decorated function.
 For more information, see https://github.com/alexmojaki/snoop
 '''
 
-from .configuration import install, Config
-from .variables import Attrs, Exploding, Indices, Keys
 import collections
 import sys
+
+from .configuration import Config, install
+from .variables import Attrs, Exploding, Indices, Keys
 
 __VersionInfo = collections.namedtuple('VersionInfo',
                                        ('major', 'minor', 'micro'))

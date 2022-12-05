@@ -10,11 +10,14 @@ import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr, find_repr_function, try_register_repr
 
-from snoop.utils import my_cheap_repr, ArgDefaultDict, iscoroutinefunction, \
-    truncate_list, ensure_tuple, is_comprehension_frame, no_args_decorator, pp_name_prefix, NO_BIRDSEYE, \
-    _register_cheap_reprs, PY34
+from snoop.utils import (NO_BIRDSEYE, PY34, ArgDefaultDict,
+                         _register_cheap_reprs, ensure_tuple,
+                         is_comprehension_frame, iscoroutinefunction,
+                         my_cheap_repr, no_args_decorator, pp_name_prefix,
+                         truncate_list)
+
 from .formatting import Event, Source
-from .variables import CommonVariable, Exploding, BaseVariable
+from .variables import BaseVariable, CommonVariable, Exploding
 
 find_repr_function(six.text_type).maxparts = 100
 find_repr_function(six.binary_type).maxparts = 100
@@ -221,7 +224,7 @@ class Tracer(object):
 
     def _is_internal_frame(self, frame):
         return frame.f_code.co_filename.startswith(internal_directories)
-    
+
     def _is_traced_frame(self, frame):
         return frame.f_code in self.target_codes or frame in self.target_frames
 

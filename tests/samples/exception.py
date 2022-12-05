@@ -40,7 +40,7 @@ def main():
         pass
 
     x = [[[2]]]
-    
+
     try:
         str(x[1][0][0])
     except:

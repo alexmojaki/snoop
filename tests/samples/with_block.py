@@ -51,7 +51,7 @@ def gen():
 def main():
     foo(2)
     list(gen())
-    
-    
+
+
 if __name__ == '__main__':
     main()

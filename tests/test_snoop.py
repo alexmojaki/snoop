@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import io
 import os
 import re
@@ -12,7 +13,7 @@ import pytest
 import six
 from cheap_repr import cheap_repr, register_repr
 from cheap_repr.utils import safe_qualname
-from littleutils import file_to_string, string_to_file, group_by_key_func
+from littleutils import file_to_string, group_by_key_func, string_to_file
 
 # Hide 3rd party pretty-printing modules
 sys.modules['prettyprinter'] = {}
@@ -21,7 +22,8 @@ sys.modules['pprintpp'] = {}
 from snoop import formatting, install, spy
 from snoop.configuration import Config
 from snoop.pp_module import is_deep_arg
-from snoop.utils import truncate_string, truncate_list, needs_parentheses, NO_ASTTOKENS, NO_BIRDSEYE, PYPY
+from snoop.utils import (NO_ASTTOKENS, NO_BIRDSEYE, PYPY, needs_parentheses,
+                         truncate_list, truncate_string)
 
 formatting._get_filename = lambda _: "/path/to_file.py"
 
@@ -64,7 +66,7 @@ def sample_traceback():
 def assert_sample_output(module_name):
     module = import_module('tests.samples.' + module_name)
     old = sys.stderr
-    
+
     out = io.StringIO()
     sys.stderr = out
 
@@ -88,7 +90,7 @@ def assert_sample_output(module_name):
     normalised = normalised.replace(str(current_thread().ident), '123456789')
 
     result_filename = os.path.join(
-        tests_dir, 
+        tests_dir,
         'sample_results',
         PYPY * 'pypy' + '.'.join(sys.version.split('.')[:2]),
         module_name + '.txt',
