@@ -45,7 +45,7 @@
 12:34:56.78 .................. i = 1
 12:34:56.78   48 |                 yield i
 12:34:56.78 <<< Yield value from gen: 1
-12:34:56.78 >>> Start generator gen in File "/path/to_file.py", line 48
+12:34:56.78 >>> Re-enter generator gen in File "/path/to_file.py", line 48
 12:34:56.78 ...................... i = 1
 12:34:56.78   48 |                 yield i
 12:34:56.78   47 |             with snoop:
