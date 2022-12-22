@@ -155,12 +155,22 @@ class Event(object):
     def code_qualname(self):
         return self.source.code_qualname(self.code)
 
-    @property
-    def opname(self):
-        code_byte = self.code.co_code[self.frame.f_lasti]
+    def opname_at(self, index):
+        code_byte = self.code.co_code[index]
         if not isinstance(code_byte, int):
             code_byte = ord(code_byte)
         return opcode.opname[code_byte]
+
+    @property
+    def opname(self):
+        return self.opname_at(self.frame.f_lasti)
+
+    @property
+    def is_yield_value(self):
+        for i in range(self.frame.f_lasti, -1, -1):
+            opname = self.opname_at(i)
+            if opname not in ('RESUME', 'CACHE'):
+                return opname == 'YIELD_VALUE'
 
 
 class DefaultFormatter(object):
@@ -358,7 +368,7 @@ class DefaultFormatter(object):
             else:
                 assert event.event == 'call'
                 if event.frame_info.is_generator:
-                    if event.opname == 'YIELD_VALUE':
+                    if event.is_yield_value:
                         description = 'Re-enter generator'
                     else:
                         description = 'Start generator'

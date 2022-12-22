@@ -48,16 +48,6 @@ pypy2.7, pypy3.5, pypy3.6
 f_string
 Doesn't exist: 2.7, 3.4, 3.5, pypy2.7, pypy3.5
 
-generator
-Differing versions:
-2.7, 3.10, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.11
-
-generator_expression
-Differing versions:
-2.7, 3.10, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.11
-
 multiline
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, pypy2.7, pypy3.5, pypy3.6
@@ -97,8 +87,7 @@ Differing versions:
 with_block
 Differing versions:
 2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.10
-3.11
+3.10, 3.11
 
 with_block_depth
 Differing versions:
