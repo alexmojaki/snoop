@@ -436,8 +436,8 @@ class DefaultFormatter(object):
         elif is_comprehension:
             description = u'Values of {name}:'.format(name=name)
         else:
-            description = u'{name} ='.format(name=name)
-        prefix = u'......{dots} {description} '.format(
+            description = u'{name} :'.format(name=name)
+        prefix = u'\033[92m......{dots} {description} '.format(
             description=description,
             dots=dots,
         )
