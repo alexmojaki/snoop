@@ -194,7 +194,8 @@ class DefaultFormatter(object):
             self.c.grey = formatters[color].style_string["Token.Comment"][0]
 
             def highlighted(code):
-                return cached_highlight(code, color)
+                # return cached_highlight(code, color)
+                return Colors.VCOLOR+code+Colors.reset #by8b
 
             def highlighted_source_line(event):
                 return event.source.highlighted[color][event.line_no - 1]
@@ -202,7 +203,7 @@ class DefaultFormatter(object):
             self.c = NoColors()
 
             def highlighted(code):
-                return code
+                return Colors.VCOLOR+code+Colors.reset #by8b
 
             def highlighted_source_line(event):
                 return event.source_line
@@ -436,10 +437,11 @@ class DefaultFormatter(object):
         elif is_comprehension:
             description = u'Values of {name}:'.format(name=name)
         else:
-            description = u'{name} :'.format(name=name)
-        prefix = u'\033[92m......{dots} {description} '.format(
+            description = u'{name} :'.format(name=name) #by8b
+        prefix = u'{colors.VCOLOR}......{dots} {description} '.format(
             description=description,
             dots=dots,
+            colors=Colors
         )
         return indented_lines(prefix, self.highlighted(value))
 
@@ -496,6 +498,9 @@ class Colors(object):
     green = '\x1b[32m\x1b[1m'
     cyan = '\x1b[36m\x1b[1m'
     reset = '\x1b[0m'
+    BLUE = '\033[94m' # by8b
+    MAGENTA = '\033[95m' 
+    VCOLOR = MAGENTA
 
 
 def indented_lines(prefix, string, plain_prefix=None):
