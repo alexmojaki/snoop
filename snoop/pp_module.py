@@ -1,7 +1,6 @@
 import ast
 import inspect
 import traceback
-import warnings
 from copy import deepcopy
 from threading import current_thread
 from uuid import uuid4
@@ -10,7 +9,7 @@ from executing import future_flags, only
 
 from snoop.formatting import Event, Source
 from snoop.tracer import FrameInfo
-from snoop.utils import (NO_ASTTOKENS, FormattedValue, builtins,
+from snoop.utils import (FormattedValue, builtins,
                          optional_numeric_label, pp_name_prefix)
 
 
@@ -49,7 +48,6 @@ class PPEvent(object):
 
         self.returns = None
         try:
-            assert not NO_ASTTOKENS
             self.call = call = Source.executing(frame).node
             assert isinstance(call, ast.Call)
             assert len(args) == len(call.args)

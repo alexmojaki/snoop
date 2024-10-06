@@ -1,17 +1,15 @@
 import inspect
 import os
-import pprint
 import sys
 import threading
+from collections.abc import Mapping, Sequence, Set
 from io import open
-
-import six
 
 import snoop as package
 from snoop.formatting import DefaultFormatter
 from snoop.pp_module import PP
 from snoop.tracer import Spy, Tracer
-from snoop.utils import Mapping, QuerySet, Sequence, Set
+from snoop.utils import QuerySet
 from snoop.utils import builtins as builtins_module
 from snoop.utils import ensure_tuple, is_pathlike, shitcode
 
@@ -166,7 +164,7 @@ def len_shape_watch(source, value):
 
     length = len(value)
     if (
-            (isinstance(value, six.string_types)
+            (isinstance(value, (str, bytes))
              and length < 50) or
             (isinstance(value, (Mapping, Set, Sequence))
              and length == 0)
@@ -184,8 +182,8 @@ def dtype_watch(source, value):
 
 def get_write_function(output, overwrite):
     is_path = (
-        isinstance(output, six.string_types)
-        or is_pathlike(output)
+            isinstance(output, str)
+            or is_pathlike(output)
     )
     if is_path:
         return FileWriter(output, overwrite).write
@@ -211,7 +209,7 @@ def get_write_function(output, overwrite):
 
 class FileWriter(object):
     def __init__(self, path, overwrite):
-        self.path = six.text_type(path)
+        self.path = str(path)
         self.overwrite = overwrite
 
     def write(self, s):

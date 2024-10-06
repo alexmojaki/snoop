@@ -1,14 +1,8 @@
 import itertools
+from collections.abc import Mapping, Sequence
 from copy import deepcopy
 
-import six
-
 from snoop.utils import ensure_tuple, my_cheap_repr, with_needed_parentheses
-
-if six.PY2:
-    from collections import Mapping, Sequence
-else:
-    from collections.abc import Mapping, Sequence
 
 
 class BaseVariable(object):
