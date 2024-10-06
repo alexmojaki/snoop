@@ -169,7 +169,7 @@ class Event(object):
     def is_yield_value(self):
         for i in range(self.frame.f_lasti, -1, -1):
             opname = self.opname_at(i)
-            if opname not in ('RESUME', 'CACHE'):
+            if opname not in ('RESUME', 'CACHE', 'POP_TOP', 'PUSH_NULL'):
                 return opname == 'YIELD_VALUE'
 
 
@@ -303,7 +303,7 @@ class DefaultFormatter(object):
                 if event.frame_info.had_exception:
                     return [u'{c.red}??? Call either returned None or ended by exception{c.reset}'
                                 .format(c=self.c)]
-            elif opname not in ('RETURN_VALUE', 'YIELD_VALUE'):
+            elif opname not in ('RETURN_VALUE', 'YIELD_VALUE', 'RETURN_CONST'):
                 return [u'{c.red}!!! Call ended by exception{c.reset}'.format(c=self.c)]
 
         value = self.highlighted(my_cheap_repr(arg))
@@ -311,7 +311,7 @@ class DefaultFormatter(object):
             prefix = plain_prefix = u'Result: '
         else:
             plain_prefix = u'<<< {description} value from {func}: '.format(
-                description='Yield' if opname == 'YIELD_VALUE' else 'Return',
+                description='Yield' if opname in ('YIELD_VALUE', 'RESUME') else 'Return',
                 func=event.code_qualname(),
             )
             prefix = u'{c.green}{}{c.reset}'.format(

@@ -1,102 +1,85 @@
 cellvars
 Differing versions:
-2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.10, 3.11
+3.10, 3.11, 3.12, 3.13
+3.8, 3.9
 
 color
 Differing versions:
-2.7
 3.10, 3.11, 3.8, 3.9
-3.4
-3.5, 3.6, 3.7, pypy3.5, pypy3.6
-pypy2.7
+3.12
+3.13
+
+comprehensions
+Differing versions:
+3.10, 3.11, 3.8, 3.9
+3.12, 3.13
 
 decorator_exception
 Differing versions:
-2.7, pypy2.7
 3.10
-3.11
-3.4
-3.5, 3.6, 3.7, pypy3.5, pypy3.6
+3.11, 3.12, 3.13
 3.8, 3.9
-
-depth
-Differing versions:
-2.7, 3.10, 3.11, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.4
-
-django_sample
-Doesn't exist: 2.7, pypy2.7
-
-enabled
-Doesn't exist: 3.4, pypy2.7, pypy3.5, pypy3.6
 
 end_finally
 Differing versions:
-2.7, 3.4, 3.5, 3.6, 3.7, pypy2.7, pypy3.5, pypy3.6
-3.10, 3.11
+3.10, 3.11, 3.12, 3.13
 3.8
 3.9
 
 exception
 Differing versions:
-2.7, 3.5, 3.6, 3.7
-3.10, 3.11, 3.8, 3.9
-3.4
-pypy2.7, pypy3.5, pypy3.6
-
-f_string
-Doesn't exist: 2.7, 3.4, 3.5, pypy2.7, pypy3.5
+3.10, 3.11, 3.12, 3.8, 3.9
+3.13
 
 multiline
 Differing versions:
-2.7, 3.4, 3.5, 3.6, 3.7, pypy2.7, pypy3.5, pypy3.6
 3.10
-3.11
+3.11, 3.12, 3.13
 3.8, 3.9
 
 pandas_sample
-Doesn't exist: 3.4, pypy2.7, pypy3.5, pypy3.6
-
-pp
 Differing versions:
-2.7, 3.5, 3.6, 3.7, pypy2.7
-3.10, 3.11, 3.8, 3.9
-3.4
-pypy3.5, pypy3.6
+3.10, 3.8
+3.11, 3.12, 3.13, 3.9
 
 pp_custom_pformat
 Differing versions:
-2.7, pypy2.7
-3.10, 3.11
-3.4
-3.5, 3.6, 3.7, 3.8, 3.9, pypy3.5, pypy3.6
+3.10, 3.11, 3.12, 3.13
+3.8, 3.9
 
 pp_exception
 Differing versions:
-2.7, 3.10, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.11
-3.4
+3.10, 3.8, 3.9
+3.11, 3.12
+3.13
 
 spy
-Doesn't exist: 3.4, pypy2.7, pypy3.5, pypy3.6
 Differing versions:
-2.7, 3.10, 3.5, 3.6, 3.7, 3.8, 3.9
-3.11
+3.10, 3.8, 3.9
+3.11, 3.12, 3.13
+
+variables_classes
+Differing versions:
+3.10, 3.11, 3.8, 3.9
+3.12, 3.13
+
+watch_explode
+Differing versions:
+3.10, 3.11, 3.8, 3.9
+3.12, 3.13
 
 with_block
 Differing versions:
-2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.10, 3.11
+3.10, 3.11, 3.12, 3.13
+3.8, 3.9
 
 with_block_depth
 Differing versions:
-2.7, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.10, 3.11
+3.10, 3.11, 3.12, 3.13
+3.8, 3.9
 
 with_no_args
 Differing versions:
-2.7, 3.5, 3.6, 3.7, 3.8, 3.9, pypy2.7, pypy3.5, pypy3.6
-3.10, 3.11
-3.4
+3.10, 3.11, 3.12, 3.13
+3.8, 3.9
 
