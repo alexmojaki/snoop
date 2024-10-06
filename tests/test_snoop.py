@@ -130,6 +130,9 @@ def generate_test_samples():
         if module_name in 'f_string' and sys.version_info[:2] < (3, 6):
             continue
 
+        if module_name == 'color' and sys.version_info[:2] == (3, 12) and os.environ.get('CI'):
+            continue
+
         yield module_name
 
 

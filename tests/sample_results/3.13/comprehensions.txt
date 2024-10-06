@@ -1,0 +1,474 @@
+12:34:56.78 >>> Call to main in File "/path/to_file.py", line 16
+12:34:56.78   16 | def main():
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 0
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 1
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 2
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 3
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 4
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 5
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 6
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 7
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 8
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 9
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 10
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 11
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 12
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 13
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 14
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 15
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 16
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 17
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 18
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 19
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 20
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 21
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 22
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 23
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 24
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 25
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 26
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 27
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 28
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 29
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 30
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 31
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 32
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 33
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 34
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 35
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 36
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 37
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 38
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 39
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 40
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 41
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 42
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 43
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 44
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 45
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 46
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 47
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 48
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 49
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 50
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 51
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 52
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 53
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 54
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 55
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 56
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 57
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 58
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 59
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 60
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 61
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 62
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 63
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 64
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 65
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 66
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 67
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 68
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 69
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 70
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 71
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 72
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 73
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 74
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 75
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 76
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 77
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 78
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 79
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 80
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 81
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 82
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 83
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 84
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 85
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 86
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 87
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 88
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 89
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 90
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 91
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 92
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 93
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 94
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 95
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 96
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 97
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 98
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78 .......... x = 99
+12:34:56.78   17 |     str({x for x in list(range(100))})
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 0
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 1
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 2
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 3
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 4
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 5
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 6
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 7
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 8
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 9
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 10
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 11
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 12
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 13
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 14
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 15
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 16
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 17
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 18
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 19
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 20
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 21
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 22
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 23
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 24
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 25
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 26
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 27
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 28
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 29
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 30
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 31
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 32
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 33
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 34
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 35
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 36
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 37
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 38
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 39
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 40
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 41
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 42
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 43
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 44
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 45
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 46
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 47
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 48
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 49
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 50
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 51
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 52
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 53
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 54
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 55
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 56
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 57
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 58
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 59
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 60
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 61
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 62
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 63
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 64
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 65
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 66
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 67
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 68
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 69
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 70
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 71
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 72
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 73
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 74
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 75
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 76
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 77
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 78
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 79
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 80
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 81
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 82
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 83
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 84
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 85
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 86
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 87
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 88
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 89
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 90
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 91
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 92
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 93
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 94
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 95
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 96
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 97
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 98
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78 .......... x = 99
+12:34:56.78   18 |     str({x: x for x in list(range(100))})
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78 .......... x = 0
+12:34:56.78 .......... y = 0
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78 .......... x = 1
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78 .......... x = 2
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78 .......... x = 0
+12:34:56.78 .......... y = 1
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78 .......... x = 1
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78 .......... x = 2
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78 .......... x = 0
+12:34:56.78 .......... y = 2
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78 .......... x = 1
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78 .......... x = 2
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78   19 |     str({y: {x + y for x in list(range(3))} for y in list(range(3))})
+12:34:56.78   20 |     str({foo(x) for x in (1, 2)})
+    12:34:56.78 >>> Call to foo in File "/path/to_file.py", line 2
+    12:34:56.78 ...... x = 1
+    12:34:56.78    2 | def foo(x):
+    12:34:56.78    3 |     return x ** 2
+    12:34:56.78 <<< Return value from foo: 1
+12:34:56.78   20 |     str({foo(x) for x in (1, 2)})
+12:34:56.78 .......... x = 1
+12:34:56.78   20 |     str({foo(x) for x in (1, 2)})
+    12:34:56.78 >>> Call to foo in File "/path/to_file.py", line 2
+    12:34:56.78 ...... x = 2
+    12:34:56.78    2 | def foo(x):
+    12:34:56.78    3 |     return x ** 2
+    12:34:56.78 <<< Return value from foo: 4
+12:34:56.78   20 |     str({foo(x) for x in (1, 2)})
+12:34:56.78 .......... x = 2
+12:34:56.78   20 |     str({foo(x) for x in (1, 2)})
+12:34:56.78   21 |     str({no_trace(x) for x in (1, 2)})
+12:34:56.78 .......... x = 1
+12:34:56.78   21 |     str({no_trace(x) for x in (1, 2)})
+12:34:56.78 .......... x = 2
+12:34:56.78   21 |     str({no_trace(x) for x in (1, 2)})
+12:34:56.78   22 |     bar()
+    12:34:56.78 >>> Call to bar in File "/path/to_file.py", line 11
+    12:34:56.78   11 | def bar():
+    12:34:56.78   12 |     str({no_trace(x) for x in (1, 2)})
+        12:34:56.78 >>> Call to no_trace in File "/path/to_file.py", line 6
+        12:34:56.78 ...... _x = 1
+        12:34:56.78    6 | def no_trace(_x):
+        12:34:56.78    7 |     return 3
+        12:34:56.78 <<< Return value from no_trace: 3
+    12:34:56.78   12 |     str({no_trace(x) for x in (1, 2)})
+    12:34:56.78 .......... x = 1
+    12:34:56.78   12 |     str({no_trace(x) for x in (1, 2)})
+        12:34:56.78 >>> Call to no_trace in File "/path/to_file.py", line 6
+        12:34:56.78 ...... _x = 2
+        12:34:56.78    6 | def no_trace(_x):
+        12:34:56.78    7 |     return 3
+        12:34:56.78 <<< Return value from no_trace: 3
+    12:34:56.78   12 |     str({no_trace(x) for x in (1, 2)})
+    12:34:56.78 .......... x = 2
+    12:34:56.78   12 |     str({no_trace(x) for x in (1, 2)})
+    12:34:56.78 <<< Return value from bar: None
+12:34:56.78   22 |     bar()
+12:34:56.78 <<< Return value from main: None
