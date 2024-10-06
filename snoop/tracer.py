@@ -6,11 +6,10 @@ import sys
 import threading
 from collections import OrderedDict
 
-import six
 # noinspection PyUnresolvedReferences
 from cheap_repr import cheap_repr, find_repr_function, try_register_repr
 
-from snoop.utils import (NO_BIRDSEYE, PY34, ArgDefaultDict,
+from snoop.utils import (NO_BIRDSEYE, ArgDefaultDict,
                          _register_cheap_reprs, ensure_tuple,
                          is_comprehension_frame, iscoroutinefunction,
                          my_cheap_repr, no_args_decorator, pp_name_prefix,
@@ -19,8 +18,8 @@ from snoop.utils import (NO_BIRDSEYE, PY34, ArgDefaultDict,
 from .formatting import Event, Source
 from .variables import BaseVariable, CommonVariable, Exploding
 
-find_repr_function(six.text_type).maxparts = 100
-find_repr_function(six.binary_type).maxparts = 100
+find_repr_function(str).maxparts = 100
+find_repr_function(bytes).maxparts = 100
 find_repr_function(object).maxparts = 100
 find_repr_function(int).maxparts = 999999
 cheap_repr.suppression_threshold = 999999
@@ -139,8 +138,7 @@ class TracerMeta(type):
         return self.default.__exit__(*args, context=1)
 
 
-@six.add_metaclass(TracerMeta)
-class Tracer(object):
+class Tracer(metaclass=TracerMeta):
     def __init__(
             self,
             watch=(),
@@ -216,8 +214,7 @@ class Tracer(object):
         previous_trace = thread_global.original_trace_functions.pop()
         sys.settrace(previous_trace)
         calling_frame = sys._getframe(context + 1)
-        if not (PY34 and previous_trace is None):
-            calling_frame.f_trace = previous_trace
+        calling_frame.f_trace = previous_trace
         self.trace(calling_frame, 'exit', None)
         self.target_frames.discard(calling_frame)
         self.frame_infos.pop(calling_frame, None)

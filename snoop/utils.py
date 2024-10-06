@@ -4,13 +4,10 @@ import os
 import sys
 from itertools import chain
 
-import six
 from cheap_repr import cheap_repr, try_register_repr
 
-PY34 = sys.version_info[:2] == (3, 4)
-NO_ASTTOKENS = PY34
 PYPY = 'pypy' in sys.version.lower()
-NO_BIRDSEYE = NO_ASTTOKENS or PYPY
+NO_BIRDSEYE = PYPY
 
 pp_name_prefix = '__deep_pp_hidden__'
 
@@ -44,7 +41,7 @@ def truncate_list(lst, max_length):
 
 
 def ensure_tuple(x, split=False):
-    if split and isinstance(x, six.string_types):
+    if split and isinstance(x, str):
         x = x.replace(',', ' ').split()
     if not isinstance(x, (list, set, tuple)):
         x = (x,)
@@ -146,20 +143,6 @@ except Exception:
 
 def no_args_decorator(args, kwargs):
     return len(args) == 1 and inspect.isfunction(args[0]) and not kwargs
-
-
-try:
-    from functools import lru_cache
-except ImportError:
-    from backports.functools_lru_cache import lru_cache
-
-
-if six.PY2:
-    # noinspection PyUnresolvedReferences
-    from collections import Mapping, Sequence, Set
-else:
-    # noinspection PyUnresolvedReferences,PyCompatibility
-    from collections.abc import Mapping, Sequence, Set
 
 
 class DirectRepr(str):

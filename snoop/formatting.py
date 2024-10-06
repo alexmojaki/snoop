@@ -7,21 +7,14 @@ from textwrap import dedent
 
 import executing
 import opcode
-import six
 from pygments import highlight
 from pygments.formatters.terminal256 import Terminal256Formatter
 from pygments.lexers.python import Python3Lexer
 from pygments.styles.monokai import MonokaiStyle
-from six import PY3
-
-from snoop.utils import (NO_ASTTOKENS, ArgDefaultDict, FormattedValue,
-                         ensure_tuple, lru_cache, my_cheap_repr,
+from functools import lru_cache
+from snoop.utils import (ArgDefaultDict, FormattedValue,
+                         ensure_tuple, my_cheap_repr,
                          optional_numeric_label, short_filename, try_statement)
-
-try:
-    from pygments.lexers.python import Python2Lexer
-except ImportError:
-    from pygments.lexers.python import PythonLexer as Python2Lexer
 
 
 class StatementsDict(dict):
@@ -85,7 +78,7 @@ class Source(executing.Source):
         return result
 
 
-lexer = (Python3Lexer if PY3 else Python2Lexer)(stripnl=False)
+lexer = Python3Lexer(stripnl=False)
 
 
 class ForceWhiteTerminal256Formatter(Terminal256Formatter):
@@ -177,7 +170,7 @@ class DefaultFormatter(object):
     datetime_format = None
 
     def __init__(self, prefix, columns, color):
-        prefix = six.text_type(prefix)
+        prefix = str(prefix)
         if prefix and prefix == prefix.rstrip():
             prefix += u' '
         self.prefix = prefix
@@ -385,7 +378,6 @@ class DefaultFormatter(object):
 
     def format_executing_node_exception(self, event):
         try:
-            assert not NO_ASTTOKENS
             ex = Source.executing(event.frame)
             decorator = getattr(ex, "decorator", None)
             node = decorator or ex.node
@@ -414,7 +406,7 @@ class DefaultFormatter(object):
     def columns_string(self, event):
         column_strings = []
         for column in self.columns:
-            string = six.text_type(column(event))
+            string = str(column(event))
             width = self.column_widths[column] = max(
                 self.column_widths[column],
                 len(string),
@@ -499,7 +491,7 @@ class Colors(object):
 
 
 def indented_lines(prefix, string, plain_prefix=None):
-    lines = six.text_type(string).splitlines() or ['']
+    lines = str(string).splitlines() or ['']
     return [prefix + lines[0]] + [
         u' ' * len(plain_prefix or prefix) + line
         for line in lines[1:]

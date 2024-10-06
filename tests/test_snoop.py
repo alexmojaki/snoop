@@ -10,7 +10,6 @@ from tempfile import mkstemp
 from threading import current_thread
 
 import pytest
-import six
 from cheap_repr import cheap_repr, register_repr
 from cheap_repr.utils import safe_qualname
 from littleutils import file_to_string, group_by_key_func, string_to_file
@@ -22,7 +21,7 @@ sys.modules['pprintpp'] = {}
 from snoop import formatting, install, spy
 from snoop.configuration import Config
 from snoop.pp_module import is_deep_arg
-from snoop.utils import (NO_ASTTOKENS, NO_BIRDSEYE, PYPY, needs_parentheses,
+from snoop.utils import (NO_BIRDSEYE, PYPY, needs_parentheses,
                          truncate_list, truncate_string)
 
 formatting._get_filename = lambda _: "/path/to_file.py"
@@ -58,7 +57,6 @@ def sample_traceback():
     tb = u''.join(
         line for line in raw
         if not line.strip().startswith("File")
-        if not line.strip() == "raise value"  # part of six.reraise
     )
     sys.stderr.write(tb)
 
@@ -112,12 +110,9 @@ def generate_test_samples():
     for filename in os.listdir(samples_dir):
         if filename.endswith('.pyc'):
             continue
-        module_name = six.text_type(filename.split('.')[0])
+        module_name = str(filename.split('.')[0])
 
         if module_name in '__init__ __pycache__':
-            continue
-
-        if module_name in 'django_sample'.split() and six.PY2:
             continue
 
         if PYPY or sys.version_info[:2] in ((3, 4), (3, 10)):
@@ -305,6 +300,6 @@ def test_is_deep_arg():
 
 
 def test_no_asttokens_spy():
-    if NO_ASTTOKENS:
+    if PYPY:
         with pytest.raises(Exception, match="birdseye doesn't support this version of Python"):
             spy(test_is_deep_arg)
