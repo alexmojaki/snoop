@@ -1,85 +1,86 @@
 cellvars
 Differing versions:
-3.10, 3.11, 3.12, 3.13
+3.10, 3.11, 3.12, 3.13, 3.14
 3.8, 3.9
 
 color
 Differing versions:
 3.10, 3.11, 3.8, 3.9
 3.12
-3.13
+3.13, 3.14
 
 comprehensions
 Differing versions:
 3.10, 3.11, 3.8, 3.9
-3.12, 3.13
+3.12, 3.13, 3.14
 
 decorator_exception
 Differing versions:
 3.10
-3.11, 3.12, 3.13
+3.11, 3.12, 3.13, 3.14
 3.8, 3.9
 
 end_finally
 Differing versions:
-3.10, 3.11, 3.12, 3.13
+3.10, 3.11, 3.12, 3.13, 3.14
 3.8
 3.9
 
 exception
 Differing versions:
 3.10, 3.11, 3.12, 3.8, 3.9
-3.13
+3.13, 3.14
 
 multiline
 Differing versions:
 3.10
-3.11, 3.12, 3.13
+3.11, 3.12, 3.13, 3.14
 3.8, 3.9
 
 pandas_sample
 Differing versions:
 3.10, 3.8
 3.11, 3.12, 3.13, 3.9
+3.14
 
 pp_custom_pformat
 Differing versions:
-3.10, 3.11, 3.12, 3.13
+3.10, 3.11, 3.12, 3.13, 3.14
 3.8, 3.9
 
 pp_exception
 Differing versions:
 3.10, 3.8, 3.9
 3.11, 3.12
-3.13
+3.13, 3.14
 
 spy
 Differing versions:
 3.10, 3.8, 3.9
-3.11, 3.12, 3.13
+3.11, 3.12, 3.13, 3.14
 
 variables_classes
 Differing versions:
 3.10, 3.11, 3.8, 3.9
-3.12, 3.13
+3.12, 3.13, 3.14
 
 watch_explode
 Differing versions:
 3.10, 3.11, 3.8, 3.9
-3.12, 3.13
+3.12, 3.13, 3.14
 
 with_block
 Differing versions:
-3.10, 3.11, 3.12, 3.13
+3.10, 3.11, 3.12, 3.13, 3.14
 3.8, 3.9
 
 with_block_depth
 Differing versions:
-3.10, 3.11, 3.12, 3.13
+3.10, 3.11, 3.12, 3.13, 3.14
 3.8, 3.9
 
 with_no_args
 Differing versions:
-3.10, 3.11, 3.12, 3.13
+3.10, 3.11, 3.12, 3.13, 3.14
 3.8, 3.9
 

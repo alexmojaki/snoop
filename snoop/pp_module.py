@@ -204,7 +204,7 @@ class NodeVisitor(ast.NodeTransformer):
         before_marker = ast.Call(
             func=ast.Name(id=self.before_name,
                           ctx=ast.Load()),
-            args=[ast.Num(node._tree_index)],
+            args=[ast.Constant(node._tree_index)],
             keywords=[],
         )
 
