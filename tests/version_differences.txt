@@ -40,7 +40,8 @@ Differing versions:
 pandas_sample
 Differing versions:
 3.10, 3.8, 3.9
-3.11, 3.12, 3.13, 3.14
+3.11, 3.13, 3.14
+3.12
 
 pp_custom_pformat
 Differing versions:
