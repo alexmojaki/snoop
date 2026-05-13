@@ -303,3 +303,12 @@ def test_no_asttokens_spy():
     if PYPY:
         with pytest.raises(Exception, match="birdseye doesn't support this version of Python"):
             spy(test_is_deep_arg)
+
+
+def test_pp_deep_free_var_in_genexpr():
+    from snoop import pp
+
+    def f(arg):
+        return pp.deep(lambda: list(arg * i for i in [1, 2, 3]))
+
+    assert f(3) == [3, 6, 9]

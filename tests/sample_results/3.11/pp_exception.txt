@@ -20,8 +20,8 @@ Traceback (most recent call last):
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     self.returns = self.deep_pp(call_arg.body, frame)
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    return eval(code, frame.f_globals, frame.f_locals)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    return eval(code, eval_globals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
     pp.deep(lambda: x + y + bad() + 2)
                             ^^^^^
     raise TypeError('bad')
