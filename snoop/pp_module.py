@@ -137,10 +137,13 @@ class PPEvent(object):
             dont_inherit=True,
             flags=future_flags & frame.f_code.co_flags,
         )
-        frame.f_globals[before_expr.name] = before_expr
-        frame.f_globals[after_expr.name] = after_expr
+        # Merge locals into globals so names stay visible inside nested function scopes
+        eval_globals = dict(frame.f_globals)
+        eval_globals.update(frame.f_locals)
+        eval_globals[before_expr.name] = before_expr
+        eval_globals[after_expr.name] = after_expr
         try:
-            return eval(code, frame.f_globals, frame.f_locals)
+            return eval(code, eval_globals)
         except Exception as e:
             if stack:
                 last_node = stack[-1]
@@ -151,8 +154,8 @@ class PPEvent(object):
                 )
             raise
         finally:
-            frame.f_globals[before_expr.name] = lambda x: x
-            frame.f_globals[after_expr.name] = lambda node, value: value
+            eval_globals[before_expr.name] = lambda x: x
+            eval_globals[after_expr.name] = lambda node, value: value
 
 
 class DirectRepr(str):
