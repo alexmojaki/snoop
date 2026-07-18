@@ -1,0 +1,26 @@
+snoop/utils.py
+  s_3e11c35a03b282::t_41ee45f35314b6 184
+  s_3e11c35a03b282::t_8ae841b38003e8 183
+  s_3e11c35a03b282::t_ec127ed5741fdc 180-182
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "0c3021da057d66f1ef2114a6997327dff31025f4",
+  "prompts": {},
+  "humans": {
+    "h_d9dd17644dded9": {
+      "author": "Alex Hall <alex.mojaki@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_3e11c35a03b282": {
+      "agent_id": {
+        "tool": "github-copilot-jetbrains",
+        "id": "1784372976886",
+        "model": "unknown"
+      },
+      "human_author": "Alex Hall <alex.mojaki@gmail.com>"
+    }
+  }
+}
