@@ -1,0 +1,25 @@
+.github/workflows/pytest.yml
+  s_3e11c35a03b282::t_d93d0e44d925e7 5
+  h_d9dd17644dded9 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "f2f345f3ccc67e170b5329d345acd82e146a62b1",
+  "prompts": {},
+  "humans": {
+    "h_d9dd17644dded9": {
+      "author": "Alex Hall <alex.mojaki@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_3e11c35a03b282": {
+      "agent_id": {
+        "tool": "github-copilot-jetbrains",
+        "id": "1784372976886",
+        "model": "unknown"
+      },
+      "human_author": "Alex Hall <alex.mojaki@gmail.com>"
+    }
+  }
+}
