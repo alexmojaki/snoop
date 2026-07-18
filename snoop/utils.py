@@ -176,9 +176,12 @@ def _register_cheap_reprs():
         maxparts = _repr_series_one_line.maxparts
         for i in _sample_indices(n, maxparts):
             try:
-                k = x.index[i:i + 1].format(sparsify=False)[0]
-            except TypeError:
-                k = x.index[i:i + 1].format()[0]
+                try:
+                    k = x.index[i:i + 1].format(sparsify=False)[0]
+                except TypeError:
+                    k = x.index[i:i + 1].format()[0]
+            except AttributeError:
+                k = x.index[i]
             v = x.iloc[i]
             pieces.append('%s = %s' % (k, cheap_repr(v, newlevel)))
         if n > maxparts + 2:
