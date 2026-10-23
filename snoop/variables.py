@@ -58,9 +58,12 @@ class CommonVariable(BaseVariable):
 
 class Attrs(CommonVariable):
     def _keys(self, main_value):
+        slots = getattr(main_value, '__slots__', ())
+        if isinstance(slots, str):
+            slots = (slots,)
         return itertools.chain(
             getattr(main_value, '__dict__', ()),
-            getattr(main_value, '__slots__', ())
+            slots
         )
 
     def _format_key(self, key):
